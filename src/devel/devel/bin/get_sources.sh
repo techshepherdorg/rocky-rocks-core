@@ -13,7 +13,7 @@ GGET=$MYDIR/gget.sh
 
 if [ ! "$SURL" ]; then
 	# rocksclusters download base URL
-	SURL="https://googledrive.com/host/0B0LD0shfkvCRRGtadUFTQkhoZWs"
+	SURL="https://rockyrocks.techshepherd.org/"
 fi
 
 pn=$(basename `pwd`)
@@ -36,11 +36,13 @@ while read a; do
   else
     if [ ! -e ${fname} ]; then
       url=${SURL}/${pn}/`basename ${fname}`
+      echo Getting ${url}
       basepath=`dirname ${fname}`
       test -d $basepath || mkdir -p $basepath
-      if [ "x${fobj}" == "x" ]; then 
+      if [ "x${fobj}" == "x" ]; then
       	curl -L "$url" -o ${fname}
       else
+        echo Using gget
         $GGET ${fobj} ${fname}
       fi
       if [ "$?" != "0" ]; then
@@ -51,6 +53,7 @@ while read a; do
       echo "${fsha}  ${fname}" | sha1sum -c --status;
       if [ "$?" != "0" ]; then 
           echo "Checksum error for file ${fname}"
+          rm -rf ${fname}
           exit 1
       fi
     else
