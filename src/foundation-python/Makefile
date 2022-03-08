@@ -183,7 +183,11 @@ build:
 	-cd patch-files-$(ARCH) && find . -type f | grep -v CVS | cpio -pduv ../
 ifeq ($(strip $(VERSION.MAJOR)),5)
 	patch -p0 < patch-$(VERSION)-$(ARCH)
-endif	
+endif
+ifeq ($(strip $(VERSION.MAJOR)), 8)
+	patch -p0 < patch-$(VERSION)-$(ARCH)
+endif
+	
 	( 								\
 		cd Python-$(VERSION);					\
 		./configure $(ADDFLAGS) --prefix=$(PKGROOT) 		\

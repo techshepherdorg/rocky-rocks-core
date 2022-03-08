@@ -1,0 +1,25 @@
+diff -Naur Python-3.10.2/Lib/encodings/rot_13.py Python-3.10.2-patched/Lib/encodings/rot_13.py
+--- Python-3.10.2/Lib/encodings/rot_13.py	2022-01-13 13:52:14.000000000 -0500
++++ Python-3.10.2-patched/Lib/encodings/rot_13.py	2022-03-08 13:17:49.315758443 -0500
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ """ Python Character Mapping Codec for ROT13.
+ 
+ This codec de/encodes from str to str.
+diff -Naur Python-3.10.2/Lib/lib2to3/tests/data/different_encoding.py Python-3.10.2-patched/Lib/lib2to3/tests/data/different_encoding.py
+--- Python-3.10.2/Lib/lib2to3/tests/data/different_encoding.py	2022-01-13 13:52:14.000000000 -0500
++++ Python-3.10.2-patched/Lib/lib2to3/tests/data/different_encoding.py	2022-03-08 13:19:09.343937713 -0500
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ # -*- coding: utf-8 -*-
+ print u'ßàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞ'
+ 
+diff -Naur Python-3.10.2/Lib/lib2to3/tests/data/false_encoding.py Python-3.10.2-patched/Lib/lib2to3/tests/data/false_encoding.py
+--- Python-3.10.2/Lib/lib2to3/tests/data/false_encoding.py	2022-01-13 13:52:14.000000000 -0500
++++ Python-3.10.2-patched/Lib/lib2to3/tests/data/false_encoding.py	2022-03-08 13:19:36.157662726 -0500
+@@ -1,2 +1,2 @@
+-#!/usr/bin/env python
++#!/usr/bin/env python3
+ print '#coding=0'
