@@ -62,6 +62,7 @@
 
 . src/devel/devel/src/roll/etc/bootstrap-functions.sh
 compile devel
+echo ********************DEVEL COMPILED****************
 install rocks-devel
 . /etc/profile.d/rocks-devel.sh
 
