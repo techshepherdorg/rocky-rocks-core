@@ -116,3 +116,16 @@ src/foundation-python-sphinx/Sphinx-1.2.2.tar.gz
 # --- END ---
 src/protobuf/protobuf-2.6.1.tar.gz
 src/protobuf/protobuf-2.6.1.tar.gz
+# --- Added by ROCKS 8
+src/foundation-coreutils/coreutils-8.22.tar.gz
+src/foundation-coreutils/coreutils-8.32.tar.gz
+src/foundation-git/git-2.9.2.tar.gz
+src/foundation-git/git-manpages-2.9.2.tar.gz
+src/foundation-mysql/mysql-5.6.26.tar.gz
+src/foundation-python-extras/gobject-introspection-1.40.0.tar.gz
+src/foundation-python-extras/gobject-introspection-1.42.0.tar.gz
+src/foundation-python-extras/numpy-1.10.4.tar.gz
+src/foundation-python-extras/pygobject-3.14.0.tar.gz
+src/foundation-python/Python-2.7.5.tar.gz
+src/foundation-python/Python-3.10.2.tar.gz
+
