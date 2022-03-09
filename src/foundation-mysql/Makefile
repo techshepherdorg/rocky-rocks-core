@@ -244,9 +244,13 @@ build:
 			-DMYSQL_UNIX_ADDR=$(PKGVAR)/mysql.sock 		\
 			-DMYSQL_TCP_PORT=40000				\
 			-DWITH_SSL=yes					\
-			-DWITH_DEBUG=no;				\
+			-DWITH_DEBUG=no					\
+			-DDOWNLOAD_BOOST=1				\
+			-DWITH_BOOST=./boost				\
+			-DFORCE_INSOURCE_BUILD=1;			\
 		$(MAKE);						\
 	)
+-DDOWNLOAD_BOOST=1 -DWITH_BOOST=<directory>
 
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)/etc/
