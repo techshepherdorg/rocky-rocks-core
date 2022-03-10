@@ -168,7 +168,8 @@ yum -y install gcc-toolset-10-gcc gcc-toolset-10-gcc-c++ gcc-toolset-10-binutils
 yum --enablerepo powertools -y install rpcgen
 compile_and_install foundation-mysql
 compile_and_install foundation-python
-compile_and_install foundation-python-setuptools
+# ROCKS 8 no longer needs setuptools as it is included with python3
+#compile_and_install foundation-python-setuptools
 compile_and_install foundation-libxml2
 compile_and_install foundation-python-xml
 compile_and_install foundation-python-extras
