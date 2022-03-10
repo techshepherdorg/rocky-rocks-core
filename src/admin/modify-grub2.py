@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ## This reads /etc/sysconfig/grub file, searches for the
 ## a keyword and either appends or replaces values for that particular
 ## keyword

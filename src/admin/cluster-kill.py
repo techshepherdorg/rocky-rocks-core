@@ -160,7 +160,7 @@
 
 
 
-print 'cluster-kill has been replaced with:'
-print 'rocks run host "pkill process_name"'
+print('cluster-kill has been replaced with:')
+print('rocks run host "pkill process_name"')
 
 

@@ -168,7 +168,7 @@ cmd_set.append('GRANT SELECT, INSERT, UPDATE, DELETE, DROP, ALTER ' +\
 for cmd in cmd_set:
 	try:
 		if "-v" in sys.argv:
-			print "executing: ", cmd
+			print("executing: ", cmd)
 		db.execute(cmd)
 	except:
 		sys.stderr.write('Could not execute "%s"\n' % cmd)

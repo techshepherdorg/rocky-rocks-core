@@ -104,5 +104,5 @@
 #
 #
 
-print 'rocks-user-sync is no longer supported. please use:'
-print '\n\trocks sync users\n'
+print('rocks-user-sync is no longer supported. please use:')
+print('\n\trocks sync users\n')

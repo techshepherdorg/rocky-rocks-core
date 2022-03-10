@@ -6,13 +6,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,9 +29,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -225,14 +225,14 @@ class Shooter(Thread):
       
    def start_vnc(self):
       # Spawn the vnc window
-      if os.environ.has_key('DISPLAY'):
-	      print 'Launching rocks-console for %s' % (self.host)
-	      os.system('rocks-console %s' % (self.host))
+      if 'DISPLAY' in os.environ:
+          print('Launching rocks-console for %s' % (self.host))
+          os.system('rocks-console %s' % (self.host))
       else:
-	     print "DISPLAY variable not set"
-	     print "Cannot start VNC console"
-	     return(1)
-   	
+         print("DISPLAY variable not set")
+         print("Cannot start VNC console")
+         return(1)
+       
    def wait_for_vnc(self):
       # Wait for VNC server to start. The way we do this
       # is by trying to see is the vnc port is open on the compute node
@@ -240,31 +240,31 @@ class Shooter(Thread):
       ssh_args = ['ssh',"%s" % self.host,"-p %s" % self.ekvport,"-o UserKnownHostsFile=%s" % self.known_hosts,"/tmp/updates/rocks/bin/check_port --port 5901 --node localhost"]
       # Close stderr while waiting for vnc to start
       try:
-      	fd_temp = os.dup(2)
-      	os.close(2)
+          fd_temp = os.dup(2)
+          os.close(2)
       except:
-      	pass
+          pass
       count = 0
       while ( os.spawnvp(os.P_WAIT,'ssh',ssh_args) != 0 ):
-	      time.sleep(1)
-	      if ( count%3 == 0 ):
-		      print "Waiting for VNC server on [%s] to start" % self.host
-	      count = count+1
-	      if (count > 120):
-		      print "Can't connect to VNC server after 2 minutes"
-		      try:
-		      	os.dup2(fd_temp,2)
-		      except:
-		      	pass
-      		      sys.stderr.flush()
-	      if (count > 180):
-		      print "Cannot connect to VNC server. Bailing out...."
-		      break
+          time.sleep(1)
+          if ( count%3 == 0 ):
+              print("Waiting for VNC server on [%s] to start" % self.host)
+          count = count+1
+          if (count > 120):
+              print("Can't connect to VNC server after 2 minutes")
+              try:
+                  os.dup2(fd_temp,2)
+              except:
+                  pass
+                  sys.stderr.flush()
+          if (count > 180):
+              print("Cannot connect to VNC server. Bailing out....")
+              break
       try:
-      	os.dup2(fd_temp,2)
+          os.dup2(fd_temp,2)
       except:
-      	pass
-	
+          pass
+    
       sys.stderr.flush()
 
 
@@ -272,38 +272,38 @@ class Shooter(Thread):
       # Wait for ssh setup to complete. This includes the authorized_keys
       # file to be setup. We do this by checking if we can connect to the compute host
       # using ssh
-      print "Waiting for ssh setup to complete..."
+      print("Waiting for ssh setup to complete...")
       self.known_hosts  = "%s_%s" % (self.known_hosts,self.host)
       if os.path.exists(self.known_hosts):
-	      os.unlink(self.known_hosts)
-	      
+          os.unlink(self.known_hosts)
+          
       ssh_args = ['ssh','%s' % self.host, '-p %s' % self.ekvport, '-o UserKnownHostsFile=%s' % self.known_hosts,"/usr/bin/echo -n","1>/dev/null","2>&1"]
 
       try:
-      	fd_temp = os.dup(2)
-      	os.close(2)
+          fd_temp = os.dup(2)
+          os.close(2)
       except:
-      	pass
+          pass
       count = 0
       while ( os.spawnvp(os.P_WAIT,'ssh',ssh_args) != 0 ):
-	      time.sleep(1)
-	      if ( count%3 == 0 ):
-		      print "Waiting for ssh server on [%s] to start" % self.host
-	      count = count+1
-	      if (count > 120):
-		      print "Can't connect to ssh server after 2 minutes"
-		      try:
-		      	os.dup2(fd_temp,2)
-		      except:
-		      	pass
-      		      sys.stderr.flush()
-	      if (count > 180):
-		      print "Cannot connect to ssh server. Bailing out...."
-		      break
+          time.sleep(1)
+          if ( count%3 == 0 ):
+              print("Waiting for ssh server on [%s] to start" % self.host)
+          count = count+1
+          if (count > 120):
+              print("Can't connect to ssh server after 2 minutes")
+              try:
+                  os.dup2(fd_temp,2)
+              except:
+                  pass
+                  sys.stderr.flush()
+          if (count > 180):
+              print("Cannot connect to ssh server. Bailing out....")
+              break
       try:
-      	os.dup2(fd_temp,2)
+          os.dup2(fd_temp,2)
       except:
-      	pass
+          pass
       sys.stderr.flush()
 
 
@@ -311,16 +311,16 @@ class Shooter(Thread):
    def wait_for_reboot(self):
       while self.is_host_alive():
          time.sleep(5)
-         print '[%s] waiting for machine to go down' % (self.host)
+         print('[%s] waiting for machine to go down' % (self.host))
 
    def wait_for_post(self):
       while not self.is_host_alive():
-         print '[%s] waiting for machine to come up' % (self.host)
+         print('[%s] waiting for machine to come up' % (self.host))
          time.sleep(5)
 
    def run(self) :
       if not self.is_host_alive():
-         print '[%s] is not alive, cannot kickstart' % (self.host)
+         print('[%s] is not alive, cannot kickstart' % (self.host))
          return 0
       start = time.time()
       self.kickstart_node()
@@ -337,17 +337,17 @@ class Shooter(Thread):
       self.wait_for_post()
       stop = time.time()
       
-      print '[%s] done. (%f minutes)' % (self.host, (stop - start) / 60)
+      print('[%s] done. (%f minutes)' % (self.host, (stop - start) / 60))
       return 1
 
 
 def help():
    usage()
-   print usage_help
+   print(usage_help)
 
 def usage():
-   print usage_name, '- version', usage_version
-   print 'Usage: ', usage_command, usage_text
+   print(usage_name, '- version', usage_version)
+   print('Usage: ', usage_command, usage_text)
 
 
 
@@ -366,11 +366,11 @@ if not len(args):
    usage()
    sys.exit(-1)
 
-if not os.environ.has_key('SSH_AGENT_PID') \
-   and not os.environ.has_key('SSH_AUTH_SOCK') \
-   and not os.environ.has_key('SSH_NO_PASSWD'):
+if 'SSH_AGENT_PID' not in os.environ \
+   and 'SSH_AUTH_SOCK' not in os.environ \
+   and 'SSH_NO_PASSWD' not in os.environ:
    usage()
-   print 'Requires ssh-agent to launch'
+   print('Requires ssh-agent to launch')
    sys.exit(-1)
 
 # Fire off a bunch of threads to kickstart all the nodes specified,

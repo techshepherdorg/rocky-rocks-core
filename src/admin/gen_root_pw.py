@@ -15,4 +15,4 @@ def get_pw():
 	return crypt.crypt(s, salt)
 
 if __name__ == '__main__':
-	print get_pw()
+	print(get_pw())

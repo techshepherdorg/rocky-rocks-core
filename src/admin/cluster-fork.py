@@ -151,5 +151,5 @@
 #
 #
 
-print 'cluster-fork has been replaced with "rocks run host"'
+print('cluster-fork has been replaced with "rocks run host"')
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import sys
 import subprocess
 import os.path
@@ -26,4 +26,4 @@ for l in lines:
 			pass
 			
 for f in files:
-	print f
+	print(f)

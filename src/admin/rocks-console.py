@@ -4,13 +4,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                Rocks(r)
+#             www.rocksclusters.org
+#             version 6.2 (SideWinder)
+#             version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,9 +27,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#    "This product includes software developed by the Rocks(r)
+#    Cluster Group at the San Diego Supercomputer Center at the
+#    University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -131,175 +131,176 @@ import rocks.app
 import socket
 import time
 import subprocess 
-		        
+            
 class App(rocks.app.Application):
 
-	def __init__(self, argv):
-		rocks.app.Application.__init__(self, argv)	
+    def __init__(self, argv):
+        rocks.app.Application.__init__(self, argv)    
 
-		self.usage_name = 'Rocks Console'
-		self.usage_version = '@VERSION@'
+        self.usage_name = 'Rocks Console'
+        self.usage_version = '@VERSION@'
 
-		self.nodename = ''
-		self.known_hosts = '/tmp/.known_hosts'
-		self.defaultport = 5901
-		self.sshport	= 22
-		if self.usage_version.split('.')[0] == '6':	
-			self.remotedefaultport = 5900
-			self.sshport = 2200
-		else:
-			self.remotedefaultport = self.defaultport 
-		self.localport = 0
-		self.remoteport = 0
-		self.ekv = 0
+        self.nodename = ''
+        self.known_hosts = '/tmp/.known_hosts'
+        self.defaultport = 5901
+        self.sshport    = 22
+        if self.usage_version.split('.')[0] == '6':    
+            self.remotedefaultport = 5900
+            self.sshport = 2200
+        else:
+            self.remotedefaultport = self.defaultport 
+        self.localport = 0
+        self.remoteport = 0
+        self.ekv = 0
 
-		porthelp = '(port number of VNC server - default = %d)' \
-			% (self.defaultport)
-
-
-		self.getopt.l.extend([
-				'ekv',
-				('port=', porthelp)
-			])
-
-		return
+        porthelp = '(port number of VNC server - default = %d)' \
+            % (self.defaultport)
 
 
-	def parseArg(self, c):
-		rocks.app.Application.parseArg(self, c)
+        self.getopt.l.extend([
+                'ekv',
+                ('port=', porthelp)
+            ])
 
-		key, val = c
-		if key in ('--port'):
-			self.localport = int(val)
-		elif key in ('--ekv'):
-			self.ekv = 1
-
-		return
+        return
 
 
-	def usageTail(self):
-		return ' <nodename (e.g., compute-0-0)>\n'
+    def parseArg(self, c):
+        rocks.app.Application.parseArg(self, c)
+
+        key, val = c
+        if key in ('--port'):
+            self.localport = int(val)
+        elif key in ('--ekv'):
+            self.ekv = 1
+
+        return
 
 
-	def ekvviewer(self):
-		cmd = 'telnet localhost %d' % (self.localport)
-		os.system(cmd)
-		return
+    def usageTail(self):
+        return ' <nodename (e.g., compute-0-0)>\n'
 
 
-	def vncviewer(self):
-		cmd = 'vncviewer localhost:%d' \
-			% (self.localport - self.defaultport + 1)
-		os.system(cmd)
-
-		return
-
-	def createSecureTunnel_linux(self):
-		#
-		# use a temporary file to store the host key. we do this
-		# because a new temporary host key is created in the
-		# installer and if we add this temporary host key to
-		# /root/.ssh/known_hosts, then the next time the node is
-		# installed, the ssh tunnel will get a 'man-in-middle' error
-		# and not allow port forwarding.
-		#
-		self.known_hosts = "%s_%s" % (self.known_hosts,self.nodename)
-		if os.path.exists(self.known_hosts):
-			os.unlink(self.known_hosts)
-
-		cmd = 'ssh -q -f -o UserKnownHostsFile=%s ' % (self.known_hosts)
-		cmd += '-o GlobalKnownHostsFile=%s ' % (self.known_hosts)
-		cmd += '-L %d:127.0.0.1:%d ' % (self.localport, self.remoteport)
-		cmd += '%s -p %d ' % (self.nodename,self.sshport)
-		cmd += '\'/bin/bash -c "sleep 20"\' '
-		self.s.close()
-		os.system(cmd)
+    def ekvviewer(self):
+        cmd = 'telnet localhost %d' % (self.localport)
+        os.system(cmd)
+        return
 
 
-	def createSecureTunnel_sunos(self):
-		#
-		# use a temporary file to store the host key. we do this
-		# because a new temporary host key is created in the
-		# installer and if we add this temporary host key to
-		# /root/.ssh/known_hosts, then the next time the node is
-		# installed, the ssh tunnel will get a 'man-in-middle' error
-		# and not allow port forwarding.
-		#
-		self.known_hosts = "%s_%s" % (self.known_hosts,self.nodename)
-		if os.path.exists(self.known_hosts):
-			os.unlink(self.known_hosts)
+    def vncviewer(self):
+        cmd = 'vncviewer localhost:%d' \
+            % (self.localport - self.defaultport + 1)
+        os.system(cmd)
 
-		cmd = 'ssh -q -f -o UserKnownHostsFile=%s ' % (self.known_hosts)
-		cmd +='-o XAuthLocation=/tmp/root/.TTauthority '
-		cmd += '-L %d:localhost:%d ' % (self.localport, self.remoteport)
-		cmd += '%s -p 2200 ' % (self.nodename)
-		cmd +="\'/tmp/root/usr/bin/x11vnc -display :0 "	\
-			"-quiet -once -nopw -rfbport %d -auth "	\
-			"/tmp/root/.TTauthority -localhost -noshm\'" % self.remoteport
-		self.s.close()
-		print cmd
-		os.system(cmd)
-		time.sleep(5)
-		return
+        return
 
+    def createSecureTunnel_linux(self):
+        #
+        # use a temporary file to store the host key. we do this
+        # because a new temporary host key is created in the
+        # installer and if we add this temporary host key to
+        # /root/.ssh/known_hosts, then the next time the node is
+        # installed, the ssh tunnel will get a 'man-in-middle' error
+        # and not allow port forwarding.
+        #
+        self.known_hosts = "%s_%s" % (self.known_hosts,self.nodename)
+        if os.path.exists(self.known_hosts):
+            os.unlink(self.known_hosts)
 
-
-	def createSecureTunnel(self):
-
-		cmd = "rocks report host attr attr=os %s " % self.nodename 
-		p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
-	
-		r,w = (p.stdout, p.stdin)
-		w.close()
-		osname = r.readline().strip()
-		if osname == '':
-			osname = 'linux'
-		f = getattr(self, "createSecureTunnel_%s" % osname)	
-		f()
-		return
+        cmd = 'ssh -q -f -o UserKnownHostsFile=%s ' % (self.known_hosts)
+        cmd += '-o GlobalKnownHostsFile=%s ' % (self.known_hosts)
+        cmd += '-L %d:127.0.0.1:%d ' % (self.localport, self.remoteport)
+        cmd += '%s -p %d ' % (self.nodename,self.sshport)
+        cmd += '\'/bin/bash -c "sleep 20"\' '
+        self.s.close()
+        os.system(cmd)
 
 
-	def run(self):
-		if len(self.args) > 0:
-			self.nodename = self.args[0]
-		else:
-			print '\n\t"nodename" was not specified\n'
-			self.usage()
-			sys.exit(-1)
+    def createSecureTunnel_sunos(self):
+        #
+        # use a temporary file to store the host key. we do this
+        # because a new temporary host key is created in the
+        # installer and if we add this temporary host key to
+        # /root/.ssh/known_hosts, then the next time the node is
+        # installed, the ssh tunnel will get a 'man-in-middle' error
+        # and not allow port forwarding.
+        #
+        self.known_hosts = "%s_%s" % (self.known_hosts,self.nodename)
+        if os.path.exists(self.known_hosts):
+            os.unlink(self.known_hosts)
 
-		self.nodename = self.args[0]
+        cmd = 'ssh -q -f -o UserKnownHostsFile=%s ' % (self.known_hosts)
+        cmd +='-o XAuthLocation=/tmp/root/.TTauthority '
+        cmd += '-L %d:localhost:%d ' % (self.localport, self.remoteport)
+        cmd += '%s -p 2200 ' % (self.nodename)
+        cmd +="\'/tmp/root/usr/bin/x11vnc -display :0 "    \
+            "-quiet -once -nopw -rfbport %d -auth "    \
+            "/tmp/root/.TTauthority -localhost -noshm\'" % self.remoteport
+        self.s.close()
+        print(cmd)
+        os.system(cmd)
+        time.sleep(5)
+        return
 
-		if self.ekv == 1:
-			if self.localport == 0:
-				self.localport = 8000
-			self.remoteport = 8000
-		else:
-			if self.localport == 0:
-				self.localport = self.defaultport
-			self.remoteport = self.remotedefaultport
 
-		# Check ports to see which one is open. If ports are already bound
-		# go to the next one to check. Whatever binds is successfully is used.
-		self.s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-		done = 0
-		while(done == 0):
-		 	try:
-				self.s.bind(("localhost",self.localport))
-				done = 1
-			except socket.error,(errno,string):
-			   if(errno == 98):
-				done = 0
-				self.localport = self.localport + 1
-		
-		#Connect to the secure tunnel and go...
-		self.createSecureTunnel()
 
-		if self.ekv == 1:
-			self.ekvviewer()
-		else:
-			self.vncviewer()
+    def createSecureTunnel(self):
 
-		return
+        cmd = "rocks report host attr attr=os %s " % self.nodename 
+        p = subprocess.Popen(cmd, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, close_fds=True)
+    
+        r,w = (p.stdout, p.stdin)
+        w.close()
+        osname = r.readline().strip()
+        if osname == '':
+            osname = 'linux'
+        f = getattr(self, "createSecureTunnel_%s" % osname)    
+        f()
+        return
+
+
+    def run(self):
+        if len(self.args) > 0:
+            self.nodename = self.args[0]
+        else:
+            print('\n\t"nodename" was not specified\n')
+            self.usage()
+            sys.exit(-1)
+
+        self.nodename = self.args[0]
+
+        if self.ekv == 1:
+            if self.localport == 0:
+                self.localport = 8000
+            self.remoteport = 8000
+        else:
+            if self.localport == 0:
+                self.localport = self.defaultport
+            self.remoteport = self.remotedefaultport
+
+        # Check ports to see which one is open. If ports are already bound
+        # go to the next one to check. Whatever binds is successfully is used.
+        self.s = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+        done = 0
+        while(done == 0):
+            try:
+                                self.s.bind(("localhost",self.localport))
+                                done = 1
+            except socket.error as xxx_todo_changeme:
+                           (errno,string) = xxx_todo_changeme.args
+                           if(errno == 98):
+                                done = 0
+                                self.localport = self.localport + 1
+        
+        #Connect to the secure tunnel and go...
+        self.createSecureTunnel()
+
+        if self.ekv == 1:
+            self.ekvviewer()
+        else:
+            self.vncviewer()
+
+        return
 
 
 app = App(sys.argv)
