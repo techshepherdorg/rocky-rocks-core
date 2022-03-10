@@ -4,13 +4,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,9 +27,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -143,369 +143,369 @@ from xml.sax import make_parser
 
 class App(rocks.app.Application):
 
-	def __init__(self, argv):
-		rocks.app.Application.__init__(self, argv)
-		self.usage_name		= 'Kickstart Document Generator'
-		self.usage_version	= '@VERSION@'
-		self.graph		= 'default'
-		self.xmlNodes           = []
-		self.donthave = []
+    def __init__(self, argv):
+        rocks.app.Application.__init__(self, argv)
+        self.usage_name        = 'Kickstart Document Generator'
+        self.usage_version    = '@VERSION@'
+        self.graph        = 'default'
+        self.xmlNodes           = []
+        self.donthave = []
 
-		# Add application flags to inherited flags
+        # Add application flags to inherited flags
 
-		self.getopt.s.extend([
-			('g:', 'graph')
-			])
-		self.getopt.l.extend([
-			('graph=', 'graph'),
-			])
+        self.getopt.s.extend([
+            ('g:', 'graph')
+            ])
+        self.getopt.l.extend([
+            ('graph=', 'graph'),
+            ])
 
-	def usageTail(self):
-		return ' [file]'
+    def usageTail(self):
+        return ' [file]'
 
-	def parseArg(self, c):
-		if rocks.sql.Application.parseArg(self, c):
-			return 1
-		elif c[0] in ('-g', '--graph'):
-			self.graph = c[1]
-		else:
-			return 0
-		return 1
+    def parseArg(self, c):
+        if rocks.sql.Application.parseArg(self, c):
+            return 1
+        elif c[0] in ('-g', '--graph'):
+            self.graph = c[1]
+        else:
+            return 0
+        return 1
 
-	def parseNode(self, node):
-		
-		nodesPath = [ os.path.join('.',  'nodes'),
-			      os.path.join('.',  'site-nodes') ]
-
-
-		# Find the xml file for each node in the graph.  If we
-		# can't find one just complain and abort.
-
-		xml = [ None, None, None ] # rocks, extend, replace
-		for dir in nodesPath:
-			if not xml[0]:
-				file = os.path.join(dir, '%s.xml' % node.name)
-				if os.path.isfile(file):
-					xml[0] = file
-			if not xml[1]:
-				file = os.path.join(dir, 'extend-%s.xml'\
-						    % node.name)
-				if os.path.isfile(file):
-					xml[1] = file
-			if not xml[2]:
-				file = os.path.join(dir, 'replace-%s.xml'\
-						    % node.name)
-				if os.path.isfile(file):
-					xml[2] = file
-
-		if not (xml[0] or xml[2]):
-			sys.stderr.write('error - cannot find node "%s"\n' \
-				% node.name)
-			self.donthave.append(node.name)
-			return
-
-		xmlFiles = [ xml[0] ]
-		if xml[1]:
-			xmlFiles.append(xml[1])
-		if xml[2]:
-			xmlFiles = [ xml[2] ]
-
-		for xmlFile in xmlFiles:
-			fin = open(xmlFile, 'r')
-			parser = make_parser()
-			handler = NodeHandler(node, xmlFile)
-			parser.setContentHandler(handler)
-			parser.parse(fin)
-			fin.close()
-
-		return handler
+    def parseNode(self, node):
+        
+        nodesPath = [ os.path.join('.',  'nodes'),
+                  os.path.join('.',  'site-nodes') ]
 
 
-	def document(self, node, description, parents, children):
-		print
-		print '<section id="s-%s" xreflabel="%s">' % (node, node)
-		print '<title>%s</title>' % node
-		print '<para>'
-		print description
-		print '</para>'
+        # Find the xml file for each node in the graph.  If we
+        # can't find one just complain and abort.
 
-		if parents:
-			print '<para>'
-			print '<emphasis>Parent Nodes:</emphasis>'
-			print   '<itemizedlist>'
-			for p in parents:
-				link = '<xref linkend="s-%s">' % p
-				if p in self.donthave:
-					link = p
-				print '<listitem><para>%s</para></listitem>' % link
-			print   '</itemizedlist>'
-			print '</para>'
+        xml = [ None, None, None ] # rocks, extend, replace
+        for dir in nodesPath:
+            if not xml[0]:
+                file = os.path.join(dir, '%s.xml' % node.name)
+                if os.path.isfile(file):
+                    xml[0] = file
+            if not xml[1]:
+                file = os.path.join(dir, 'extend-%s.xml'\
+                            % node.name)
+                if os.path.isfile(file):
+                    xml[1] = file
+            if not xml[2]:
+                file = os.path.join(dir, 'replace-%s.xml'\
+                            % node.name)
+                if os.path.isfile(file):
+                    xml[2] = file
 
-		if children:
-			print '<para>'
-			print '<emphasis>Children Nodes:</emphasis>'
-			print   '<itemizedlist>'
-			for c in children:
-				link = '<xref linkend="s-%s">' % c
-				if c in self.donthave:
-					link = c
-				print '<listitem><para>%s</para></listitem>' % link
-			print   '</itemizedlist>'
-			print '</para>'
+        if not (xml[0] or xml[2]):
+            sys.stderr.write('error - cannot find node "%s"\n' \
+                % node.name)
+            self.donthave.append(node.name)
+            return
 
-		print '</section>'
+        xmlFiles = [ xml[0] ]
+        if xml[1]:
+            xmlFiles.append(xml[1])
+        if xml[2]:
+            xmlFiles = [ xml[2] ]
 
-		
-	def header(self):
-		print '<!-- Generated by kdoc.py. Do not edit -->'
-		print '<section id="base-nodes" xreflabel="Rocks Base Nodes">'
-		print '<title>Rocks Base Nodes</title>'
+        for xmlFile in xmlFiles:
+            fin = open(xmlFile, 'r')
+            parser = make_parser()
+            handler = NodeHandler(node, xmlFile)
+            parser.setContentHandler(handler)
+            parser.parse(fin)
+            fin.close()
 
-	def footer(self):
-		print '</section>'
+        return handler
 
-	def run(self):
-		parser  = make_parser()
-		handler = GraphHandler()
 
-		if not os.path.exists('graphs'):
-			err = 'error - cannot find graphs dir. Runme in a build env.\n'
-			sys.stderr.write(err)
-			sys.exit(1)
+    def document(self, node, description, parents, children):
+        print()
+        print('<section id="s-%s" xreflabel="%s">' % (node, node))
+        print('<title>%s</title>' % node)
+        print('<para>')
+        print(description)
+        print('</para>')
 
-		self.header()
+        if parents:
+            print('<para>')
+            print('<emphasis>Parent Nodes:</emphasis>')
+            print('<itemizedlist>')
+            for p in parents:
+                link = '<xref linkend="s-%s">' % p
+                if p in self.donthave:
+                    link = p
+                print('<listitem><para>%s</para></listitem>' % link)
+            print('</itemizedlist>')
+            print('</para>')
 
-		graph_dir = os.path.join('graphs', self.graph)
+        if children:
+            print('<para>')
+            print('<emphasis>Children Nodes:</emphasis>')
+            print('<itemizedlist>')
+            for c in children:
+                link = '<xref linkend="s-%s">' % c
+                if c in self.donthave:
+                    link = c
+                print('<listitem><para>%s</para></listitem>' % link)
+            print('</itemizedlist>')
+            print('</para>')
 
-		for file in os.listdir(graph_dir):
-			root, ext = os.path.splitext(file)
-			if ext == '.xml':
-				path = os.path.join(graph_dir, file)
-				if os.path.isfile(path):
-					fin = open(path, 'r')
-					parser.setContentHandler(handler)
-					parser.parse(fin)
-					fin.close()
+        print('</section>')
+
+        
+    def header(self):
+        print('<!-- Generated by kdoc.py. Do not edit -->')
+        print('<section id="base-nodes" xreflabel="Rocks Base Nodes">')
+        print('<title>Rocks Base Nodes</title>')
+
+    def footer(self):
+        print('</section>')
+
+    def run(self):
+        parser  = make_parser()
+        handler = GraphHandler()
+
+        if not os.path.exists('graphs'):
+            err = 'error - cannot find graphs dir. Runme in a build env.\n'
+            sys.stderr.write(err)
+            sys.exit(1)
+
+        self.header()
+
+        graph_dir = os.path.join('graphs', self.graph)
+
+        for file in os.listdir(graph_dir):
+            root, ext = os.path.splitext(file)
+            if ext == '.xml':
+                path = os.path.join(graph_dir, file)
+                if os.path.isfile(path):
+                    fin = open(path, 'r')
+                    parser.setContentHandler(handler)
+                    parser.parse(fin)
+                    fin.close()
 
                 g = handler.getGraph()
 
-		list = []
-		for node in g.getNodes():
-			list.append((node.name, node))
-		list.sort()
+        list = []
+        for node in g.getNodes():
+            list.append((node.name, node))
+        list.sort()
 
-		for name,node in list:
-			children = []
-			parents  = []
+        for name,node in list:
+            children = []
+            parents  = []
 
-			for e in g[node]:
-				children.append(e.getChild().name)
-			children.sort()
+            for e in g[node]:
+                children.append(e.getChild().name)
+            children.sort()
 
-			g.reverse()
-			for e in g[node]:
-				parents.append(e.getChild().name)
-			g.reverse()
-			parents.sort()
+            g.reverse()
+            for e in g[node]:
+                parents.append(e.getChild().name)
+            g.reverse()
+            parents.sort()
 
-			handler = self.parseNode(node)
-			if not handler:
-				continue
+            handler = self.parseNode(node)
+            if not handler:
+                continue
 
-			self.document(name,
-				      handler.description,
-				      parents,
-				      children)
+            self.document(name,
+                      handler.description,
+                      parents,
+                      children)
 
-		# need reference nodes for any (external/missing) node references
-		for p in self.donthave:
-			desc="Node '%s' referenced but not defined in this roll" %p
-			self.document(p,desc,None,None)
+        # need reference nodes for any (external/missing) node references
+        for p in self.donthave:
+            desc="Node '%s' referenced but not defined in this roll" %p
+            self.document(p,desc,None,None)
 
-		self.footer()
+        self.footer()
 
 
-	
+    
 class GraphHandler(rocks.util.ParseXML):
 
-	def __init__(self):
-		rocks.util.ParseXML.__init__(self)
-		self.graph		= rocks.graph.Graph()
-		self.attrs		= rocks.util.Struct()
-		self.attrs.default	= rocks.util.Struct()
+    def __init__(self):
+        rocks.util.ParseXML.__init__(self)
+        self.graph        = rocks.graph.Graph()
+        self.attrs        = rocks.util.Struct()
+        self.attrs.default    = rocks.util.Struct()
 
 
-	def getGraph(self):
-		return self.graph
+    def getGraph(self):
+        return self.graph
 
 
-	def addEdge(self):
-		if self.graph.hasNode(self.attrs.parent):
-			head = self.graph.getNode(self.attrs.parent)
-		else:
-			head = Node(self.attrs.parent)
+    def addEdge(self):
+        if self.graph.hasNode(self.attrs.parent):
+            head = self.graph.getNode(self.attrs.parent)
+        else:
+            head = Node(self.attrs.parent)
 
-		if self.graph.hasNode(self.attrs.child):
-			tail = self.graph.getNode(self.attrs.child)
-		else:
-			tail = Node(self.attrs.child)
+        if self.graph.hasNode(self.attrs.child):
+            tail = self.graph.getNode(self.attrs.child)
+        else:
+            tail = Node(self.attrs.child)
 
-		e = Edge(tail, head)
-		e.setArchitecture(self.attrs.arch)
-		e.setRelease(self.attrs.release)
-		self.graph.addEdge(e)
-
-
-
-	# <to>
-
-	def startElement_to(self, name, attrs):	
-		self.text		= ''
-		self.attrs.arch		= self.attrs.default.arch
-		self.attrs.release	= self.attrs.default.release
-
-		if attrs.has_key('arch'):
-			self.attrs.arch = attrs['arch']
-		if attrs.has_key('release'):
-			self.attrs.release = attrs['release']
-
-	def endElement_to(self, name):
-		self.attrs.parent = self.text
-		self.addEdge()	
-		self.attrs.parent = None
-	
-
-	# <from>
-
-	def startElement_from(self, name, attrs):
-		self.text		= ''
-		self.attrs.arch		= self.attrs.default.arch
-		self.attrs.release	= self.attrs.default.release
-		
-		if attrs.has_key('arch'):
-			self.attrs.arch = attrs['arch']
-		if attrs.has_key('release'):
-			self.attrs.release = attrs['release']
+        e = Edge(tail, head)
+        e.setArchitecture(self.attrs.arch)
+        e.setRelease(self.attrs.release)
+        self.graph.addEdge(e)
 
 
-	def endElement_from(self, name):
-		self.attrs.child = self.text
-		self.addEdge()
-		self.attrs.child = None
-		
 
-	# <edge>
-	
-	def startElement_edge(self, name, attrs):
-		if attrs.has_key('arch'):
-			self.attrs.default.arch = attrs['arch']
-		else:
-			self.attrs.default.arch = None
-		if attrs.has_key('release'):
-			self.attrs.default.release = attrs['release']
-		else:
-			self.attrs.default.release	= None
-		if attrs.has_key('to'):
-			self.attrs.parent = attrs['to']
-		else:
-			self.attrs.parent = None
-		if attrs.has_key('from'):
-			self.attrs.child = attrs['from']
-		else:
-			self.attrs.child = None
+    # <to>
+
+    def startElement_to(self, name, attrs):    
+        self.text        = ''
+        self.attrs.arch        = self.attrs.default.arch
+        self.attrs.release    = self.attrs.default.release
+
+        if 'arch' in attrs:
+            self.attrs.arch = attrs['arch']
+        if 'release' in attrs:
+            self.attrs.release = attrs['release']
+
+    def endElement_to(self, name):
+        self.attrs.parent = self.text
+        self.addEdge()    
+        self.attrs.parent = None
+    
+
+    # <from>
+
+    def startElement_from(self, name, attrs):
+        self.text        = ''
+        self.attrs.arch        = self.attrs.default.arch
+        self.attrs.release    = self.attrs.default.release
+        
+        if 'arch' in attrs:
+            self.attrs.arch = attrs['arch']
+        if 'release' in attrs:
+            self.attrs.release = attrs['release']
 
 
-	def endElement_edge(self, name):
-		if self.attrs.parent and self.attrs.child:
-			self.addEdge()
+    def endElement_from(self, name):
+        self.attrs.child = self.text
+        self.addEdge()
+        self.attrs.child = None
+        
+
+    # <edge>
+    
+    def startElement_edge(self, name, attrs):
+        if 'arch' in attrs:
+            self.attrs.default.arch = attrs['arch']
+        else:
+            self.attrs.default.arch = None
+        if 'release' in attrs:
+            self.attrs.default.release = attrs['release']
+        else:
+            self.attrs.default.release    = None
+        if 'to' in attrs:
+            self.attrs.parent = attrs['to']
+        else:
+            self.attrs.parent = None
+        if 'from' in attrs:
+            self.attrs.child = attrs['from']
+        else:
+            self.attrs.child = None
 
 
-	def endDocument(self):
-		pass
+    def endElement_edge(self, name):
+        if self.attrs.parent and self.attrs.child:
+            self.addEdge()
+
+
+    def endDocument(self):
+        pass
 
 
 
 class NodeHandler(rocks.util.ParseXML):
 
-	def __init__(self, node, filename):
-		rocks.util.ParseXML.__init__(self)
-		self.filename    = filename
-		self.node        = node
-		self.description = ''
+    def __init__(self, node, filename):
+        rocks.util.ParseXML.__init__(self)
+        self.filename    = filename
+        self.node        = node
+        self.description = ''
 
-	# <kickstart>
-	
-	def startElement_kickstart(self, name, attrs):
-		pass
-	
-	def endElement_kickstart(self, name):
-		pass
-
-
-	# <description>
-
-	def startElement_description(self, name, attrs):
-        	self.text = ''
+    # <kickstart>
+    
+    def startElement_kickstart(self, name, attrs):
+        pass
+    
+    def endElement_kickstart(self, name):
+        pass
 
 
-	def endElement_description(self, name):
-        	self.description = self.text
+    # <description>
 
-				
-				
+    def startElement_description(self, name, attrs):
+            self.text = ''
+
+
+    def endElement_description(self, name):
+            self.description = self.text
+
+                
+                
 class Node(rocks.graph.Node):
 
-	def __init__(self, name):
-		rocks.graph.Node.__init__(self, name)
-		self.xmlText       = ''
-		self.xmlMethods    = []
-		self.xmlAttributes = []
+    def __init__(self, name):
+        rocks.graph.Node.__init__(self, name)
+        self.xmlText       = ''
+        self.xmlMethods    = []
+        self.xmlAttributes = []
 
-	def addAttribute(self, attr):
-		if attr not in self.xmlAttributes:
-			self.xmlAttributes.append(attr)
+    def addAttribute(self, attr):
+        if attr not in self.xmlAttributes:
+            self.xmlAttributes.append(attr)
 
-	def addMethod(self, method):
-		if method not in self.xmlMethods:
-			self.xmlMethods.append(method)
+    def addMethod(self, method):
+        if method not in self.xmlMethods:
+            self.xmlMethods.append(method)
 
-	def addXML(self, xmlText):
-		self.xmlText = self.xmlText + xmlText
-		
-	def getAttributes(self):
-		return self.xmlAttributes
+    def addXML(self, xmlText):
+        self.xmlText = self.xmlText + xmlText
+        
+    def getAttributes(self):
+        return self.xmlAttributes
 
-	def getMethods(self):
-		return self.xmlMethods
+    def getMethods(self):
+        return self.xmlMethods
 
-	def getXML(self):
-		return self.xmlText
-		
+    def getXML(self):
+        return self.xmlText
+        
 
 
 class Edge(rocks.graph.Edge):
-	def __init__(self, a, b):
-		rocks.graph.Edge.__init__(self, a, b)
-		self.arch    = None
-		self.release = None
+    def __init__(self, a, b):
+        rocks.graph.Edge.__init__(self, a, b)
+        self.arch    = None
+        self.release = None
 
-	def setArchitecture(self, arch):
-		if arch:
-			self.arch = arch
+    def setArchitecture(self, arch):
+        if arch:
+            self.arch = arch
 
-	def getArchitecture(self):
-		return self.arch
+    def getArchitecture(self):
+        return self.arch
 
-	def setRelease(self, release):
-		if release:
-			self.release = release
+    def setRelease(self, release):
+        if release:
+            self.release = release
 
-	def getRelease(self):
-		return self.release
+    def getRelease(self):
+        return self.release
 
 
 if __name__ == "__main__":
-	app = App(sys.argv)
-	app.parseArgs()
-	app.run()
+    app = App(sys.argv)
+    app.parseArgs()
+    app.run()
 

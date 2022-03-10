@@ -4,13 +4,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,9 +27,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -160,13 +160,13 @@
 # - in the node XML for the new appliance, they include custom partitioning info
 # - when kickstart.cgi is run, it outputs:
 #
-# 	part <custom 1>
-# 	part <custom 2>
-# 	part <custom 3>
-# 	.
-# 	.
-# 	.
-# 	part
+#     part <custom 1>
+#     part <custom 2>
+#     part <custom 3>
+#     .
+#     .
+#     .
+#     part
 #
 # the last 'part' tells the installer to add the default partitioning (this
 # came from auto-partition.xml), thus, the new appliance gets the custom
@@ -329,7 +329,7 @@
 # Revision 1.25  2003/04/24 16:59:41  mjk
 # - add order tags
 # - edge and order tags can have children
-# 	This just make the graph look nicer, no functional change
+#     This just make the graph look nicer, no functional change
 # - added include directory
 # - moved install class code into include directory
 # - dependecies enforced via topological sort
@@ -429,82 +429,82 @@ from rocks.util import KickstartError
 
 class App(rocks.app.Application):
 
-	def __init__(self, argv):
-		rocks.app.Application.__init__(self, argv)
-		self.usage_name		= 'Kickstart Generator'
-		self.usage_version	= '@VERSION@'
-		self.sections		= []
+    def __init__(self, argv):
+        rocks.app.Application.__init__(self, argv)
+        self.usage_name        = 'Kickstart Generator'
+        self.usage_version    = '@VERSION@'
+        self.sections        = []
 
-		self.os = os.uname()[0].lower()
-		osGenerator = getattr(rocks.gen, 'Generator_%s' % self.os)
-		self.generator = osGenerator()		
-		self.generator.setArch(self.getArch())
-		self.generator.setOS(self.os)
-	
-		self.getopt.s.extend([('a:', 'architecture')])
-		self.getopt.l.extend([('arch=', 'architecture'),
-				      ('section=', 'name'),
-				      ('postonly', 'show post'),
-				      ])
+        self.os = os.uname()[0].lower()
+        osGenerator = getattr(rocks.gen, 'Generator_%s' % self.os)
+        self.generator = osGenerator()        
+        self.generator.setArch(self.getArch())
+        self.generator.setOS(self.os)
+    
+        self.getopt.s.extend([('a:', 'architecture')])
+        self.getopt.l.extend([('arch=', 'architecture'),
+                      ('section=', 'name'),
+                      ('postonly', 'show post'),
+                      ])
 
-	def usageTail(self):
-		return ' [file]'
+    def usageTail(self):
+        return ' [file]'
 
-	def parseArg(self, c):
-		if rocks.app.Application.parseArg(self, c):
-			return 1
-		elif c[0] in ('-a', '--arch'):
-			self.generator.setArch(c[1])
-		elif c[0] == '--section':
-			self.sections += c[1].split()
-		elif c[0] == '--postonly':
-			self.sections.append('post')
-		else:
-			return 0
-		return 1
+    def parseArg(self, c):
+        if rocks.app.Application.parseArg(self, c):
+            return 1
+        elif c[0] in ('-a', '--arch'):
+            self.generator.setArch(c[1])
+        elif c[0] == '--section':
+            self.sections += c[1].split()
+        elif c[0] == '--postonly':
+            self.sections.append('post')
+        else:
+            return 0
+        return 1
 
 
-	def run(self):
+    def run(self):
 
-        	if self.args:
-			file = open(self.args[0], 'r')
-		else:
-			file = sys.stdin
-		
-		self.generator.parse(file.read())
+        if self.args:
+            file = open(self.args[0], 'r')
+        else:
+            file = sys.stdin
+        
+        self.generator.parse(file.read())
 
-		print '#'
-		print '# %s version %s' % (self.usage_name, self.usage_version)
-		print '#'
+        print('#')
+        print('# %s version %s' % (self.usage_name, self.usage_version))
+        print('#')
 
-		sections = self.sections
-		if not sections:
-			sections = [
-				'order',
-				'debug',
-				'main',
-				'packages',
-				'pre',
-				'post',
-				]
-		list = []
-		for s in sections:
-			list += self.generator.generate(s)
+        sections = self.sections
+        if not sections:
+            sections = [
+                'order',
+                'debug',
+                'main',
+                'packages',
+                'pre',
+                'post',
+                ]
+        list = []
+        for s in sections:
+            list += self.generator.generate(s)
 
-		for line in list:
-			print line.rstrip()
+        for line in list:
+            print(line.rstrip())
 
 
 if __name__ == "__main__":
-	app = App(sys.argv)
-	app.parseArgs()
-	try:
-		app.run()
-	except KickstartError, msg:
-		sys.stderr.write("kgen error - %s\n" % msg)
-		sys.exit(-1)
-	
-	except SAXParseException, msg:
-		sys.stderr.write("kgen XML parse exception: %s\n" % msg)
-		sys.exit(-1)
+    app = App(sys.argv)
+    app.parseArgs()
+    try:
+        app.run()
+    except KickstartError as msg:
+        sys.stderr.write("kgen error - %s\n" % msg)
+        sys.exit(-1)
+    
+    except SAXParseException as msg:
+        sys.stderr.write("kgen XML parse exception: %s\n" % msg)
+        sys.exit(-1)
 
