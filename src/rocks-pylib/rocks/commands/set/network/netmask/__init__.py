@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -121,50 +121,50 @@ import rocks.commands
 
 
 class Command(rocks.commands.NetworkArgumentProcessor,
-	rocks.commands.set.command):
-	"""
-	Sets the network mask for one or more named networks .
+    rocks.commands.set.command):
+    """
+    Sets the network mask for one or more named networks .
 
-	<arg type='string' name='network' repeat='1'> 
-	One or more named networks that should have the defined netmask.
-	</arg>
-	
-	<arg type='string' name='netmask'>
-	Netmask that named networks should have.
-	</arg>
-	
-	<param type='string' name='netmask'>
-	Can be used in place of netmask argument.
-	</param>
+    <arg type='string' name='network' repeat='1'> 
+    One or more named networks that should have the defined netmask.
+    </arg>
+    
+    <arg type='string' name='netmask'>
+    Netmask that named networks should have.
+    </arg>
+    
+    <param type='string' name='netmask'>
+    Can be used in place of netmask argument.
+    </param>
 
-	<example cmd='set network netmask optiputer 255.255.255.0'>
-	Sets the netmask for the "optiputer" network to a class-c address
-	space.
-	</example>
+    <example cmd='set network netmask optiputer 255.255.255.0'>
+    Sets the netmask for the "optiputer" network to a class-c address
+    space.
+    </example>
 
-	<example cmd='set network netmask optiputer netmask=255.255.255.0'>
-	Same as above.
-	</example>
+    <example cmd='set network netmask optiputer netmask=255.255.255.0'>
+    Same as above.
+    </example>
 
-	<example cmd='set network netmask optiputer cavewave 255.255.0.0'>
-	Sets the netmask for the "optiputer" and "cavewave" networks to
-	a class-b address space.
-	</example>
-	
-	<related>add network</related>
-	<related>set network subnet</related>
-	"""
+    <example cmd='set network netmask optiputer cavewave 255.255.0.0'>
+    Sets the netmask for the "optiputer" and "cavewave" networks to
+    a class-b address space.
+    </example>
+    
+    <related>add network</related>
+    <related>set network subnet</related>
+    """
 
-        def run(self, params, args):
-        	(args, netmask) = self.fillPositionalArgs(('netmask',))
-        	
-        	if not len(args):
-        		self.abort('must supply network')
-		if not netmask:
-			self.abort('must supply netmask')
-			        	
-        	for network in self.getNetworkNames(args):
-			self.db.execute("""update subnets set netmask='%s' where
-				subnets.name='%s'""" % (netmask, network))
+    def run(self, params, args):
+        (args, netmask) = self.fillPositionalArgs(('netmask',))
+        
+        if not len(args):
+            self.abort('must supply network')
+    if not netmask:
+        self.abort('must supply netmask')
+                    
+        for network in self.getNetworkNames(args):
+            self.db.execute("""update subnets set netmask='%s' where
+            subnets.name='%s'""" % (netmask, network))
 
 

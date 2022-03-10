@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -102,52 +102,52 @@
 import rocks.commands
 
 class Command(rocks.commands.NetworkArgumentProcessor,
-	rocks.commands.list.host.command):
-	"""
-	List the current firewall rules for the named hosts.
+    rocks.commands.list.host.command):
+    """
+    List the current firewall rules for the named hosts.
 
-	<arg optional='1' type='string' name='host' repeat='1'>
-	Zero, one or more host names. If no host names are supplied, the 
-	firewall rules for all the known hosts are listed.
-	</arg>
+    <arg optional='1' type='string' name='host' repeat='1'>
+    Zero, one or more host names. If no host names are supplied, the 
+    firewall rules for all the known hosts are listed.
+    </arg>
 
-	<param type='integer' name='maxwidth' optional='1'>
-	Maximum width of comment and flags field. Default is 24.
-	</param>
+    <param type='integer' name='maxwidth' optional='1'>
+    Maximum width of comment and flags field. Default is 24.
+    </param>
 
-	"""
+    """
 
 
-	def run(self, params, args):
-		self.beginOutput()
+    def run(self, params, args):
+        self.beginOutput()
 
-		(maxwidth,) = self.fillParams([('maxwidth',24),])
-		maxwidth = int(maxwidth)
+        (maxwidth,) = self.fillParams([('maxwidth',24),])
+        maxwidth = int(maxwidth)
 
-		for host in self.getHostnames(args):
-			# """ Get all rules """
-			rules = {}
-			comments = {}
-	
-			# Use stored procedure to create this host's TEMPTABLES.fwresolved with
-			# rules resolved from all levels. Get all rules except NAT
-	
-			self.db.execute("""CALL resolvefirewalls('%s','default')""" % host)
-			self.db.execute("""SELECT rulename, categoryName, insubnet, outsubnet, service,
-				protocol, action, chain, flags, comment
-				FROM TEMPTABLES.fwresolved ORDER BY rulename""" )
+        for host in self.getHostnames(args):
+            # """ Get all rules """
+            rules = {}
+            comments = {}
+    
+            # Use stored procedure to create this host's TEMPTABLES.fwresolved with
+            # rules resolved from all levels. Get all rules except NAT
+    
+            self.db.execute("""CALL resolvefirewalls('%s','default')""" % host)
+            self.db.execute("""SELECT rulename, categoryName, insubnet, outsubnet, service,
+                protocol, action, chain, flags, comment
+                FROM TEMPTABLES.fwresolved ORDER BY rulename""" )
 
-			for rulename, catname, i, o, s, p, c, a, f, cmt in self.db.fetchall():
-				network = self.getNetworkName(i)
-				output_network = self.getNetworkName(o)
-			 	if f is not None: f = f[0:maxwidth]
-				if cmt is not None: cmt = cmt[0:maxwidth]
+            for rulename, catname, i, o, s, p, c, a, f, cmt in self.db.fetchall():
+                network = self.getNetworkName(i)
+                output_network = self.getNetworkName(o)
+                if f is not None: f = f[0:maxwidth]
+                if cmt is not None: cmt = cmt[0:maxwidth]
 
-				self.addOutput('',(rulename, s, p, c, a, network,
-					output_network, f, cmt, '%s' % (catname)))
-	
-		self.endOutput(header=['', 'rulename', 'service', 'protocol', 'action',
-			'chain', 'network', 'output-network', 'flags',
-			'comment', 'category'])
+                self.addOutput('',(rulename, s, p, c, a, network,
+                    output_network, f, cmt, '%s' % (catname)))
+    
+        self.endOutput(header=['', 'rulename', 'service', 'protocol', 'action',
+            'chain', 'network', 'output-network', 'flags',
+            'comment', 'category'])
 
 

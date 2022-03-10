@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -64,96 +64,96 @@ import rocks.commands
 
 
 class Command(rocks.commands.save.host.command):
-	"""
-	Save the frontend current mounted paritions into the Rocks database. 
-	You can use this command to update partition information when you 
-	change you frontend partitions configuration.
+    """
+    Save the frontend current mounted paritions into the Rocks database. 
+    You can use this command to update partition information when you 
+    change you frontend partitions configuration.
 
 
-	<example cmd='save host partitions'>
-	Save the current mounted partition into rocks database
-	</example>
-	"""
-	
-	def discoveredDisks(self):
-		""" this procedure reads the current /proc/mounts and /proc/mdstat 
-		stores it's content in /tmp/discovered.disks
-		"""
-		devices=[]
-		raids=[]
-		# check the proc mounts first
-		fstab=open('/proc/mounts')
-		for line in fstab:
-			if line.startswith('/dev/'):
-				# its a block device
-				devPath = line.split()[0]
-				devName = devPath.split('/')
-				if len(devName) == 3:
-					# it's in the form of /dev/devname2 hence it's a block device
-					if devName[2].startswith('md'):
-						raids.append(devName[2])
-					else:
-						# we need to take off the numbers
-						devName = devName[2].strip('0123456789')
-						if devName not in devices:
-							devices.append(devName)
-		fstab.close()
-		
-		if raids:
-			#if we have raids we need to look at /proc/mdstat
-			mdstat=open('/proc/mdstat')
-			for line in mdstat:
-				if line.startswith('md'):
-					devicesName=line.split()[4:]
-					for devName in devicesName:
-						# we need to strip the partition number and 
-						# the raid ID nuber [2], [3]
-						devName = devName.strip('0123456789[]')
-						if devName not in devices:
-							devices.append(devName)
-			mdstat.close()
-		
-		#print devices
-		discoveredDisk = open('/tmp/discovered.disks', 'w')
-		discoveredDisk.write("disks: " + string.join(devices, ' ') + "\n")
-		discoveredDisk.write("raids: " + string.join(raids, ' ') + "\n")
-		discoveredDisk.close()
-	    
-	
-	def saveToDb(self, kickstarthost):
-	    # this is really hugly but record_partitions is looking for this file
-	    file = open("/tmp/db_partition_info.py", 'w')
-	    file.write("KickstartHost = '%s'" % kickstarthost)
-	    file.close()
-	    path = self.db.getHostAttr('localhost', 'Kickstart_DistroDir')
-	    if path == None:
-		path = '/export/rocks' 
-	    path=os.path.join(path,'install', 'rocks-dist')
-	    arch = os.listdir(path)[0]
-	    path = os.path.join(path, arch, 'build/include/installclass/')
-	    sys.path.append(path)
-	    
-	    
-	    import record_partitions
-	    #print "partitions: ", record_partitions.nodepartinfo
-	    
-	    #p = rocks_partition.RocksPartition()
-	    #
-	    ##
-	    ## get the list of hard disks and software raid devices
-	    ##
-	    #disks = p.getDisks() + p.getRaids()
-	    #nodepartinfo = p.getNodePartInfo(disks)
-	    
-	    #print "node part info: ", nodepartinfo
-	
+    <example cmd='save host partitions'>
+    Save the current mounted partition into rocks database
+    </example>
+    """
+    
+    def discoveredDisks(self):
+        """ this procedure reads the current /proc/mounts and /proc/mdstat 
+        stores it's content in /tmp/discovered.disks
+        """
+        devices=[]
+        raids=[]
+        # check the proc mounts first
+        fstab=open('/proc/mounts')
+        for line in fstab:
+            if line.startswith('/dev/'):
+                # its a block device
+                devPath = line.split()[0]
+                devName = devPath.split('/')
+                if len(devName) == 3:
+                    # it's in the form of /dev/devname2 hence it's a block device
+                    if devName[2].startswith('md'):
+                        raids.append(devName[2])
+                    else:
+                        # we need to take off the numbers
+                        devName = devName[2].strip('0123456789')
+                        if devName not in devices:
+                            devices.append(devName)
+        fstab.close()
+        
+        if raids:
+            #if we have raids we need to look at /proc/mdstat
+            mdstat=open('/proc/mdstat')
+            for line in mdstat:
+                if line.startswith('md'):
+                    devicesName=line.split()[4:]
+                    for devName in devicesName:
+                        # we need to strip the partition number and 
+                        # the raid ID nuber [2], [3]
+                        devName = devName.strip('0123456789[]')
+                        if devName not in devices:
+                            devices.append(devName)
+            mdstat.close()
+        
+        #print devices
+        discoveredDisk = open('/tmp/discovered.disks', 'w')
+        discoveredDisk.write("disks: " + string.join(devices, ' ') + "\n")
+        discoveredDisk.write("raids: " + string.join(raids, ' ') + "\n")
+        discoveredDisk.close()
+        
+    
+    def saveToDb(self, kickstarthost):
+        # this is really hugly but record_partitions is looking for this file
+        file = open("/tmp/db_partition_info.py", 'w')
+        file.write("KickstartHost = '%s'" % kickstarthost)
+        file.close()
+        path = self.db.getHostAttr('localhost', 'Kickstart_DistroDir')
+        if path == None:
+            path = '/export/rocks' 
+        path=os.path.join(path,'install', 'rocks-dist')
+        arch = os.listdir(path)[0]
+        path = os.path.join(path, arch, 'build/include/installclass/')
+        sys.path.append(path)
+        
+        
+        import record_partitions
+        #print "partitions: ", record_partitions.nodepartinfo
+        
+        #p = rocks_partition.RocksPartition()
+        #
+        ##
+        ## get the list of hard disks and software raid devices
+        ##
+        #disks = p.getDisks() + p.getRaids()
+        #nodepartinfo = p.getNodePartInfo(disks)
+        
+        #print "node part info: ", nodepartinfo
+    
 
-	def run(self, params, args):
-		publicHostname = publicHostname = self.db.getHostAttr('localhost', 'Kickstart_PublicHostname')
-		if not publicHostname:
-			self.abort("Kickstart_PublicHostname is not defined")
-		self.discoveredDisks()
-		self.saveToDb(publicHostname)
+    def run(self, params, args):
+        publicHostname = publicHostname = self.db.getHostAttr('localhost', 'Kickstart_PublicHostname')
+        if not publicHostname:
+            self.abort("Kickstart_PublicHostname is not defined")
+        self.discoveredDisks()
+        self.saveToDb(publicHostname)
 
 
 

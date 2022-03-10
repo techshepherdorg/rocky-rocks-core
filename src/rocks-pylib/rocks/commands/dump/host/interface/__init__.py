@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -166,100 +166,100 @@ import string
 import rocks.commands
 
 class Command(rocks.commands.dump.host.command):
-	"""
-	Dump the host interface information as rocks commands.
-		
-	<arg optional='1' type='string' name='host' repeat='1'>
-	Zero, one or more host names. If no host names are supplied, 
-	information for all hosts will be listed.
-	</arg>
+    """
+    Dump the host interface information as rocks commands.
+        
+    <arg optional='1' type='string' name='host' repeat='1'>
+    Zero, one or more host names. If no host names are supplied, 
+    information for all hosts will be listed.
+    </arg>
 
-	<example cmd='dump host interface compute-0-0'>
-	Dump the interfaces for compute-0-0.
-	</example>
+    <example cmd='dump host interface compute-0-0'>
+    Dump the interfaces for compute-0-0.
+    </example>
 
-	<example cmd='dump host interface compute-0-0 compute-0-1'>
-	Dump the interfaces for compute-0-0 and compute-0-1.
-	</example>
+    <example cmd='dump host interface compute-0-0 compute-0-1'>
+    Dump the interfaces for compute-0-0 and compute-0-1.
+    </example>
 
-	<example cmd='dump host interface'>
-	Dump all interfaces.
-	</example>
-		
-	<related>add host interface</related>
-	"""
+    <example cmd='dump host interface'>
+    Dump all interfaces.
+    </example>
+        
+    <related>add host interface</related>
+    """
 
-	def run(self, params, args):
+    def run(self, params, args):
 
-		for host in self.getHostnames(args):
-                        rows = self.db.execute("""select distinctrow
-				IF(net.subnet, sub.name, NULL),
-				net.device, net.mac, net.ip,
-				IF(net.subnet, sub.netmask, NULL),
-				net.module, net.name, net.vlanid, net.options,
-				net.channel
-				from nodes n, networks net, subnets sub where
-				n.name='%s' and net.node=n.id and
-				(net.subnet=sub.id or net.subnet is NULL)
-				order by net.device""" % host )
-			if rows < 1:
-				continue
-			for (subnet, iface, mac, ip, netmask, module, name,
-				vlan, options, channel) in self.db.fetchall():
-				
-				if not iface:
-					if mac:
-						iface = mac
-					else:
-						continue # nothing to dump
+        for host in self.getHostnames(args):
+            rows = self.db.execute("""select distinctrow
+                IF(net.subnet, sub.name, NULL),
+                net.device, net.mac, net.ip,
+                IF(net.subnet, sub.netmask, NULL),
+                net.module, net.name, net.vlanid, net.options,
+                net.channel
+                from nodes n, networks net, subnets sub where
+                n.name='%s' and net.node=n.id and
+                (net.subnet=sub.id or net.subnet is NULL)
+                order by net.device""" % host )
+            if rows < 1:
+                continue
+            for (subnet, iface, mac, ip, netmask, module, name,
+                vlan, options, channel) in self.db.fetchall():
+                
+                if not iface:
+                    if mac:
+                        iface = mac
+                    else:
+                        continue # nothing to dump
 
-				# If this is the frontend (localhost) do
-				# not dump anything for the public and
-				# private subnets.  For the extra frontend
-				# interfaces do not dump the mac or
-				# module.
+                # If this is the frontend (localhost) do
+                # not dump anything for the public and
+                # private subnets.  For the extra frontend
+                # interfaces do not dump the mac or
+                # module.
 
-				host = self.dumpHostname(host)
-				if host == 'localhost':
-					mac    = None
-					module = None
+                host = self.dumpHostname(host)
+                if host == 'localhost':
+                    mac    = None
+                    module = None
 
-					#
-					# special case: we need to save vlan
-					# configurations for the public and
-					# private networks on the frontend
-					#
-					if not vlan and subnet in \
-						[ 'public', 'private' ]:
+                    #
+                    # special case: we need to save vlan
+                    # configurations for the public and
+                    # private networks on the frontend
+                    #
+                    if not vlan and subnet in \
+                        [ 'public', 'private' ]:
 
-						ip     = None
-						name   = None
-						subnet = None
-						vlan   = None
-						iface  = None
+                        ip     = None
+                        name   = None
+                        subnet = None
+                        vlan   = None
+                        iface  = None
 
-				if iface:
-					self.dump('add host interface %s %s' % 
-						(host, iface))
+                if iface:
+                    self.dump('add host interface %s %s' % 
+                        (host, iface))
 
-				set = 'set host interface %%s %s %s %%s' % \
-					(host, iface)
-				if ip:
-					self.dump(set % ('ip', ip))
-				if name:
-					self.dump(set % ('name', name))
-				if mac:
-					self.dump(set % ('mac', mac))
-				if module:
-					self.dump(set % ('module', module))
-				if subnet:
-					self.dump(set % ('subnet', subnet))
-				if vlan:
-					self.dump(set % ('vlan', vlan))
-				if options:
-					self.dump(set % ('options',
-						'options="%s"' % options))
-				if channel:
-					self.dump(set % ('channel', channel))
+                set = 'set host interface %%s %s %s %%s' % \
+                    (host, iface)
+                if ip:
+                    self.dump(set % ('ip', ip))
+                if name:
+                    self.dump(set % ('name', name))
+                if mac:
+                    self.dump(set % ('mac', mac))
+                if module:
+                    self.dump(set % ('module', module))
+                if subnet:
+                    self.dump(set % ('subnet', subnet))
+                if vlan:
+                    self.dump(set % ('vlan', vlan))
+                if options:
+                    self.dump(set % ('options',
+                        'options="%s"' % options))
+                if channel:
+                    self.dump(set % ('channel', channel))
 
 

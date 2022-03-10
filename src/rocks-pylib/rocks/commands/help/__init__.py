@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -83,43 +83,43 @@ import rocks.commands
 
 class command(rocks.commands.Command):
 
-	MustBeRoot = 0
+    MustBeRoot = 0
 
-	
+    
 class Command(command):
-	"""
-	List help for the command line client.  With no arguments it lists
-	all the commands available.  Otherwise it will list the subset
-	of command with the specified string (see examples).
+    """
+    List help for the command line client.  With no arguments it lists
+    all the commands available.  Otherwise it will list the subset
+    of command with the specified string (see examples).
 
-	<arg type='string' name='command'>
-	The substring matched against all commands.
-	</arg>
+    <arg type='string' name='command'>
+    The substring matched against all commands.
+    </arg>
 
-	<example cmd='help'>
-	Alias for 'rocks list help'
-	</example>
+    <example cmd='help'>
+    Alias for 'rocks list help'
+    </example>
 
-	<example cmd='help viz'>
-	Lists all the commands with the string 'viz' in the name.
-	</example>
+    <example cmd='help viz'>
+    Lists all the commands with the string 'viz' in the name.
+    </example>
 
-	<example cmd='help list host'>
-	Lists all the commands with the string 'list host' in the name.
-	</example>
-	"""
+    <example cmd='help list host'>
+    Lists all the commands with the string 'list host' in the name.
+    </example>
+    """
 
-	def run(self, params, args):
+    def run(self, params, args):
 
-		help = self.command('list.help', [ 'cols=0' ])
-		sub  = string.join(args)
+        help = self.command('list.help', [ 'cols=0' ])
+        sub  = string.join(args)
 
-		if not args:
-			self.addText(help)
-		else:
-			for line in help.split('\n'):
-				if line:
-					if string.find(line, sub) >= 0:
-						self.addText('%s\n' % line)
-		
+        if not args:
+            self.addText(help)
+        else:
+            for line in help.split('\n'):
+                if line:
+                    if string.find(line, sub) >= 0:
+                        self.addText('%s\n' % line)
+        
 

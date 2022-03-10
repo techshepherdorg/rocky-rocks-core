@@ -2,13 +2,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -128,207 +128,207 @@ DEFAULTPATH = "/mnt/cdrom"
 
 class Media:
 
-	def mounted(self,path=None):
-		"Returns true if /tmp/rocks-cdrom device or /mnt/cdrom is mounted"
+    def mounted(self,path=None):
+        "Returns true if /tmp/rocks-cdrom device or /mnt/cdrom is mounted"
 
-		rv = 0
-		f = open('/proc/mounts','r')
-		for line in f.readlines():
-			if path is not None and line.find(path) >= 0:
-				rv = 1
-				break
-			if line.find('/tmp/rocks-cdrom') >= 0:
-				rv = 1
-				break
-			if line.find(DEFAULTPATH) >= 0:
-				rv = 1
-				break
-		f.close()
-		return rv
-
-
-	def mountCD(self, prefix="/",path=DEFAULTPATH):
-		"""Try to mount the CD. Returns 256 if mount failed
-		(no disk in drive), 0 on success."""
-
-		if self.mounted(path=path):
-			return 1
-			
-		if path.startswith(os.path.sep):
-			mountpoint = path
-		else:
-			mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
-
-		#
-		# loader creates '/tmp/rocks-cdrom' -- the cdrom device
-		#
-		rc = os.system('mount -o ro /tmp/rocks-cdrom'
-			+ ' %s > /dev/null 2>&1' % (mountpoint))
-
-		return rc
+        rv = 0
+        f = open('/proc/mounts','r')
+        for line in f.readlines():
+            if path is not None and line.find(path) >= 0:
+                rv = 1
+                break
+            if line.find('/tmp/rocks-cdrom') >= 0:
+                rv = 1
+                break
+            if line.find(DEFAULTPATH) >= 0:
+                rv = 1
+                break
+        f.close()
+        return rv
 
 
-	def umountCD(self, prefix="/",path=DEFAULTPATH):
-		if not self.mounted(path):
-			return
+    def mountCD(self, prefix="/",path=DEFAULTPATH):
+        """Try to mount the CD. Returns 256 if mount failed
+        (no disk in drive), 0 on success."""
+
+        if self.mounted(path=path):
+            return 1
+            
+        if path.startswith(os.path.sep):
+            mountpoint = path
+        else:
+            mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
+
+        #
+        # loader creates '/tmp/rocks-cdrom' -- the cdrom device
+        #
+        rc = os.system('mount -o ro /tmp/rocks-cdrom'
+            + ' %s > /dev/null 2>&1' % (mountpoint))
+
+        return rc
+
+
+    def umountCD(self, prefix="/",path=DEFAULTPATH):
+        if not self.mounted(path):
+            return
               
-		if path.startswith(os.path.sep):
-			mountpoint = path
-		else:
-			mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
-		os.system('umount %s > /dev/null 2>&1' % (mountpoint))
-                return
+        if path.startswith(os.path.sep):
+            mountpoint = path
+        else:
+            mountpoint = os.path.join(prefix, 'mnt', 'cdrom')
+            os.system('umount %s > /dev/null 2>&1' % (mountpoint))
+            return
 
 
-	def ejectCD(self,path=DEFAULTPATH):
-		self.umountCD(path=path)
+    def ejectCD(self,path=DEFAULTPATH):
+        self.umountCD(path=path)
 
-		#
-		# there are cases where the CD doesn't immediately un-mount
-		# (it could be a slow finishing operation).
-		#
-		# try 10 times to unmount the CD.
-		#
-		i = 0
-		while self.mounted(path) and i < 10:
-			self.umountCD(path)
-			i += 1
+        #
+        # there are cases where the CD doesn't immediately un-mount
+        # (it could be a slow finishing operation).
+        #
+        # try 10 times to unmount the CD.
+        #
+        i = 0
+        while self.mounted(path) and i < 10:
+            self.umountCD(path)
+            i += 1
 
-		#
-		# the 'eject' utility requires '/etc/fstab' to exist
-		#
-		os.system('touch /etc/fstab')
+        #
+        # the 'eject' utility requires '/etc/fstab' to exist
+        #
+        os.system('touch /etc/fstab')
 
-		#
-		# loader creates the cdrom device '/tmp/rocks-cdrom'
-		#
-		if rocks.version_major == '6':
-			ejectcmd = '/tmp/updates/usr/sbin/eject'
-		else:
-			ejectcmd = '/usr/bin/eject'
+        #
+        # loader creates the cdrom device '/tmp/rocks-cdrom'
+        #
+        if rocks.version_major == '6':
+            ejectcmd = '/tmp/updates/usr/sbin/eject'
+        else:
+            ejectcmd = '/usr/bin/eject'
 
-		cmd = '%s /tmp/rocks-cdrom > /dev/null 2>&1' % ejectcmd
-		os.system(cmd)
+        cmd = '%s /tmp/rocks-cdrom > /dev/null 2>&1' % ejectcmd
+        os.system(cmd)
 
-		return
-
-
-	def getCDInfo(self,path=DEFAULTPATH):
-		self.mountCD(path)
-
-		try:
-			file = open(os.path.join(path,'.discinfo'), 'r')
-			t = file.readline()
-			n = file.readline()
-			a = file.readline()
-			d = file.readline()
-			file.close()
-
-			timestamp = t[:-1]
-			name = n[:-1].replace(' ', '_')
-			archinfo = a[:-1]
-			diskid = d[:-1]
-		except:
-			timestamp = None
-			name = None
-			archinfo = None
-			diskid = None
-			pass
-
-		return (timestamp, name, archinfo, diskid)
+        return
 
 
-	def getCDInfoFromXML(self,path=DEFAULTPATH):
-		retval = (None, None, None)
+    def getCDInfo(self,path=DEFAULTPATH):
+        self.mountCD(path)
 
-		self.mountCD(path)
-		cdtree = rocks.file.Tree(path)
-		for dir in cdtree.getDirs():
-			for file in cdtree.getFiles(dir):
-				try:
-					xmlfile = rocks.file.RollInfoFile(
-							file.getFullName())
+        try:
+            file = open(os.path.join(path,'.discinfo'), 'r')
+            t = file.readline()
+            n = file.readline()
+            a = file.readline()
+            d = file.readline()
+            file.close()
 
-					rollname = xmlfile.getRollName()
-					rollversion = xmlfile.getRollVersion()
-					rollarch = xmlfile.getRollArch()
+            timestamp = t[:-1]
+            name = n[:-1].replace(' ', '_')
+            archinfo = a[:-1]
+            diskid = d[:-1]
+        except:
+            timestamp = None
+            name = None
+            archinfo = None
+            diskid = None
+            pass
 
-					if rollname != None and \
-						rollversion != None and \
-							rollarch != None:
-
-						retval = (rollname, \
-							rollversion, rollarch)
-						break
-
-				except:
-					continue
-
-			if retval != (None, None, None):
-				break
-
-		return retval
+        return (timestamp, name, archinfo, diskid)
 
 
-	def getId(self,path=DEFAULTPATH):
-		"""Get the Id of the physical roll CD."""
+    def getCDInfoFromXML(self,path=DEFAULTPATH):
+        retval = (None, None, None)
 
-		(timestamp, name, archinfo, diskid) = self.getCDInfo(path)
+        self.mountCD(path)
+        cdtree = rocks.file.Tree(path)
+        for dir in cdtree.getDirs():
+            for file in cdtree.getFiles(dir):
+                try:
+                    xmlfile = rocks.file.RollInfoFile(
+                            file.getFullName())
 
-		if name != None and diskid != None:
-			str = '%s - Disk %s' % (name, diskid)
-		else:
-			str = 'Not Identified'
+                    rollname = xmlfile.getRollName()
+                    rollversion = xmlfile.getRollVersion()
+                    rollarch = xmlfile.getRollArch()
 
-		return str
-		
+                    if rollname != None and \
+                        rollversion != None and \
+                            rollarch != None:
 
-	def listRolls(self, url, diskid, rollList):
-		if os.path.exists('/tmp/updates/rocks/bin/wget'):
-			wget = '/tmp/updates/rocks/bin/wget'
-		else:
-			wget = '/usr/bin/wget'
+                        retval = (rollname, \
+                            rollversion, rollarch)
+                        break
 
-		cmd = "%s --timeout=15 --tries=2 -O - -nv %s 2>&1 " % \
-			(wget, url)
+                except:
+                    continue
 
-		for line in os.popen(cmd).readlines():
-			l = string.split(line, '"')
+            if retval != (None, None, None):
+                break
 
-			if l[0] == '<a href=':
-				#
-				# apache style listing
-				#
-				filename = l[1]
-			elif len(l) > 2 and l[2] == '><a href=':
-				#
-				# lighttpd style listing
-				#
-				filename = l[3]
-			else:
-				continue
-				
-			if len(filename) > 0 and filename[-1] == '/':
-				#
-				# this is a directory
-				#
-				dir = filename[:-1]
-				
-				if dir in [ '.', '..']:
-					continue
+        return retval
 
-				if dir == 'RedHat':
-					urlList = url.split('/')
 
-					rollname = urlList[-3]
-					rollversion = urlList[-2]
-					rollarch = urlList[-1]
+    def getId(self,path=DEFAULTPATH):
+        """Get the Id of the physical roll CD."""
 
-					rollList.append((rollname,
-						rollversion, rollarch, diskid))
-				else:
-					self.listRolls(os.path.join(url, dir),
-						diskid, rollList)
+        (timestamp, name, archinfo, diskid) = self.getCDInfo(path)
 
-		return
+        if name != None and diskid != None:
+            str = '%s - Disk %s' % (name, diskid)
+        else:
+            str = 'Not Identified'
+
+        return str
+        
+
+    def listRolls(self, url, diskid, rollList):
+        if os.path.exists('/tmp/updates/rocks/bin/wget'):
+            wget = '/tmp/updates/rocks/bin/wget'
+        else:
+            wget = '/usr/bin/wget'
+
+        cmd = "%s --timeout=15 --tries=2 -O - -nv %s 2>&1 " % \
+            (wget, url)
+
+        for line in os.popen(cmd).readlines():
+            l = string.split(line, '"')
+
+            if l[0] == '<a href=':
+                #
+                # apache style listing
+                #
+                filename = l[1]
+            elif len(l) > 2 and l[2] == '><a href=':
+                #
+                # lighttpd style listing
+                #
+                filename = l[3]
+            else:
+                continue
+                
+            if len(filename) > 0 and filename[-1] == '/':
+                #
+                # this is a directory
+                #
+                dir = filename[:-1]
+                
+                if dir in [ '.', '..']:
+                    continue
+
+                if dir == 'RedHat':
+                    urlList = url.split('/')
+
+                    rollname = urlList[-3]
+                    rollversion = urlList[-2]
+                    rollarch = urlList[-1]
+
+                    rollList.append((rollname,
+                        rollversion, rollarch, diskid))
+                else:
+                    self.listRolls(os.path.join(url, dir),
+                        diskid, rollList)
+
+        return
 

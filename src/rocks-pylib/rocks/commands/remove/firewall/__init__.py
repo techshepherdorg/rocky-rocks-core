@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -92,65 +92,65 @@
 import rocks.commands
 
 class command(rocks.commands.CategoryArgumentProcessor,
-	rocks.commands.remove.command):
-	pass
+    rocks.commands.remove.command):
+    pass
 
 class Command(command):
-	"""
-	Remove a named firewall rule
+    """
+    Remove a named firewall rule
 
-	<arg type='string' name='category=index' optional='1'>
-	[global,os,appliance,host]=index.
+    <arg type='string' name='category=index' optional='1'>
+    [global,os,appliance,host]=index.
 
-	Specify which version of rulename to remove
-	os=linux, appliance=login, or host=compute-0-0.
-	global, global=, and global=global all refer
-	to the global category.
+    Specify which version of rulename to remove
+    os=linux, appliance=login, or host=compute-0-0.
+    global, global=, and global=global all refer
+    to the global category.
 
-	cannot be wildcarded. Specifying just a rulename defaults to the global
-	category
-	</arg>
+    cannot be wildcarded. Specifying just a rulename defaults to the global
+    category
+    </arg>
 
-	<arg type='stringe' name='rulename'>
-	The particular rule to remove. Cannot be wildcarded
-	</arg>
+    <arg type='stringe' name='rulename'>
+    The particular rule to remove. Cannot be wildcarded
+    </arg>
 
-	<example cmd='remove firewall global ZZDRACONIAN'>
-	Remove the rule named ZZDRACONIAN from the global category
-	</example>
+    <example cmd='remove firewall global ZZDRACONIAN'>
+    Remove the rule named ZZDRACONIAN from the global category
+    </example>
 
-	<example cmd='remove firewall appliance=compute MYRULE'>
-	Remove the rule named MYRULE from compute appliances
-	</example>
+    <example cmd='remove firewall appliance=compute MYRULE'>
+    Remove the rule named MYRULE from compute appliances
+    </example>
 
-	<related>list firewall</related>
-	<related>list host firewall</related>
+    <related>list firewall</related>
+    <related>list host firewall</related>
 
-	"""
+    """
 
 
-	def run(self, params, args):
+    def run(self, params, args):
 
-                (args, rulename) = self.fillPositionalArgs(('rulename',))
-		if '@ROCKSPARAM0' in params:
-			args.append(params['@ROCKSPARAM0'])
+        (args, rulename) = self.fillPositionalArgs(('rulename',))
+        if '@ROCKSPARAM0' in params:
+            args.append(params['@ROCKSPARAM0'])
 
-		indices =  self.getCategoryIndices(args, wildcard=0)
-	
-		if rulename is None:
-			self.abort("no rulename specified")
-	
-		for category,catindex in indices:
-			try:
-				nrows=self.db.execute("""DELETE FROM firewalls 
-					 WHERE rulename='%s' AND category=mapCategory('%s')
-					AND catindex=mapCategoryIndex('%s','%s') """ % 
-					(rulename, category, category, catindex)) 
-				if nrows == 0:
-					raise notFound
-			except:
-				self.abort("Rule '%s' not found for %s=%s" % (rulename,category,catindex))
-	
+        indices =  self.getCategoryIndices(args, wildcard=0)
+    
+        if rulename is None:
+            self.abort("no rulename specified")
+    
+        for category,catindex in indices:
+            try:
+                nrows=self.db.execute("""DELETE FROM firewalls 
+                     WHERE rulename='%s' AND category=mapCategory('%s')
+                    AND catindex=mapCategoryIndex('%s','%s') """ % 
+                    (rulename, category, category, catindex)) 
+                if nrows == 0:
+                    raise notFound
+            except:
+                self.abort("Rule '%s' not found for %s=%s" % (rulename,category,catindex))
+    
 
 
 

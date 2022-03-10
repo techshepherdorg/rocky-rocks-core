@@ -2,13 +2,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -895,57 +895,57 @@ import rocks
 
 
 class BuildError(Exception):
-	pass
+    pass
 
 
 class Builder:
     
-	def __init__(self):
-        	self.verbose = 0
-		self.debug   = 0
-		self.versionMajor = int(rocks.version_major)
+    def __init__(self):
+        self.verbose = 0
+        self.debug   = 0
+        self.versionMajor = int(rocks.version_major)
 
-	def build(self):
-		pass
+    def build(self):
+        pass
 
-	def setVerbose(self, level=1):
-		self.verbose = level
+    def setVerbose(self, level=1):
+        self.verbose = level
 
-	def setDebug(self, level=1):
-		self.debug = level
+    def setDebug(self, level=1):
+        self.debug = level
 
 
 
 class MirrorBuilder(Builder):
 
-	def __init__(self, m):
-		Builder.__init__(self)
-		self.mirrors	= m
+    def __init__(self, m):
+        Builder.__init__(self)
+        self.mirrors    = m
 
-	def build(self):
-		for m in self.mirrors:
-			dirs = []
-			if m.getRemoteReleasePath():
-				dirs.append(m.getRemoteReleasePath())
-			for dir in dirs:
-				self.buildMirror(m.getHost(), dir)
+    def build(self):
+        for m in self.mirrors:
+            dirs = []
+            if m.getRemoteReleasePath():
+                dirs.append(m.getRemoteReleasePath())
+            for dir in dirs:
+                self.buildMirror(m.getHost(), dir)
 
 
-	def buildMirror(self, host, path):
-		# Try FTP first, failover to HTTP
-		sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-		try:
-			sock.connect((host, 21))
-			sock.close()
-        		cmd = 'wget -m -nv ftp://%s//%s/' % (host, path)
-		except socket.error:
-        		cmd = 'wget -m -nv -np http://%s//%s/' % (host, path)
-		sock = None
+    def buildMirror(self, host, path):
+        # Try FTP first, failover to HTTP
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.connect((host, 21))
+            sock.close()
+            cmd = 'wget -m -nv ftp://%s//%s/' % (host, path)
+        except socket.error:
+            cmd = 'wget -m -nv -np http://%s//%s/' % (host, path)
+            sock = None
 
-                if self.verbose or self.debug:
-                	print(cmd)
-		if not self.debug:
-			subprocess.call(cmd, shell=True)
+            if self.verbose or self.debug:
+                  print(cmd)
+        if not self.debug:
+            subprocess.call(cmd, shell=True)
 
 
 #
@@ -957,10 +957,10 @@ directory_listing_cgi = """#!/usr/bin/env python
 import os
 
 try:
-	dir = os.environ['DOCUMENT_ROOT'] + os.environ['REQUEST_URI']
+    dir = os.environ['DOCUMENT_ROOT'] + os.environ['REQUEST_URI']
 except:
-	dir = '.'
-	pass
+    dir = '.'
+    pass
 
 out = ''
 
@@ -971,16 +971,16 @@ out += '<table>'
 listing = os.listdir(dir)
 listing.sort(key=str.lower)
 for file in listing:
-	if file not in [ 'index.cgi' ]:
-		out += '<tr><td>\\n'
+    if file not in [ 'index.cgi' ]:
+        out += '<tr><td>\\n'
 
-		if os.path.isdir(os.path.join(dir, file)):
-			out += '<a href="%s/">%s/</a>\\n' % (file, file)
-		else:
-			out += '<a href="%s">%s</a>\\n' % (file, file)
+        if os.path.isdir(os.path.join(dir, file)):
+            out += '<a href="%s/">%s/</a>\\n' % (file, file)
+        else:
+            out += '<a href="%s">%s</a>\\n' % (file, file)
 
-		out += '</td></tr>'
-		out += '\\n'
+        out += '</td></tr>'
+        out += '\\n'
 
 out += '</table>'
 out += '</body>'
@@ -997,49 +997,49 @@ class DistributionBuilder(Builder):
 
     def __init__(self, dist, links=1):
         Builder.__init__(self)
-        self.dist		= dist
-        self.useLinks		= links
-        self.compsPath		= None
-	self.useRolls		= {}
-	self.allRolls		= 1
-	self.onlyRolls		= 0
-	self.withSiteProfiles   = 0
-	self.version	 = '1.0'
-	self.calcmd5		= 1
+        self.dist        = dist
+        self.useLinks        = links
+        self.compsPath        = None
+    self.useRolls        = {}
+    self.allRolls        = 1
+    self.onlyRolls        = 0
+    self.withSiteProfiles   = 0
+    self.version     = '1.0'
+    self.calcmd5        = 1
 
-        # Build the Tree objects for the Mirror and Distribution
-        # trees.  The actual files for the distibution may or may not
-        # exist.  We no longer nuke pre-existing distibutions before
-        # building a new one.  This will make mirroring simpler.
+    # Build the Tree objects for the Mirror and Distribution
+    # trees.  The actual files for the distibution may or may not
+    # exist.  We no longer nuke pre-existing distibutions before
+    # building a new one.  This will make mirroring simpler.
 
-        for mirror in self.dist.getMirrors():
-            if not mirror.isBuilt():
-                mirror.build()
+    for mirror in self.dist.getMirrors():
+        if not mirror.isBuilt():
+            mirror.build()
 
-        if not self.dist.isBuilt():
-            self.dist.build()
+    if not self.dist.isBuilt():
+        self.dist.build()
 
 
     def setRolls(self, list, only=0):
-	    if list:
-		    for e in list:
-			    self.useRolls[e[0]] = (e[1], e[2])
-		    self.allRolls = 0
-	    else:
-		    self.useRolls = {}
-		    self.allRolls = 1
-	    self.onlyRolls = only
+        if list:
+            for e in list:
+                self.useRolls[e[0]] = (e[1], e[2])
+            self.allRolls = 0
+        else:
+            self.useRolls = {}
+            self.allRolls = 1
+        self.onlyRolls = only
 
 
     def setVersion(self, ver):
-    	self.version = ver
+        self.version = ver
 
     def setSiteProfiles(self, bool):
-	    self.withSiteProfiles = bool
-	    
+        self.withSiteProfiles = bool
+        
     def setCalcMD5(self, bool):
-	    self.calcmd5 = bool
-	    
+        self.calcmd5 = bool
+        
     def clean(self):
         # Nuke the previous distribution.  The cleaner() method will
         # preserve any build/ directory.
@@ -1048,123 +1048,123 @@ class DistributionBuilder(Builder):
 
 
     def useRoll(self, key, ver, arch):
-    	"Returns true if we should include this roll"
+        "Returns true if we should include this roll"
 
-	if arch == self.dist.arch:
-		if self.allRolls:
-			return 1
-		if key in self.useRolls:
-			version, enabled = self.useRolls[key]
-			if enabled and version == ver:
-				return 1
-	return 0
+    if arch == self.dist.arch:
+        if self.allRolls:
+            return 1
+        if key in self.useRolls:
+            version, enabled = self.useRolls[key]
+            if enabled and version == ver:
+                return 1
+    return 0
 
 
     def getRollBaseFiles(self):
-	    files = []
-	    for m in self.dist.getMirrors():
-		    for key, value in list(m.getRolls().items()):
-			    for arch, ver in value:
-				    if self.useRoll(key, ver, arch):
-					    print('    including "%s" (%s,%s) roll...' % \
-						    (key, ver, arch))
-					    files.extend(m.getRollBaseFiles(key,
-								    ver,
-								    arch))
-	    return files
+        files = []
+        for m in self.dist.getMirrors():
+            for key, value in list(m.getRolls().items()):
+                for arch, ver in value:
+                    if self.useRoll(key, ver, arch):
+                        print('    including "%s" (%s,%s) roll...' % \
+                            (key, ver, arch))
+                        files.extend(m.getRollBaseFiles(key,
+                                    ver,
+                                    arch))
+        return files
 
 
     def getRollRPMS(self):
-	    rpms = []
-	    for m in self.dist.getMirrors():
-		    for key, value in list(m.getRolls().items()):
-			    for arch, ver in value:
-				    if self.useRoll(key, ver, arch):
-					    print('    including "%s" (%s,%s) roll...' % \
-						    (key, ver, arch))
-					    rpms.extend(m.getRollRPMS(key,
-								    ver,
-								    arch))
-	    return rpms
+        rpms = []
+        for m in self.dist.getMirrors():
+            for key, value in list(m.getRolls().items()):
+                for arch, ver in value:
+                    if self.useRoll(key, ver, arch):
+                        print('    including "%s" (%s,%s) roll...' % \
+                            (key, ver, arch))
+                        rpms.extend(m.getRollRPMS(key,
+                                    ver,
+                                    arch))
+        return rpms
 
 
     def getRollSRPMS(self):
-	    rpms = []
-	    for m in self.dist.getMirrors():
-		    for key, value in list(m.getRolls().items()):
-			   for arch, ver in value:
-				if self.useRoll(key,ver,arch):
-					    print('    including "%s" (%s,%s) roll...' % \
-						  (key, ver, arch))
-					    rpms.extend(m.getRollSRPMS(key,
-								       ver,
-								       arch))
-	    return rpms
+        rpms = []
+        for m in self.dist.getMirrors():
+            for key, value in list(m.getRolls().items()):
+               for arch, ver in value:
+                if self.useRoll(key,ver,arch):
+                        print('    including "%s" (%s,%s) roll...' % \
+                          (key, ver, arch))
+                        rpms.extend(m.getRollSRPMS(key,
+                                       ver,
+                                       arch))
+        return rpms
 
     
     def buildRPMSList(self):
 
-	    # Build and resolve the list of RPMS.  Then drop in all
-	    # the other non-rpm directories from the Mirror's release.
+        # Build and resolve the list of RPMS.  Then drop in all
+        # the other non-rpm directories from the Mirror's release.
 
-	    rpms = self.getRollRPMS()
-	    for mirror in self.dist.getMirrors():
-		    rpms.extend(mirror.getRPMS())
-	    if not self.onlyRolls:
-	    	rpms.extend(self.dist.getContribRPMS())
-	    	rpms.extend(self.dist.getLocalRPMS())
-	    if not os.path.isdir(self.dist.getForceRPMSPath()):
-		    os.makedirs(self.dist.getForceRPMSPath())
-	    else:
-		    rpms.extend(self.dist.getForceRPMS()) 
-	    return rpms
+        rpms = self.getRollRPMS()
+        for mirror in self.dist.getMirrors():
+            rpms.extend(mirror.getRPMS())
+        if not self.onlyRolls:
+            rpms.extend(self.dist.getContribRPMS())
+            rpms.extend(self.dist.getLocalRPMS())
+        if not os.path.isdir(self.dist.getForceRPMSPath()):
+            os.makedirs(self.dist.getForceRPMSPath())
+        else:
+            rpms.extend(self.dist.getForceRPMS()) 
+        return rpms
 
     
     def buildSRPMSList(self):
 
-	    # Build and resolve the list of SRPMS. 
+        # Build and resolve the list of SRPMS. 
         
-	    rpms = self.getRollSRPMS()
-	    for mirror in self.dist.getMirrors():
-		    rpms.extend(mirror.getSRPMS())
-	    rpms.extend(self.dist.getContribSRPMS())
-	    rpms.extend(self.dist.getLocalSRPMS())
-	    return rpms
+        rpms = self.getRollSRPMS()
+        for mirror in self.dist.getMirrors():
+            rpms.extend(mirror.getSRPMS())
+        rpms.extend(self.dist.getContribSRPMS())
+        rpms.extend(self.dist.getLocalSRPMS())
+        return rpms
 
 
     def buildRollLinks(self):
-	"""Links all rolls from our mirrors into rocks-dist/rolls/"""
-	
-	print("Building Roll Links")
-	rollLocation = self.dist.getRollsPath()
-	subprocess.call('mkdir -p %s' % rollLocation, shell=True)
+        """Links all rolls from our mirrors into rocks-dist/rolls/"""
+    
+        print("Building Roll Links")
+        rollLocation = self.dist.getRollsPath()
+        subprocess.call('mkdir -p %s' % rollLocation, shell=True)
 
-	rolls = []
-	for mirror in self.dist.getMirrors():
-		rolldir = mirror.getRollsPath()
-		if not os.path.exists(rolldir):
-			continue
-		for d in os.listdir(rolldir):
-			rollpath = os.path.join(rolldir,d)
-			if os.path.isdir(rollpath):
-				rolls.append(rollpath)
+        rolls = []
+        for mirror in self.dist.getMirrors():
+            rolldir = mirror.getRollsPath()
+            if not os.path.exists(rolldir):
+                continue
+            for d in os.listdir(rolldir):
+                rollpath = os.path.join(rolldir,d)
+                if os.path.isdir(rollpath):
+                    rolls.append(rollpath)
 
-	here = os.getcwd()
-	os.chdir(rollLocation)
-	for r in rolls:
-		subprocess.call('ln -sf %s .' % (r), shell=True)
-	os.chdir(here)
-	
-	
+        here = os.getcwd()
+        os.chdir(rollLocation)
+        for r in rolls:
+            subprocess.call('ln -sf %s .' % (r), shell=True)
+        os.chdir(here)
+    
+    
     def buildWANLinks(self, lanbase):
-    	"""Links in the stage2.img from lan/"""
-    	
-    	print("Linking boot stages from lan")
-    	wanbase = self.dist.getBasePath()
-    	subprocess.call('rm -rf %s' % wanbase, shell=True)
-    	subprocess.call('mkdir -p %s' % wanbase, shell=True)
-    	subprocess.call('ln -s %s/* %s' % (lanbase, wanbase), shell=True) 
-    	
+        """Links in the stage2.img from lan/"""
+        
+        print("Linking boot stages from lan")
+        wanbase = self.dist.getBasePath()
+        subprocess.call('rm -rf %s' % wanbase, shell=True)
+        subprocess.call('mkdir -p %s' % wanbase, shell=True)
+        subprocess.call('ln -s %s/* %s' % (lanbase, wanbase), shell=True) 
+        
 
     def buildBase(self):
         print('Resolving versions (base files)')
@@ -1172,36 +1172,36 @@ class DistributionBuilder(Builder):
 
 
     def touchCriticalFiles(self, m, key, ver, arch):
-	criticalfiles = [ 'anaconda', 'anaconda-runtime',
-		'kudzu', 'kudzu-devel' ]
+        criticalfiles = [ 'anaconda', 'anaconda-runtime',
+            'kudzu', 'kudzu-devel' ]
 
-	for rpm in m.getRollRPMS(key,ver,arch):
-		try:
-			if rpm.getPackageName() in criticalfiles:
-				rpm.timestamp = int(time.time())
-		except:
-			pass
+        for rpm in m.getRollRPMS(key,ver,arch):
+            try:
+                if rpm.getPackageName() in criticalfiles:
+                    rpm.timestamp = int(time.time())
+            except:
+                pass
 
 
     def includeCriticalRPMS(self):
         print('Including critical RPMS')
 
-	#
-	# there are some standard RPMs that we build in order for our
-	# modifcations to the installer to work correctly. this function
-	# ensures that the rocks-built standard RPMs are always included
-	# and the ones from OS CDs are not.
-	#
+    #
+    # there are some standard RPMs that we build in order for our
+    # modifcations to the installer to work correctly. this function
+    # ensures that the rocks-built standard RPMs are always included
+    # and the ones from OS CDs are not.
+    #
 
-	for m in self.dist.getMirrors():
-		for key, value in list(m.getRolls().items()):
-			if key != 'base':
-				continue
+    for m in self.dist.getMirrors():
+        for key, value in list(m.getRolls().items()):
+            if key != 'base':
+                continue
 
-			for arch, ver in value:
-				if self.useRoll(key, ver, arch):
-					self.touchCriticalFiles(m,key,ver,arch)
-					
+            for arch, ver in value:
+                if self.useRoll(key, ver, arch):
+                    self.touchCriticalFiles(m,key,ver,arch)
+                    
 
     def buildRPMS(self):
         print('Resolving versions (RPMs)')
@@ -1214,101 +1214,101 @@ class DistributionBuilder(Builder):
 
 
     def insertNetstage(self):
-	print('Applying netstage (aka stage2)')
-	
-	cmd = 'rm -f %s/RedHat/base/stage2.img' % (self.dist.getReleasePath())
-	subprocess.call(cmd, shell=True)
+        print('Applying netstage (aka stage2)')
+    
+        cmd = 'rm -f %s/RedHat/base/stage2.img' % (self.dist.getReleasePath())
+        subprocess.call(cmd, shell=True)
 
-	## Note for CentOS7 rocks-boot has all the net/cdrom/EFI components 
-	try:
+        ## Note for CentOS7 rocks-boot has all the net/cdrom/EFI components 
+        try:
 
-		if self.versionMajor >= 7:
-			rpm = 'rocks-boot'
-		else:	
-			rpm = 'rocks-boot-netstage'
-		self.applyRPM(rpm, self.dist.getReleasePath())
-	except:
-		print("Couldn't find the package %s" % rpm)
-		print("\tIf you are building the OS roll, this is not a problem")
-		pass
+            if self.versionMajor >= 7:
+                rpm = 'rocks-boot'
+            else:    
+                rpm = 'rocks-boot-netstage'
+            self.applyRPM(rpm, self.dist.getReleasePath())
+        except:
+            print("Couldn't find the package %s" % rpm)
+            print("\tIf you are building the OS roll, this is not a problem")
+            pass
 
 
-	print('Applying rocks-anaconda-updates')
-	if self.versionMajor < 7:
-		cmd = 'rm -f %s/RedHat/base/updates.img' % (self.dist.getReleasePath())
-		subprocess.call(cmd, shell=True)
+        print('Applying rocks-anaconda-updates')
+        if self.versionMajor < 7:
+            cmd = 'rm -f %s/RedHat/base/updates.img' % (self.dist.getReleasePath())
+            subprocess.call(cmd, shell=True)
 
-	## Note for CentOS7 rocks-anaconda-updates only contains comps.xml
-	try:
-		self.applyRPM('rocks-anaconda-updates',
-			self.dist.getReleasePath())
-	except:
-		print("Couldn't find the package rocks-anaconda-updates")
-		print("\tIf you are building the OS roll, this is not a problem")
-		pass
-
-	return
+        ## Note for CentOS7 rocks-anaconda-updates only contains comps.xml
+        try:
+            self.applyRPM('rocks-anaconda-updates',
+                self.dist.getReleasePath())
+        except:
+            print("Couldn't find the package rocks-anaconda-updates")
+            print("\tIf you are building the OS roll, this is not a problem")
+            pass
+    
+        return
 
 
     def build(self):
-		self.clean()
-		self.dist.syncMirror()
-		self.buildBase()
-		self.includeCriticalRPMS()
-		self.buildRPMS()
-		self.buildSRPMS()
+        self.clean()
+        self.dist.syncMirror()
+        self.buildBase()
+        self.includeCriticalRPMS()
+        self.buildRPMS()
+        self.buildSRPMS()
 
-		print('Creating files', end=' ')
-		if self.useLinks:
-			print('(symbolic links - fast)')
-		else:
-			print('(deep copy - slow)')
-		self.dist.getReleaseTree().apply(self.builder)
-		self.dist.getReleaseTree().apply(self.normalizer)
+        print('Creating files', end=' ')
+        if self.useLinks:
+            print('(symbolic links - fast)')
+        else:
+            print('(deep copy - slow)')
+        self.dist.getReleaseTree().apply(self.builder)
+        self.dist.getReleaseTree().apply(self.normalizer)
 
-		self.insertNetstage()
-		self.buildKickstart()
-		print('     Calling Yum genpkgmetadata.py')
-		self.createrepo()
-		print('     Rebuilding Product Image including md5 sums')
-		self.buildProductImg()
-		print('     Creating Directory Listing')
-		self.makeDirListing()
-	
-		return
+        self.insertNetstage()
+        self.buildKickstart()
+        print('     Calling Yum genpkgmetadata.py')
+        self.createrepo()
+        print('     Rebuilding Product Image including md5 sums')
+        self.buildProductImg()
+        print('     Creating Directory Listing')
+        self.makeDirListing()
+    
+        return
 
 
     def buildKickstart(self):
-	print('Installing XML Kickstart profiles')
+        print('Installing XML Kickstart profiles')
 
-	build   = self.dist.getBuildPath()
+    build   = self.dist.getBuildPath()
 
-	for rpm in self.dist.getRPMS():
-		tok = rpm.getBaseName().split('-')
-		if tok[0] != 'roll':
-			continue
-		try:
-			k = tok.index('kickstart')
-			rollname = '-'.join(tok[1:k])
-		except ValueError:
-			continue
-			
-		print('    installing "%s" profiles...' % rollname)
-		self.applyRPM(rpm.getBaseName(), build)
+    for rpm in self.dist.getRPMS():
+        tok = rpm.getBaseName().split('-')
+        if tok[0] != 'roll':
+            continue
+        try:
+            k = tok.index('kickstart')
+            rollname = '-'.join(tok[1:k])
+        except ValueError:
+            continue
+            
+        print('    installing "%s" profiles...' % rollname)
+        self.applyRPM(rpm.getBaseName(), build)
 
-	# Copy local profiles into the distribution.
-	if self.withSiteProfiles:
-		print('    installing "site" profiles...')
-		tree = self.dist.getSiteProfilesTree()
-		for dir in tree.getDirs():
-			for file in tree.getFiles(dir):
-				path = os.path.join(build, dir)
-				if not os.path.isdir(path):
-					os.makedirs(path)
-				shutil.copy(file.getFullName(),
-					os.path.join(path, file.getName()))
-				# make sure apache can read site XML
-				file.chmod(0o664)
+    # Copy local profiles into the distribution.
+    if self.withSiteProfiles:
+        print('    installing "site" profiles...')
+        tree = self.dist.getSiteProfilesTree()
+        for dir in tree.getDirs():
+            for file in tree.getFiles(dir):
+                path = os.path.join(build, dir)
+                if not os.path.isdir(path):
+                    os.makedirs(path)
+                shutil.copy(file.getFullName(),
+                    os.path.join(path, file.getName()))
+                # make sure apache can read site XML
+                file.chmod(0o664)
 
 
     def applyRPM(self, name, root, flags=''):
@@ -1319,14 +1319,14 @@ class DistributionBuilder(Builder):
         Throws a ValueError if it cannot find the specified RPM, and
         BuildError if the RPM was found but could not be installed."""
 
-	rpm = None
-	try:
-        	rpm = self.dist.getRPM(name)
-	except rocks.dist.DistRPMList as e:
-		for r in e.list:
-			if r.getPackageArch() == self.dist.getArch():
-				rpm = r
-				break
+    rpm = None
+    try:
+            rpm = self.dist.getRPM(name)
+    except rocks.dist.DistRPMList as e:
+        for r in e.list:
+            if r.getPackageArch() == self.dist.getArch():
+                rpm = r
+                break
 
         if not rpm:
             raise ValueError("could not find %s" % name)
@@ -1338,22 +1338,22 @@ class DistributionBuilder(Builder):
         reloc = subprocess.call("rpm -q --queryformat '%{prefixes}\n' -p " +
                         rpm.getFullName() + "| grep none > /dev/null", shell=True)
 
-	cmd = 'rpm -i --ignoresize --nomd5 --force --nodeps --ignorearch '
-	cmd += '--dbpath %s ' % dbdir
-        if reloc:
-	    cmd = cmd + '--prefix %s %s %s' % (root, flags,
-					       rpm.getFullName())
-        else:
-	    cmd = cmd + '--badreloc --relocate /=%s %s %s' % (root, flags,
-							      rpm.getFullName())
+    cmd = 'rpm -i --ignoresize --nomd5 --force --nodeps --ignorearch '
+    cmd += '--dbpath %s ' % dbdir
+    if reloc:
+        cmd = cmd + '--prefix %s %s %s' % (root, flags,
+                           rpm.getFullName())
+    else:
+        cmd = cmd + '--badreloc --relocate /=%s %s %s' % (root, flags,
+                                  rpm.getFullName())
 
-	if self.debug > 0:
+    if self.debug > 0:
                 sys.stderr.write('build.applyRPM: executing "%s"' % cmd)
 
         retval = subprocess.call(cmd + ' > /dev/null 2>&1', shell=True)
 
         shutil.rmtree(os.path.join(root, 'var'))
-		
+        
         if retval == 256:
             raise BuildError("could not apply RPM %s" % (name))
 
@@ -1361,130 +1361,130 @@ class DistributionBuilder(Builder):
 
 
     def buildProductImg(self):
-	#
-	# the directory where the python files exist that are used to
-	# extend anaconda
-	#
+    #
+    # the directory where the python files exist that are used to
+    # extend anaconda
+    #
 
         ## For CentOS 7, rocks-boot has the product img
         if self.versionMajor >= 7:
                 return
-	product = '../../images/product.img'
-	productfilesdir = os.path.join(self.dist.getBuildPath(), 'include')
+    product = '../../images/product.img'
+    productfilesdir = os.path.join(self.dist.getBuildPath(), 'include')
 
-	if not os.path.exists(productfilesdir):
-		#
-		# there are no 'product' files, so there's nothing to do.
-		# let's just return
-		#
-		return
+    if not os.path.exists(productfilesdir):
+        #
+        # there are no 'product' files, so there's nothing to do.
+        # let's just return
+        #
+        return
 
-	cwd = os.getcwd()
+    cwd = os.getcwd()
 
-	#
-	# make an MD5 checksum for all files in the distribution
-	#
-	# the 'sed' command strips off the leading "./" from the pathnames
-	#
-	# don't include the build, SRPMS and force directories
-	#
-	os.chdir(self.dist.getReleasePath())
-	if self.calcmd5:
-		cmd = '/usr/bin/md5sum `find -L . -type f | sed "s/^\.\///" | '
-		cmd += 'egrep -v "^build|^SRPMS|^force" | egrep -v "rpm$"` '
-		cmd += '> %s/packages.md5' % (productfilesdir)
-	else:
-		cmd = 'touch %s/packages.md5' % (productfilesdir)
+    #
+    # make an MD5 checksum for all files in the distribution
+    #
+    # the 'sed' command strips off the leading "./" from the pathnames
+    #
+    # don't include the build, SRPMS and force directories
+    #
+    os.chdir(self.dist.getReleasePath())
+    if self.calcmd5:
+        cmd = '/usr/bin/md5sum `find -L . -type f | sed "s/^\.\///" | '
+        cmd += 'egrep -v "^build|^SRPMS|^force" | egrep -v "rpm$"` '
+        cmd += '> %s/packages.md5' % (productfilesdir)
+    else:
+        cmd = 'touch %s/packages.md5' % (productfilesdir)
 
-	subprocess.call(cmd, shell=True)
+    subprocess.call(cmd, shell=True)
 
-	#
-	# create the product.img file
-	#
-	os.chdir(productfilesdir)
+    #
+    # create the product.img file
+    #
+    os.chdir(productfilesdir)
 
-	if not os.path.exists('../../images'):
-		os.makedirs('../../images')
+    if not os.path.exists('../../images'):
+        os.makedirs('../../images')
 
-	subprocess.call('rm -f %s' % (product), shell=True)
-	cmd = '/sbin/mksquashfs packages.md5 installclass/*py installclasses '
-	cmd += '%s ' % (product)
-	cmd += '-keep-as-directory > /dev/null 2>&1'
-	subprocess.call(cmd,shell=True)
+    subprocess.call('rm -f %s' % (product), shell=True)
+    cmd = '/sbin/mksquashfs packages.md5 installclass/*py installclasses '
+    cmd += '%s ' % (product)
+    cmd += '-keep-as-directory > /dev/null 2>&1'
+    subprocess.call(cmd,shell=True)
 
-	if os.path.exists(product):
-		#
-		# on a server installation (e.g., frontend), mksquashfs
-		# fails, but it is not important that product.img is built
-		# during the installation. product.img was already downloaded
-		# off the CD, so it will not be needed for the remainder of
-		# the server installation.
-		#
-		os.chmod(product, 0o664)
+    if os.path.exists(product):
+        #
+        # on a server installation (e.g., frontend), mksquashfs
+        # fails, but it is not important that product.img is built
+        # during the installation. product.img was already downloaded
+        # off the CD, so it will not be needed for the remainder of
+        # the server installation.
+        #
+        os.chmod(product, 0o664)
 
-	os.chdir(cwd)
-	return
+    os.chdir(cwd)
+    return
 
 
     def createrepo(self):
-	print('Creating repository')
+    print('Creating repository')
 
-	cwd = os.getcwd()
-	releasedir = self.dist.getReleasePath()
-	os.chdir(releasedir)
+    cwd = os.getcwd()
+    releasedir = self.dist.getReleasePath()
+    os.chdir(releasedir)
 
-	#
-	# first check in the install environment (/tmp/updates), then
-	# look in the 'normal' place (on a running frontend).
-	#
-	createrepo = '/tmp/updates/usr/share/createrepo/genpkgmetadata.py'
-	if not os.path.exists(createrepo):
-		createrepo = '/usr/share/createrepo/genpkgmetadata.py'
-
-
-	groupfile = "%s/RedHat/base/comps.xml" % releasedir
-	if os.path.exists(groupfile):
-		gf = "--groupfile %s/RedHat/base/comps.xml " % (releasedir)
-	else:
-		print("Couldn't find the groupfile %s" % groupfile)
-		print("\tIf you are bootstrapping, this is not a problem")
-		gf = " "
-
-	tmpdir = os.getenv("TMPDIR")
-	# worker.py (Called by genpkgmetadata) needs tmp space
-	os.putenv("TMPDIR",".")
-	subprocess.call('%s ' % (createrepo) + 
-		gf + ' --workers 8 ' +  
-		'--quiet .', shell=True)
-
-	if tmpdir is not None:
-		os.putenv("TMPDIR",tmpdir)
-	else:
-		os.unsetenv("TMPDIR")
-	os.chdir(cwd)
-
-	return
+    #
+    # first check in the install environment (/tmp/updates), then
+    # look in the 'normal' place (on a running frontend).
+    #
+    createrepo = '/tmp/updates/usr/share/createrepo/genpkgmetadata.py'
+    if not os.path.exists(createrepo):
+        createrepo = '/usr/share/createrepo/genpkgmetadata.py'
 
 
-    def makeDirListing(self):	
-	#
-	# make sure a known CGI exists in the roll directory so we can
-	# reliably list all the rolls present on a system. this is useful
-	# when the directory listing output is different between different
-	# web servers
-	#
-	path = os.path.join(self.dist.getRootPath(), 'rolls')
-	if os.path.exists(path):
-		filename = os.path.join(path, 'index.cgi')
+    groupfile = "%s/RedHat/base/comps.xml" % releasedir
+    if os.path.exists(groupfile):
+        gf = "--groupfile %s/RedHat/base/comps.xml " % (releasedir)
+    else:
+        print("Couldn't find the groupfile %s" % groupfile)
+        print("\tIf you are bootstrapping, this is not a problem")
+        gf = " "
 
-		file = open(filename, 'w')
-		file.write('%s' % (directory_listing_cgi))
-		file.close()
+    tmpdir = os.getenv("TMPDIR")
+    # worker.py (Called by genpkgmetadata) needs tmp space
+    os.putenv("TMPDIR",".")
+    subprocess.call('%s ' % (createrepo) + 
+        gf + ' --workers 8 ' +  
+        '--quiet .', shell=True)
 
-		os.chmod(path, 755)
-		os.chmod(filename, 755)
+    if tmpdir is not None:
+        os.putenv("TMPDIR",tmpdir)
+    else:
+        os.unsetenv("TMPDIR")
+    os.chdir(cwd)
 
-	return
+    return
+
+
+    def makeDirListing(self):    
+    #
+    # make sure a known CGI exists in the roll directory so we can
+    # reliably list all the rolls present on a system. this is useful
+    # when the directory listing output is different between different
+    # web servers
+    #
+    path = os.path.join(self.dist.getRootPath(), 'rolls')
+    if os.path.exists(path):
+        filename = os.path.join(path, 'index.cgi')
+
+        file = open(filename, 'w')
+        file.write('%s' % (directory_listing_cgi))
+        file.close()
+
+        os.chmod(path, 755)
+        os.chmod(filename, 755)
+
+    return
 
 
     def cleaner(self, path, file, root):
@@ -1497,7 +1497,7 @@ class DistributionBuilder(Builder):
     def builder(self, path, file, root):
         if not root:
             root = self.dist.getReleasePath()
-        dir	 = os.path.join(root, path)
+        dir     = os.path.join(root, path)
         fullname = os.path.join(dir, file.getName())
 
         if file.getFullName() == fullname:
@@ -1532,7 +1532,7 @@ class DistributionBuilder(Builder):
     def normalizer(self, path, file, root):
         if not root:
             root = self.dist.getReleasePath()
-        dir	 = os.path.join(root, path)
+        dir     = os.path.join(root, path)
         fullname = os.path.join(dir, file.getName())
 
         # Reset the File to represent the one we just created in the new
@@ -1563,121 +1563,121 @@ class DistributionBuilder(Builder):
         return list
 
     def setComps(self, path):
-    	self.compsPath = path
-    	
+        self.compsPath = path
+        
 
 class USBBuilder(DistributionBuilder):
-	"Builds a filesytem image for a Bootable USB Key."
-	
-	dn = '/CN=anonymous'
+    "Builds a filesytem image for a Bootable USB Key."
+    
+    dn = '/CN=anonymous'
 
-	def build(self, dn=None, size=20000):
-		"""Assumes a valid rocks-dist, will throw an 
-		exception if missing. Size is number of blocks (1block = 1KB)
-		in the filesystem."""
-		
-		print('Creating Bootable USB filesystem ...')
+    def build(self, dn=None, size=20000):
+        """Assumes a valid rocks-dist, will throw an 
+        exception if missing. Size is number of blocks (1block = 1KB)
+        in the filesystem."""
+        
+        print('Creating Bootable USB filesystem ...')
 
-		if dn:
-			self.dn = dn
-		cd = os.path.normpath(
-			os.path.join(self.dist.getReleasePath(), '..'))
-		thisdir = os.path.join(cd,'usb-key')
-		subprocess.call('mkdir -p %s' % thisdir, shell=True)
-		os.chdir(thisdir)
-		
-		self.applyRPM('rocks-boot-cdrom', thisdir)
-		subprocess.call('/sbin/mkfs.vfat -C usb.img '
-			+ '-n "Rocks USB Boot" %s > /dev/null' % size, shell=True)
-		subprocess.call('rm -rf key-img', shell=True)
-		subprocess.call('mkdir -p key-img', shell=True)
-		subprocess.call('mount -o loop usb.img key-img', shell=True)
-		subprocess.call('cp -a isolinux/* key-img/', shell=True)
-		os.rename('key-img/isolinux.cfg','key-img/syslinux.cfg')
-		subprocess.call('touch key-img/rocks-usbkey', shell=True)
-		try:
-			self.writeKeys('key-img')
-		except Exception as msg:
-			print('warning - could not find key: %s' % msg)
-		subprocess.call('umount key-img', shell=True)
-		subprocess.call('/usr/bin/syslinux usb.img', shell=True)
-		imgname = 'rocks-usb-%s.%s.img' %  \
-				(self.version, self.dist.getArch())
-		imgpath = os.path.join(cd,imgname)
-		os.rename('usb.img', imgpath)
-		os.chmod(imgpath,0o444)
-		subprocess.call('rm -rf %s' % thisdir, shell=True)
-			
-		print("Wrote:", imgpath)
-		print("Copy this image directly onto a usb key: ")
-		print(" # dd < %s > /dev/sda" % imgname)
-		
-		
-	def writeKeys(self, root):
-		"Copy essential cluster keys to usb drive"
+        if dn:
+            self.dn = dn
+        cd = os.path.normpath(
+            os.path.join(self.dist.getReleasePath(), '..'))
+        thisdir = os.path.join(cd,'usb-key')
+        subprocess.call('mkdir -p %s' % thisdir, shell=True)
+        os.chdir(thisdir)
+        
+        self.applyRPM('rocks-boot-cdrom', thisdir)
+        subprocess.call('/sbin/mkfs.vfat -C usb.img '
+            + '-n "Rocks USB Boot" %s > /dev/null' % size, shell=True)
+        subprocess.call('rm -rf key-img', shell=True)
+        subprocess.call('mkdir -p key-img', shell=True)
+        subprocess.call('mount -o loop usb.img key-img', shell=True)
+        subprocess.call('cp -a isolinux/* key-img/', shell=True)
+        os.rename('key-img/isolinux.cfg','key-img/syslinux.cfg')
+        subprocess.call('touch key-img/rocks-usbkey', shell=True)
+        try:
+            self.writeKeys('key-img')
+        except Exception as msg:
+            print('warning - could not find key: %s' % msg)
+        subprocess.call('umount key-img', shell=True)
+        subprocess.call('/usr/bin/syslinux usb.img', shell=True)
+        imgname = 'rocks-usb-%s.%s.img' %  \
+                (self.version, self.dist.getArch())
+        imgpath = os.path.join(cd,imgname)
+        os.rename('usb.img', imgpath)
+        os.chmod(imgpath,0o444)
+        subprocess.call('rm -rf %s' % thisdir, shell=True)
+            
+        print("Wrote:", imgpath)
+        print("Copy this image directly onto a usb key: ")
+        print(" # dd < %s > /dev/sda" % imgname)
+        
+        
+    def writeKeys(self, root):
+        "Copy essential cluster keys to usb drive"
 
-		subprocess.call('mkdir -p %s/security/server' % root, shell=True)
-		subprocess.call('mkdir -p %s/security/client' % root, shell=True)
-		self.newCert('%s/security' % root)
-		
-		# For Server: our CA and 411 master.
-		ca = '/etc/security/ca'
-		for k in ('ca.crt','ca.key','ca.serial'):
-			shutil.copy(os.path.join(ca,k), 
-				'%s/security/server/' % root)
+        subprocess.call('mkdir -p %s/security/server' % root, shell=True)
+        subprocess.call('mkdir -p %s/security/client' % root, shell=True)
+        self.newCert('%s/security' % root)
+        
+        # For Server: our CA and 411 master.
+        ca = '/etc/security/ca'
+        for k in ('ca.crt','ca.key','ca.serial'):
+            shutil.copy(os.path.join(ca,k), 
+                '%s/security/server/' % root)
 
-		# sacerdoti: The 411 shared key is saved for the frontend,
-		# so 411 and the CA can be recovered a catastrophe (disk or node
-		# destroyed. Computes never need the shared 411 key, since
-		# it is in the kickstart file.  The 411 master public key is
-		# always generated from the private key.
+        # sacerdoti: The 411 shared key is saved for the frontend,
+        # so 411 and the CA can be recovered a catastrophe (disk or node
+        # destroyed. Computes never need the shared 411 key, since
+        # it is in the kickstart file.  The 411 master public key is
+        # always generated from the private key.
 
-		shutil.copy('/etc/411-security/master.key', 
-			'%s/security/server/411-master.key' % root)
+        shutil.copy('/etc/411-security/master.key', 
+            '%s/security/server/411-master.key' % root)
 
-		shutil.copy('/etc/411-security/shared.key', 
-			'%s/security/server/411-shared.key' % root)	
-			
-		# Keep central's keys if we installed over WAN.
-		for k in ('ca.crt','cert.crt','cert.key'):
-			try:
-				shutil.copy('/etc/security/cluster-%s' % k, 
-					'%s/security/server' % root)
-			except IOError:
-				pass
+        shutil.copy('/etc/411-security/shared.key', 
+            '%s/security/server/411-shared.key' % root)    
+            
+        # Keep central's keys if we installed over WAN.
+        for k in ('ca.crt','cert.crt','cert.key'):
+            try:
+                shutil.copy('/etc/security/cluster-%s' % k, 
+                    '%s/security/server' % root)
+            except IOError:
+                pass
 
-		# Everyone
-		shutil.copy('%s/ca.crt' % ca, 
-			'%s/security/cluster-ca.crt' % root)
-		
-		
-	def newCert(self, root):
-		"""Generates a Certificate signed by our CA, for use
-		by compute nodes to prove their membership in the cluster."""
-		
-		ca = '/etc/security/ca'
-		
-		print(' Making new certificate keypair')
-		
-		cwd = os.getcwd()
-		os.chdir(root)
-		
-		cmd = ('/usr/bin/openssl req -new -nodes '
-			+ '-config %s/ca.cfg -batch -subj "%s" ' % (ca, self.dn)
-			+ '-keyout cluster-cert.key > cert.csr 2> /dev/null')
-		subprocess.call(cmd, shell=True)
-		os.chmod('cluster-cert.key',0o400)
-		
-		print(' Signing the certificate with our CA')
-		
-		cmd = ('/usr/bin/openssl x509 -req -days 1000 '
-			+ '-CA %s/ca.crt -CAkey %s/ca.key -CAserial %s/ca.serial ' 
-				% (ca, ca, ca)
-			+ ' < cert.csr > cluster-cert.crt 2> /dev/null')
-		subprocess.call(cmd, shell=True)
-		os.chmod('cluster-cert.crt', 0o444)
-		os.unlink('cert.csr')
-		
-		os.chdir(cwd)
-		return
+        # Everyone
+        shutil.copy('%s/ca.crt' % ca, 
+            '%s/security/cluster-ca.crt' % root)
+        
+        
+    def newCert(self, root):
+        """Generates a Certificate signed by our CA, for use
+        by compute nodes to prove their membership in the cluster."""
+        
+        ca = '/etc/security/ca'
+        
+        print(' Making new certificate keypair')
+        
+        cwd = os.getcwd()
+        os.chdir(root)
+        
+        cmd = ('/usr/bin/openssl req -new -nodes '
+            + '-config %s/ca.cfg -batch -subj "%s" ' % (ca, self.dn)
+            + '-keyout cluster-cert.key > cert.csr 2> /dev/null')
+        subprocess.call(cmd, shell=True)
+        os.chmod('cluster-cert.key',0o400)
+        
+        print(' Signing the certificate with our CA')
+        
+        cmd = ('/usr/bin/openssl x509 -req -days 1000 '
+            + '-CA %s/ca.crt -CAkey %s/ca.key -CAserial %s/ca.serial ' 
+                % (ca, ca, ca)
+            + ' < cert.csr > cluster-cert.crt 2> /dev/null')
+        subprocess.call(cmd, shell=True)
+        os.chmod('cluster-cert.crt', 0o444)
+        os.unlink('cert.csr')
+        
+        os.chdir(cwd)
+        return
 

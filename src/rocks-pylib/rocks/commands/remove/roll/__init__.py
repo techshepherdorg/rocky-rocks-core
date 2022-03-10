@@ -5,13 +5,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -28,9 +28,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -107,118 +107,118 @@ import rocks.commands
 
 
 class Command(rocks.commands.RollArgumentProcessor,
-	rocks.commands.remove.command):
-	"""
-	Remove a roll from both the database and filesystem.	
+    rocks.commands.remove.command):
+    """
+    Remove a roll from both the database and filesystem.    
 
-	<arg type='string' name='roll' repeat='1'>
-	List of rolls. This should be the roll base name (e.g., base, hpc,
-	kernel).
-	</arg>
-	
-	<param type='string' name='version'>
-	The version number of the roll to be removed. If no version number is
-	supplied, then all versions of a roll will be removed.
-	</param>
-	
-	<param type='string' name='arch'>
-	The architecture of the roll to be removed. If no architecture is
-	supplied, then all architectures will be removed.
-	</param>
+    <arg type='string' name='roll' repeat='1'>
+    List of rolls. This should be the roll base name (e.g., base, hpc,
+    kernel).
+    </arg>
+    
+    <param type='string' name='version'>
+    The version number of the roll to be removed. If no version number is
+    supplied, then all versions of a roll will be removed.
+    </param>
+    
+    <param type='string' name='arch'>
+    The architecture of the roll to be removed. If no architecture is
+    supplied, then all architectures will be removed.
+    </param>
 
-	<example cmd='remove roll kernel'>
-	Remove all versions and architectures of the kernel roll
-	</example>
-	
-	<example cmd='remove roll ganglia version=5.0 arch=i386'>
-	Remove version 5.0 of the Ganglia roll for i386 nodes
-	</example>
-	
-	<related>add roll</related>
-	<related>enable roll</related>
-	<related>disable roll</related>
-	<related>list roll</related>
-	<related>create roll</related>
-	"""		
+    <example cmd='remove roll kernel'>
+    Remove all versions and architectures of the kernel roll
+    </example>
+    
+    <example cmd='remove roll ganglia version=5.0 arch=i386'>
+    Remove version 5.0 of the Ganglia roll for i386 nodes
+    </example>
+    
+    <related>add roll</related>
+    <related>enable roll</related>
+    <related>disable roll</related>
+    <related>list roll</related>
+    <related>create roll</related>
+    """        
 
-	def run(self, params, args):
-		self.beginOutput()
+    def run(self, params, args):
+        self.beginOutput()
 
-                (arch, ) = self.fillParams([('arch', '%')])
+        (arch, ) = self.fillParams([('arch', '%')])
 
-                if len(args) < 1:
-                        self.abort('must supply one or more rolls')
+        if len(args) < 1:
+            self.abort('must supply one or more rolls')
 
-		for (roll, version) in self.getRollNames(args, params):
-			rows = self.db.execute("""select arch from rolls
-				where name like '%s' and 
-				version like '%s' and
-				arch like '%s'""" % (roll, version, arch))
+        for (roll, version) in self.getRollNames(args, params):
+            rows = self.db.execute("""select arch from rolls
+                where name like '%s' and 
+                version like '%s' and
+                arch like '%s'""" % (roll, version, arch))
 
-			if rows == 0: # empty table is OK
-				continue
+            if rows == 0: # empty table is OK
+                continue
 
-			# Remove each arch's instance of this roll version
-			for (thisarch,) in self.db.fetchall():
-				self.clean_roll(roll, version, thisarch)
+            # Remove each arch's instance of this roll version
+            for (thisarch,) in self.db.fetchall():
+                self.clean_roll(roll, version, thisarch)
 
-		self.endOutput(padChar='')
+        self.endOutput(padChar='')
 
-	def clean_roll(self, roll, version, arch):
-		""" Remove roll files and database entry for this arch. Calls 
-		the Host OS specific function for proper filesystem cleanup. """
+    def clean_roll(self, roll, version, arch):
+        """ Remove roll files and database entry for this arch. Calls 
+        the Host OS specific function for proper filesystem cleanup. """
 
-		self.addOutput('', 'Removing "%s" (%s,%s) roll...' %
-			(roll, version, arch))
+        self.addOutput('', 'Removing "%s" (%s,%s) roll...' %
+            (roll, version, arch))
 
-		# Like add, call through to OS-specific function due to 
-		# path differences. Proper DB use should fix this.
-		clean_rolldir = getattr(self, 'clean_rolldir_%s' % self.os)
-		distrodir = self.db.getHostAttr('localhost','Kickstart_DistroDir')
-		if distrodir == None:
-			distrodir="/export/rocks"
-		clean_rolldir(roll, version, arch, distrodir)
+        # Like add, call through to OS-specific function due to 
+        # path differences. Proper DB use should fix this.
+        clean_rolldir = getattr(self, 'clean_rolldir_%s' % self.os)
+        distrodir = self.db.getHostAttr('localhost','Kickstart_DistroDir')
+        if distrodir == None:
+            distrodir="/export/rocks"
+        clean_rolldir(roll, version, arch, distrodir)
 
-		#
-		# remove the roll from 'node_rolls'
-		#
-		self.db.execute("""delete from node_rolls where
-			rollid = (select id from rolls where name = '%s' and
-			version = '%s' and arch = '%s') """ %
-			(roll, version, arch))
+        #
+        # remove the roll from 'node_rolls'
+        #
+        self.db.execute("""delete from node_rolls where
+            rollid = (select id from rolls where name = '%s' and
+            version = '%s' and arch = '%s') """ %
+            (roll, version, arch))
 
-		# Remove roll from database as well
-		self.db.execute("""delete from rolls
-			where name = '%s' and
-			version = '%s' and
-			arch = '%s'""" % (roll, version, arch))
+        # Remove roll from database as well
+        self.db.execute("""delete from rolls
+            where name = '%s' and
+            version = '%s' and
+            arch = '%s'""" % (roll, version, arch))
 
-	def clean_rolldir_linux(self, roll, version, arch, distrodir):
-		""" Clean out the roll's filesystem presence on Linux. """
-		rolls_dir = os.path.join(distrodir, 'install','rolls')
-		self.clean_dir(os.path.join(rolls_dir, roll, version, arch))
+    def clean_rolldir_linux(self, roll, version, arch, distrodir):
+        """ Clean out the roll's filesystem presence on Linux. """
+        rolls_dir = os.path.join(distrodir, 'install','rolls')
+        self.clean_dir(os.path.join(rolls_dir, roll, version, arch))
 
-	def clean_rolldir_sunos(self, roll, version, arch):
-		""" Clean out the roll's filesystem presence on Solaris. """
-		rolls_dir = os.path.join(distrodir, 'install','jumpstart','rolls')
-		self.clean_dir(os.path.join(rolls_dir, roll, version, arch))
+    def clean_rolldir_sunos(self, roll, version, arch):
+        """ Clean out the roll's filesystem presence on Solaris. """
+        rolls_dir = os.path.join(distrodir, 'install','jumpstart','rolls')
+        self.clean_dir(os.path.join(rolls_dir, roll, version, arch))
 
-	def clean_dir(self, dir):
-		# This function cleans up a given directory and
-		# removes it from the face of the harddisk
-		if os.path.exists(dir):
-			for root, dirs, files in os.walk(dir, topdown=False):
-				for name in files:
-					os.remove(os.path.join(root, name))
-				for name in dirs:
-					if os.path.islink(os.path.join(root,
-						name)):
-						os.remove(os.path.join(root,
-							name))
-					else:
-						os.rmdir(os.path.join(root,
-							name))
+    def clean_dir(self, dir):
+        # This function cleans up a given directory and
+        # removes it from the face of the harddisk
+        if os.path.exists(dir):
+            for root, dirs, files in os.walk(dir, topdown=False):
+                for name in files:
+                    os.remove(os.path.join(root, name))
+                for name in dirs:
+                    if os.path.islink(os.path.join(root,
+                        name)):
+                        os.remove(os.path.join(root,
+                            name))
+                    else:
+                        os.rmdir(os.path.join(root,
+                            name))
 
-			os.removedirs(dir)
+            os.removedirs(dir)
 
 

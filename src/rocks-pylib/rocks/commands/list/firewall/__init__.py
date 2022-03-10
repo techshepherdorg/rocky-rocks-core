@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -96,57 +96,57 @@
 import rocks.commands
 
 class command(rocks.commands.CategoryArgumentProcessor,
-	rocks.commands.NetworkArgumentProcessor,
-	rocks.commands.list.command):
-	pass
+    rocks.commands.NetworkArgumentProcessor,
+    rocks.commands.list.command):
+    pass
 
 class Command(command):
-	"""
-	List the firewall rules for a particular category
+    """
+    List the firewall rules for a particular category
 
-	<arg type='string' name='category=index' optional='1'>
-	[global,os,appliance,host]=index.
+    <arg type='string' name='category=index' optional='1'>
+    [global,os,appliance,host]=index.
 
-	list rules index (member) of category. e.g.
-	os=linux, appliance=login, or host=compute-0-0.
+    list rules index (member) of category. e.g.
+    os=linux, appliance=login, or host=compute-0-0.
 
-	global, global=, and global=global all refer
-	to the global category.
+    global, global=, and global=global all refer
+    to the global category.
 
-	</arg>
+    </arg>
 
-	<param type='integer' name='maxwidth' optional='1' default='24'>
-	Maximum width of comment and flags field. Default is 24.
-	</param>
-	"""
+    <param type='integer' name='maxwidth' optional='1' default='24'>
+    Maximum width of comment and flags field. Default is 24.
+    </param>
+    """
 
-	def run(self, params, args):
-		self.beginOutput()
-		if '@ROCKSPARAM0' in params:
-			if not params['@ROCKSPARAM0'].startswith('maxwidth'):
-				args.append(params['@ROCKSPARAM0'])
-		(maxwidth,) = self.fillParams([('maxwidth',24),])
-		maxwidth = int(maxwidth)
+    def run(self, params, args):
+        self.beginOutput()
+        if '@ROCKSPARAM0' in params:
+            if not params['@ROCKSPARAM0'].startswith('maxwidth'):
+                args.append(params['@ROCKSPARAM0'])
+        (maxwidth,) = self.fillParams([('maxwidth',24),])
+        maxwidth = int(maxwidth)
 
-		indices =  self.getCategoryIndices(args, wildcard=1)
+        indices =  self.getCategoryIndices(args, wildcard=1)
 
-		for category,index in indices:
-			self.db.execute("""SELECT category, catindex, rulename, insubnet, outsubnet, service,
-					protocol, chain, action, flags, comment from
-					vfirewalls WHERE category LIKE '%s' 
-					AND catindex LIKE '%s' ORDER BY category,catindex,rulename""" % (category,index))
+        for category,index in indices:
+            self.db.execute("""SELECT category, catindex, rulename, insubnet, outsubnet, service,
+                    protocol, chain, action, flags, comment from
+                    vfirewalls WHERE category LIKE '%s' 
+                    AND catindex LIKE '%s' ORDER BY category,catindex,rulename""" % (category,index))
 
-			for cat, idx, rulename, i, o, s, p, c, a, f, cmt in self.db.fetchall():
-				network = self.getNetworkName(i)
-				output_network = self.getNetworkName(o)
-	
-			 	if f is not None: f = f[0:maxwidth]
-				if cmt is not None: cmt = cmt[0:maxwidth]
-				self.addOutput('',(rulename, s, p, c, a, network,
-					output_network, f, cmt, '%s:%s' % (cat,idx)))
-	
-		self.endOutput(header=['', 'rulename', 'service', 'protocol', 'chain',
-			'action', 'network', 'output-network', 'flags',
-			'comment', 'category'])
+            for cat, idx, rulename, i, o, s, p, c, a, f, cmt in self.db.fetchall():
+                network = self.getNetworkName(i)
+                output_network = self.getNetworkName(o)
+    
+                if f is not None: f = f[0:maxwidth]
+                if cmt is not None: cmt = cmt[0:maxwidth]
+                self.addOutput('',(rulename, s, p, c, a, network,
+                    output_network, f, cmt, '%s:%s' % (cat,idx)))
+    
+        self.endOutput(header=['', 'rulename', 'service', 'protocol', 'chain',
+            'action', 'network', 'output-network', 'flags',
+            'comment', 'category'])
 
 

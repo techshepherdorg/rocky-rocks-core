@@ -24,7 +24,7 @@ PY.VERSION	= 2.7
 endif
 PY.PATH		= /opt/rocks/bin/python
 ifeq ($(strip $(VERSION.MAJOR)), 8)
-PY.VERSION	= $(shell python -c 'import sys; sys.stdout.write("%d.%d"%(sys.version_info.major,sys.version_info.minor))')
+PY.VERSION	= 3.10
 PY.PATH		= /opt/rocks/bin/python3
 endif
 PY.LIB		= python$(PY.VERSION)

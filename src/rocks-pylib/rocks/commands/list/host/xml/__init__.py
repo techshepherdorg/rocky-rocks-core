@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -152,74 +152,74 @@ import socket
 import rocks.commands
 
 class Command(rocks.commands.list.host.command):
-	"""
-	Lists the monolithic XML configuration file for hosts. For each host
-	supplied on the command line, this command prints the hostname and
-	XML file configuration for that host. This is the same XML
-	configuration file that is sent back to a host when a host begins
-	it's installation procedure.
+    """
+    Lists the monolithic XML configuration file for hosts. For each host
+    supplied on the command line, this command prints the hostname and
+    XML file configuration for that host. This is the same XML
+    configuration file that is sent back to a host when a host begins
+    it's installation procedure.
 
-	<arg optional='1' type='string' name='host' repeat='1'>
-	Zero, one or more host names. If no host names are supplied, info about
-	all the known hosts is listed.
-	</arg>
+    <arg optional='1' type='string' name='host' repeat='1'>
+    Zero, one or more host names. If no host names are supplied, info about
+    all the known hosts is listed.
+    </arg>
 
         <param type='string' name='roll'>
         If set, only expand nodes from the named roll. If not
         supplied, then the all rolls are used.
         </param>
 
-	<example cmd='list host xml compute-0-0'>
-	List the XML configuration file for compute-0-0.
-	</example>
+    <example cmd='list host xml compute-0-0'>
+    List the XML configuration file for compute-0-0.
+    </example>
 
-	<example cmd='list host xml'>
-	List the XML configuration files for all known hosts.
-	</example>
-	"""
+    <example cmd='list host xml'>
+    List the XML configuration files for all known hosts.
+    </example>
+    """
 
-	def run(self, params, args):
+    def run(self, params, args):
 
-                (roll, ) = self.fillParams([('roll', )])
+        (roll, ) = self.fillParams([('roll', )])
                 
-		self.beginOutput()
+        self.beginOutput()
 
-		for host in self.getHostnames(args):
+        for host in self.getHostnames(args):
 
-			# Find the node, dist, and graph for the host
-			
-			self.db.execute("""select d.name,a.graph,a.node,m.name
-				from appliances a, nodes n, 
-				memberships m, distributions d where
-				m.distribution=d.id and m.id=n.membership and
-				a.id=m.appliance and n.name='%s'""" % host)
-			(dist, graph, node, membership) = self.db.fetchone()
-			
-			# Call "rocks list node xml" with attrs{} dictionary
-			# set from the database.
+            # Find the node, dist, and graph for the host
+            
+            self.db.execute("""select d.name,a.graph,a.node,m.name
+                from appliances a, nodes n, 
+                memberships m, distributions d where
+                m.distribution=d.id and m.id=n.membership and
+                a.id=m.appliance and n.name='%s'""" % host)
+            (dist, graph, node, membership) = self.db.fetchone()
+            
+            # Call "rocks list node xml" with attrs{} dictionary
+            # set from the database.
 
-			self.db.execute("""SELECT nt.ip, nt.mac 
-				FROM networks nt, nodes n, subnets s 
-				WHERE s.name="private" AND
-				nt.node=n.id AND nt.subnet=s.id AND
-				nt.ip IS NOT NULL AND
-				n.name='%s'""" % host)
-                        address, ksmac= self.db.fetchone()
+            self.db.execute("""SELECT nt.ip, nt.mac 
+                FROM networks nt, nodes n, subnets s 
+                WHERE s.name="private" AND
+                nt.node=n.id AND nt.subnet=s.id AND
+                nt.ip IS NOT NULL AND
+                n.name='%s'""" % host)
+            address, ksmac= self.db.fetchone()
 
-			attrs = self.db.getHostAttrs(host)
-			attrs['hostaddr']	= address
-			attrs['ksmac']	= ksmac 
-			attrs['distribution']	= dist
-			attrs['graph']		= graph
-			attrs['membership']	= membership
+            attrs = self.db.getHostAttrs(host)
+            attrs['hostaddr']    = address
+            attrs['ksmac']    = ksmac 
+            attrs['distribution']    = dist
+            attrs['graph']        = graph
+            attrs['membership']    = membership
 
-			args = [ node ]
-			args.append('attrs=%s' % attrs)
-			if roll:
-				args.append('roll=%s' % roll)
-			xml = self.command('list.node.xml', args)
-			for line in xml.split('\n'):
-				self.addOutput(host, line)
+            args = [ node ]
+            args.append('attrs=%s' % attrs)
+            if roll:
+                args.append('roll=%s' % roll)
+            xml = self.command('list.node.xml', args)
+            for line in xml.split('\n'):
+                self.addOutput(host, line)
 
-		self.endOutput(padChar='')
+        self.endOutput(padChar='')
 

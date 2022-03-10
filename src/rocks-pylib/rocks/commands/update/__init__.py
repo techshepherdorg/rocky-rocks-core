@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -90,151 +90,151 @@ import rocks.file
 import rocks.commands
 
 class command(rocks.commands.Command):
-	MustBeRoot = 1
+    MustBeRoot = 1
 
-	
+    
 class Command(command):
-	"""
-	Download and install updated packages and Rolls from Rocks.  This
-	does not include any OS packages.
-	
-	This does not rebuild the distribution or update the backend nodes.
-	
-	<example cmd='update'>
-	Updates the frontend.
-	</example>
-	"""
+    """
+    Download and install updated packages and Rolls from Rocks.  This
+    does not include any OS packages.
+    
+    This does not rebuild the distribution or update the backend nodes.
+    
+    <example cmd='update'>
+    Updates the frontend.
+    </example>
+    """
 
-	
-	def httpExists(self, url):
-		"""tests wether the URL exist or not on the server"""
-		
-		host, path = urllib.parse.urlsplit(url)[1:3]
-		try:
-			connection = http.client.HTTPConnection(host)  ## Make HTTPConnection Object
-			connection.request("HEAD", path)
-			responseOb = connection.getresponse()      ## Grab HTTPResponse Object
+    
+    def httpExists(self, url):
+        """tests wether the URL exist or not on the server"""
+        
+        host, path = urllib.parse.urlsplit(url)[1:3]
+        try:
+            connection = http.client.HTTPConnection(host)  ## Make HTTPConnection Object
+            connection.request("HEAD", path)
+            responseOb = connection.getresponse()      ## Grab HTTPResponse Object
 
-			if responseOb.status == 200:
-				return True
-			else:
-				return False
-		except Exception as e:
-			return False
+            if responseOb.status == 200:
+                return True
+            else:
+                return False
+        except Exception as e:
+            return False
 
-	
-	def run(self, params, args):
-		if len(args):
-			self.abort('command does not take arguments')
+    
+    def run(self, params, args):
+        if len(args):
+            self.abort('command does not take arguments')
 
-		ver	= self.db.getHostAttr('localhost', 'rocks_version')
-		url	= self.db.getHostAttr('localhost', 'updates_url')
-		path	= self.db.getHostAttr('localhost', 'updates_path')
-		
-		if not ver:
-			self.abort('unknown rocks version')
+        ver    = self.db.getHostAttr('localhost', 'rocks_version')
+        url    = self.db.getHostAttr('localhost', 'updates_url')
+        path    = self.db.getHostAttr('localhost', 'updates_path')
+        
+        if not ver:
+            self.abort('unknown rocks version')
 
-		if not url:
-			url  = 'http://www.rocksclusters.org/'
-			url += 'ftp-site/pub/rocks/rocks-%s/%s/updates/' % \
-				(ver, self.os)
+        if not url:
+            url  = 'http://www.rocksclusters.org/'
+            url += 'ftp-site/pub/rocks/rocks-%s/%s/updates/' % \
+                (ver, self.os)
 
-		if not path:
-			path = '/export/rocks/updates'
+        if not path:
+            path = '/export/rocks/updates'
 
-		try:
-			host = url.split('//', 1)[1].split('/')[0]
-		except:
-			self.abort('invalid url')
+        try:
+            host = url.split('//', 1)[1].split('/')[0]
+        except:
+            self.abort('invalid url')
 
-		if not os.path.exists(path):
-			os.system('mkdir -p %s' % path)
-		
-		if not self.httpExists(url) : 
-			print("No updates are available at the moment...")
-			return
-		os.chdir(path)
-		self.command('create.mirror', [ url, 'rollname=rocks-updates' ])
-		os.system('createrepo %s' % host)
+        if not os.path.exists(path):
+            os.system('mkdir -p %s' % path)
+        
+        if not self.httpExists(url) : 
+            print("No updates are available at the moment...")
+            return
+        os.chdir(path)
+        self.command('create.mirror', [ url, 'rollname=rocks-updates' ])
+        os.system('createrepo %s' % host)
 
-		# Always re-write the rocks-updates.repo yum file
+        # Always re-write the rocks-updates.repo yum file
 
-		repo = '/etc/yum.repos.d/rocks-updates.repo'
-		file = open(repo, 'w')
-		file.write('[Rocks-%s-Updates]\n' % ver)
-		file.write('name=Rocks %s Updates\n' % ver)
-		file.write('baseurl=file://%s/%s\n' % (path, host))
-		file.close()
+        repo = '/etc/yum.repos.d/rocks-updates.repo'
+        file = open(repo, 'w')
+        file.write('[Rocks-%s-Updates]\n' % ver)
+        file.write('name=Rocks %s Updates\n' % ver)
+        file.write('baseurl=file://%s/%s\n' % (path, host))
+        file.close()
 
-		# Add the updates roll and enable it, but do not rebuild the
-		# distribution.  The user should do this when they are ready.
-		# We also nuke the .iso since it is not really safe to use
-		# outside of this command.
+        # Add the updates roll and enable it, but do not rebuild the
+        # distribution.  The user should do this when they are ready.
+        # We also nuke the .iso since it is not really safe to use
+        # outside of this command.
 
-		self.command('add.roll', [
-			'rocks-updates-%s-0.%s.disk1.iso' % (ver, self.arch),
-			'clean=yes'
-			])
-		os.unlink('rocks-updates-%s-0.%s.disk1.iso' % (ver, self.arch))
-		os.unlink('roll-rocks-updates.xml')
-		self.command('enable.roll', [
-			'rocks-updates',
-			'arch=%s' % self.arch,
-			'version=%s' % ver
-			])
+        self.command('add.roll', [
+            'rocks-updates-%s-0.%s.disk1.iso' % (ver, self.arch),
+            'clean=yes'
+            ])
+        os.unlink('rocks-updates-%s-0.%s.disk1.iso' % (ver, self.arch))
+        os.unlink('roll-rocks-updates.xml')
+        self.command('enable.roll', [
+            'rocks-updates',
+            'arch=%s' % self.arch,
+            'version=%s' % ver
+            ])
 
-		# Update the packages on the frontend, but only from this new
-		# YUM repository.
+        # Update the packages on the frontend, but only from this new
+        # YUM repository.
 
-		os.system('yum --disablerepo="*" '
-			'--enablerepo=Rocks-%s-Updates update' % ver)
+        os.system('yum --disablerepo="*" '
+            '--enablerepo=Rocks-%s-Updates update' % ver)
 
-		# Determine what Rolls are on the disk and remove the XML
-		# and update scripts from Rolls that we do not have enabled
+        # Determine what Rolls are on the disk and remove the XML
+        # and update scripts from Rolls that we do not have enabled
 
-		self.db.execute("""select name from rolls where
-			enabled='yes' and version='%s'""" % ver)
-		rolls = []
-		for roll, in self.db.fetchall():
-			rolls.append(roll)
-	
-		# Go into the rocks-updates Roll and remove the
-		# kickstart profile rpms that are for rolls we are not
-		# using (not enabled).
+        self.db.execute("""select name from rolls where
+            enabled='yes' and version='%s'""" % ver)
+        rolls = []
+        for roll, in self.db.fetchall():
+            rolls.append(roll)
+    
+        # Go into the rocks-updates Roll and remove the
+        # kickstart profile rpms that are for rolls we are not
+        # using (not enabled).
 
-		tree = rocks.file.Tree(os.path.join('..', 'install', 'rolls',
-			'rocks-updates', ver, self.arch,
-			'RedHat', 'RPMS'))
-		for file in tree.getFiles():
-			name, ext  = os.path.splitext(file.getName())
-                        try:
-	                        file.getPackageName()
-                        except AttributeError:
-				continue
-			tokens = file.getBaseName().split('-')
-			if len(tokens) != 3:
-				continue
-			if tokens[0] == 'roll' and tokens[2] == 'kickstart':
-				if tokens[2] in rolls:
-					continue
-				print('+ roll not enabled, removed %s' \
-					% file.getName())
-				os.unlink(file.getFullName())
+        tree = rocks.file.Tree(os.path.join('..', 'install', 'rolls',
+            'rocks-updates', ver, self.arch,
+            'RedHat', 'RPMS'))
+        for file in tree.getFiles():
+            name, ext  = os.path.splitext(file.getName())
+            try:
+                file.getPackageName()
+            except AttributeError:
+                continue
+            tokens = file.getBaseName().split('-')
+            if len(tokens) != 3:
+                continue
+            if tokens[0] == 'roll' and tokens[2] == 'kickstart':
+                if tokens[2] in rolls:
+                    continue
+                print('+ roll not enabled, removed %s' \
+                    % file.getName())
+                os.unlink(file.getFullName())
 
 
-		# Scan the updates for any .sh files and run these to update
-		# the Frontend after the RPMs are installed.
-		# Skip update scripts for Rolls that are not enabled.
+        # Scan the updates for any .sh files and run these to update
+        # the Frontend after the RPMs are installed.
+        # Skip update scripts for Rolls that are not enabled.
 
-		dir = url.split('//', 1)[1]
-		for file in os.listdir(dir):
-			if os.path.splitext(file)[1] != '.sh':
-				continue
-			tokens = file.split('-', 1)
-			if tokens[0] == 'update':
-				if not tokens[1] in rolls:
-					print('+ roll not enabled, ignored %s' \
-					      % file)
-					continue
-			os.system('sh -x %s' % os.path.join(dir, file))
+        dir = url.split('//', 1)[1]
+        for file in os.listdir(dir):
+            if os.path.splitext(file)[1] != '.sh':
+                continue
+            tokens = file.split('-', 1)
+            if tokens[0] == 'update':
+                if not tokens[1] in rolls:
+                    print('+ roll not enabled, ignored %s' \
+                          % file)
+                    continue
+            os.system('sh -x %s' % os.path.join(dir, file))
 

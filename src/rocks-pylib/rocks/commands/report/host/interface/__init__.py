@@ -2,13 +2,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -189,469 +189,469 @@ import re
 import rocks.commands
 
 class Command(rocks.commands.HostArgumentProcessor,
-	rocks.commands.report.command):
-	"""
-	Output the network configuration file for a host's interface.
-
-	<arg type='string' name='host'>
-	One host name.
-	</arg>
-
-	<param type='string' name='iface'>
-	Output a configuration file for this host's interface (e.g. 'eth0').
-	If no 'iface' parameter is supplied, then configuration files
-	for every interface defined for the host will be output (and each
-	file will be delineated by &lt;file&gt; and &lt;/file&gt; tags).
-	</param>
-
-	<example cmd='report host interface compute-0-0 iface=eth0'>
-	Output a network configuration file for compute-0-0's eth0 interface.
-	</example>
-	"""
-
-	def isPhysicalHost(self, host):
-		#
-		# determine if this is 'physical' machine, that is, not a VM.
-		#
-		rows = self.db.execute("""show tables like 'vm_nodes' """)
-
-		if rows == 0:
-			#
-			# the Xen roll is not installed, so all hosts are
-			# physical hosts
-			#
-			retval = 1
-		else:
-			rows = self.db.execute("""select vn.id from
-				vm_nodes vn, nodes n where
-				n.name = '%s' and vn.node = n.id""" % (host))
-
-			if rows == 0:
-				#
-				# this host is *not* in the VM nodes table, so
-				# it is a physical host
-				#
-				retval = 1
-			else:
-				retval = 0
-
-		return retval
-
-
-	def isKVMContainer(self, host):
-		"""return True if host can run kvm vm host 
-		(aka it means that we have different networking) """
-		#TODO move this function probably vm.py is a good candidate
-		try:
-			import rocks.vmconstant
-			if rocks.vmconstant.virt_engine != "kvm":
-				return False
-		except ImportError:
-			#xen or kvm roll not installed
-			return False
-
-		#
-		# I want to be able to undefine kvm bridging on a frontend
-		# now defining  kvm == false will disable that
-		#
-		bridged = self.db.getHostAttr(host, 'kvm')
-		if bridged == 'true':
-			return True
-		elif bridged == 'false':
-			return False
-
-		# if kvm is not defined move to the old method
-		appliance = self.db.getHostAttr(host, 'appliance' )
-		if appliance and appliance == 'frontend':
-			return True
-		return False
-
-
-	def writeIPMI(self, host, ip, channel, netmask):
-		defaults = [ ('IPMI_SI', 'yes'),
-			('DEV_IPMI', 'yes'),
-			('IPMI_WATCHDOG', 'no'),
-			('IPMI_WATCHDOG_OPTIONS', '"timeout=60"'),
-			('IPMI_POWEROFF', 'no'),
-			('IPMI_POWERCYCLE', 'no'),
-			('IPMI_IMB', 'no') ]
-
-		self.addOutput(host,
-			'<file name="/etc/sysconfig/ipmi" perms="500">')
-
-		for var, default in defaults:
-			attr = self.db.getHostAttr(host, var)
-			if not attr:
-				attr = default
-			self.addOutput(host, '%s=%s' % (var, attr))
-
-		self.addOutput(host, 'ipmitool lan set %s ipsrc static'
-			% (channel))
-		self.addOutput(host, 'ipmitool lan set %s ipaddr %s'
-			% (channel, ip))
-		self.addOutput(host, 'ipmitool lan set %s netmask %s'
-			% (channel, netmask))
-		self.addOutput(host, 'ipmitool lan set %s arp respond on'
-			% (channel))
-
-		attr = self.db.getHostAttr(host, 'ipmi_password')
-		if attr:
-			password = attr
-		else:
-			password = 'admin'
-
-		attr = self.db.getHostAttr(host, 'ipmi_admin_user_number')
-		if attr:
-			user_number = attr
-		else:
-			user_number = '1'
-
-		self.addOutput(host, 'ipmitool user set password %s %s'
-			% (user_number, password))
-
-		self.addOutput(host, 'ipmitool lan set %s access on'
-			% (channel))
-		self.addOutput(host, 'ipmitool lan set %s user'
-			% (channel))
-		self.addOutput(host, 'ipmitool lan set %s auth ADMIN PASSWORD'
-			% (channel))
-
-		self.addOutput(host, '</file>')
-
-	def writeBridgedConfig(self, host, mac, ip, device, netmask,
-			vlanid, mtu, options, channel, active, net_id):
-		""" called when the interface is on a host that can host KVM VM """
-		outputText = []
-		brName = device
-		device = "p" + device
-		testOptions="%s" % options
-		if re.match('dhcp', testOptions.lower()):
-			dhcp = 1 # tell device to dhcp, explicitly
-		else:
-			dhcp = 0
-
-		#    ------      physical dev in promisc mode
-		s = '<file name="/etc/sysconfig/network-scripts/ifcfg-'
-		s += '%s">' % (device)
-		self.addOutput(host, s)
-		#add output
-		outputText.append( 'DEVICE=%s' % device)
-		if mac:
-			outputText.append( 'HWADDR=%s' % mac)
-		if vlanid:
-			#if this is a vlan we don't create the bridge 
-			#and we use the macvtap driver for kvm
-			outputText.append( 'VLAN=yes')
-		if ip and netmask:
-			outputText.append( 'BRIDGE="%s"' % brName)
-		if active :
-			outputText.append( 'ONBOOT=yes')
-		else : 
-			outputText.append( 'ONBOOT=no' )
-		outputText.append( 'BOOTPROTO=none' )
-		if mtu:
-			outputText.append( 'MTU=%s' % mtu)
-	
-		## run the plugins to mod this text
-		self.helperRunPlugin(host, net_id, outputText)
-		for line in outputText:
-			self.addOutput(host, line)
-		self.addOutput(host, '</file>')
-
-		# bridge with the name of IP address of the original interface
-		# attached to the physical interface
-		if ip and netmask:
-			outputText = []
-			s = '<file name="/etc/sysconfig/network-scripts/ifcfg-'
-			s += '%s">' % brName
-			self.addOutput(host, s)
-			#    ------      bridge dev with IP
-			outputText.append('DEVICE=%s' % brName)
-			outputText.append( 'TYPE=Bridge')
-			if ip and netmask:
-				outputText.append( 'IPADDR=%s' % ip)
-				outputText.append( 'NETMASK=%s' % netmask)
-			if dhcp:
-				outputText.append( 'BOOTPROTO=dhcp')
-			else:
-				outputText.append( 'BOOTPROTO=none' )
-			if active :
-				outputText.append( 'ONBOOT=yes')
-			else : 
-				outputText.append( 'ONBOOT=no' )
-			if mtu:
-				outputText.append( 'MTU=%s' % mtu)
-			self.helperRunPlugin(host, net_id, outputText)
-			for line in outputText:
-				self.addOutput(host, line)
-			self.addOutput(host, '</file>')
-		else:
-			# if the original brName file is not written we need
-			# to make sure default Anaconda file gets deleted
-			self.addOutput(host,
-				'rm -f /etc/sysconfig/network-scripts/ifcfg-%s'
-				% brName)
-
-
-
-
-
-	def writeConfig(self, host, mac, ip, device, netmask, vlanid, mtu,
-			options, channel, interfaces_name, net_id):
-
-		configured = 0
-		outputText = []
-
-		# Should we set up DHCP on this device?
-		testOptions="%s" % options
-		if re.match('dhcp', testOptions.lower()):
-			dhcp = 1 # tell device to dhcp, explicitly
-		else:
-			dhcp = 0
-
-		reg = re.compile('bond[0-9]+')
-
-		outputText.append('DEVICE=%s' % device )
-
-		# we use dhcp in cloud configurations so mac addresses are no good
-		if mac and not dhcp:
-			outputText.append('HWADDR=%s' % mac)
-
-		if ip and netmask:
-			if dhcp:
-				outputText.append( 'BOOTPROTO=dhcp')
-			else:	
-				outputText.append( 'IPADDR=%s' % ip)
-				outputText.append( 'NETMASK=%s' % netmask)
-				outputText.append( 'BOOTPROTO=none')
-
-			outputText.append( 'ONBOOT=yes')
-
-			if reg.match(device) and options:
-				outputText.append( 'BONDING_OPTS="%s"' %
-					options)
-
-			configured = 1
-
-		if vlanid:
-			outputText.append( 'VLAN=yes')
-			outputText.append( 'ONBOOT=yes')
-			configured = 1
-
-		#
-		# check if this is part of a bonded channel
-		#
-		if channel and reg.match(channel):
-			outputText.append( 'BOOTPROTO=none')
-			outputText.append( 'ONBOOT=yes')
-			outputText.append( 'MASTER=%s' % channel)
-			outputText.append( 'SLAVE=yes')
-			configured = 1
-
-		if not configured:
-			if dhcp:
-				outputText.append( 'BOOTPROTO=dhcp')
-				outputText.append( 'ONBOOT=yes')
-			else:
-				outputText.append( 'BOOTPROTO=none')
-				if interfaces_name and any([device + '.' in temp for temp in interfaces_name]):
-					# this is a ethN and we have a ethN.vlanid so this 
-					# dev must be active, red hat init madness
-					outputText.append( 'ONBOOT=yes')
-				else:
-					outputText.append( 'ONBOOT=no')
-
-		if mtu:
-			outputText.append( 'MTU=%s' % mtu)
-		self.helperRunPlugin(host, net_id, outputText)
-		for line in outputText:
-			self.addOutput(host,line)
-		
-
-	def writeModprobe(self, host, device, module, options):
-		if not module:
-			return
-
-		#self.isKVMContainer(host)
-		#
-		# new module loading mechanism
-		#
-		self.addOutput(host, '<file name="/etc/modprobe.d/%s.conf">' % device)
-		if self.isKVMContainer(host):
-			#on a kvm host the device is called p<devicename>
-			self.addOutput(host, 'alias p%s %s' % (device, module))
-		else:
-			self.addOutput(host, 'alias %s %s' % (device, module))
-
-		reg = re.compile('bond[0-9]+')
-
-		#
-		# don't write the options here if this is a bonded interface,
-		# they written in the ifcfg-bond* file (see writeConfig() above)
-		#
-		if options and not reg.match(device):
-			self.addOutput(host, 'options %s %s' % (module, options))
-		self.addOutput(host, '</file>')
-
-
-	def run(self, params, args):
-
-		self.iface, = self.fillParams([('iface', ), ])
-		self.beginOutput()
-
-		self.plugins = self.loadPlugins()
-
-                for host in self.getHostnames(args):
-			osname = self.db.getHostAttr(host, 'os')               
-			f = getattr(self, 'run_%s' % (osname))
-			f(host)
-
-		self.endOutput(padChar = '')
-
-
-	def helperRunPlugin(self, host, net_id, configText):
-		# we need to check if anyplugin exists or not
-		# if not runPlugin will invoke loadPlugin every time
-		args = {'host': host, 'net_id': net_id, 'text' : configText}
-		if self.plugins:
-			self.runPlugins(args, plugins=self.plugins)
-
-
-	def run_sunos(self, host):
-		# Ignore IPMI devices and get all the other configured
-		# interfaces
-		self.db.execute("select networks.ip, networks.device, "	+\
-				"subnets.netmask from networks, nodes, " +\
-				"subnets where nodes.name='%s' " % (host)+\
-				"and networks.subnet=subnets.id " +\
-				"and networks.device!='ipmi' "	+\
-				"and networks.node=nodes.id")
-
-		for row in self.db.fetchall():
-			(ip, device, netmask) = row
-			if ip is not None:
-				self.write_host_file_sunos(ip, netmask, device)
-		
-		# Get all the IPMI interfaces
-		self.db.execute("select networks.ip, networks.module, " +\
-				"subnets.netmask from networks, nodes, "+\
-				"subnets where nodes.name='%s' " %(host)+\
-				"and networks.device='ipmi' "		+\
-				"and networks.subnet=subnets.id "		+\
-				"and networks.node=nodes.id")
-
-		for row in self.db.fetchall():
-			(ip, channel, netmask) = row
-			self.addOutput(host, 'ipmitool lan set %s ipsrc static'
-				% (channel))
-			self.addOutput(host, 'ipmitool lan set %s ipaddr %s'
-				% (channel, ip))
-			self.addOutput(host, 'ipmitool lan set %s netmask %s'
-				% (channel, netmask))
-			self.addOutput(host, 'ipmitool lan set %s arp respond on'
-				% (channel))
-			self.addOutput(host, 'ipmitool user set password 1 admin')
-			self.addOutput(host, 'ipmitool lan set %s access on'
-				% (channel))
-			self.addOutput(host, 'ipmitool lan set %s user'
-				% (channel))
-			self.addOutput(host, 'ipmitool lan set %s auth ADMIN PASSWORD'
-				% (channel))
-	
-	def write_host_file_sunos(self, ip, netmask, device):
-		s = '<file name="/etc/hostname.%s">\n' % device
-		s += "%s netmask %s\n" % (ip, netmask)
-		s += '</file>\n'
-		self.addText(s)
-		
-	def run_linux(self, host):
-
-		self.db.execute("""select net.device from networks net, nodes n
-			where net.node = n.id and n.name = "%s"; """ % (host))
-
-		interfaces_name = []
-		for row in self.db.fetchall():
-			interfaces_name.append(row[0])
-
-		self.db.execute("""select distinctrow 
-			net.mac, net.ip, net.device, s.netmask, net.vlanid, net.subnet, 
-			net.module, s.mtu, net.options, net.channel, net.id
-			from nodes n, networks net 
-			left outer join subnets s 
-			on net.subnet = s.id  
-			where net.node = n.id and n.name = "%s" 
-			order by net.id;""" % (host))
-
-
-		for row in self.db.fetchall():
-			(mac, ip, device, netmask, vlanid, subnetid, module,
-				mtu, options, channel, net_id) = row
-
-			testOptions="%s" % options
-			if re.match('noreport', testOptions.lower()):
-				continue # don't do anything if noreport set
-
-			if device == 'ipmi':
-				self.writeIPMI(host, ip, channel, netmask)
-				continue # ipmi is special, skip the standard stuff
-
-			if module == 'ovs-bridge' or module == 'ovs-link':
-				s = '<file name="'
-				s += '/etc/sysconfig/network-scripts/ifcfg-'
-				s += '%s">' % (device)
-				self.addOutput(host, s)
-				self.writeConfig(host, mac, ip, device, netmask, vlanid,
-					mtu, options, channel, interfaces_name, net_id)
-				self.addOutput(host, '</file>')
-				continue
-
-			if device and device[0:4] != 'vlan':
-				#
-				# output a script to update modprobe.conf
-				#
-				self.writeModprobe(host, device, module,
-					options)
-
-			if self.iface:
-				if self.iface == device:
-					self.writeConfig(host, mac, ip, device,
-						netmask, vlanid, mtu, options,
-						channel, interfaces_name, net_id)
-			else:
-				if self.isKVMContainer(host) and \
-						testOptions.find("nobridge") <=0:
-					#we have to set up bridged devices
-					if device.startswith( 'vlan' ):
-						# vlan interfaces are not configured by RH network script
-						# any more but by the rocks sync host vlan command
-						pass
-					elif device.startswith('ib'):
-						# this is an infiniband interface and it deserve special
-						# treatment
-						s = '<file name="'
-						s += '/etc/sysconfig/network-scripts/ifcfg-'
-						s += '%s">' % (device)
-						self.addOutput(host, s)
-						self.writeConfig(host, mac, ip, device, netmask, vlanid,
-							mtu, options, channel, interfaces_name, net_id)
-						self.addOutput(host, '</file>')
-					else:
-						if subnetid:
-							# the interface is active bring it up at boot
-							self.writeBridgedConfig(host, mac, ip, device, netmask,
-								vlanid, mtu, options, channel, True, net_id)
-						else:
-							# inactive... don't bring it up when you boot
-							self.writeBridgedConfig(host, mac, ip, device, netmask,
-								vlanid, mtu, options, channel, False, net_id)
-				else:
-					s = '<file name="'
-					s += '/etc/sysconfig/network-scripts/ifcfg-'
-					s += '%s">' % (device)
-					self.addOutput(host, s)
-					self.writeConfig(host, mac, ip, device, netmask, vlanid,
-							mtu, options, channel, interfaces_name, net_id)
-					self.addOutput(host, '</file>')
+    rocks.commands.report.command):
+    """
+    Output the network configuration file for a host's interface.
+
+    <arg type='string' name='host'>
+    One host name.
+    </arg>
+
+    <param type='string' name='iface'>
+    Output a configuration file for this host's interface (e.g. 'eth0').
+    If no 'iface' parameter is supplied, then configuration files
+    for every interface defined for the host will be output (and each
+    file will be delineated by &lt;file&gt; and &lt;/file&gt; tags).
+    </param>
+
+    <example cmd='report host interface compute-0-0 iface=eth0'>
+    Output a network configuration file for compute-0-0's eth0 interface.
+    </example>
+    """
+
+    def isPhysicalHost(self, host):
+        #
+        # determine if this is 'physical' machine, that is, not a VM.
+        #
+        rows = self.db.execute("""show tables like 'vm_nodes' """)
+
+        if rows == 0:
+            #
+            # the Xen roll is not installed, so all hosts are
+            # physical hosts
+            #
+            retval = 1
+        else:
+            rows = self.db.execute("""select vn.id from
+                vm_nodes vn, nodes n where
+                n.name = '%s' and vn.node = n.id""" % (host))
+
+            if rows == 0:
+                #
+                # this host is *not* in the VM nodes table, so
+                # it is a physical host
+                #
+                retval = 1
+            else:
+                retval = 0
+
+        return retval
+
+
+    def isKVMContainer(self, host):
+        """return True if host can run kvm vm host 
+        (aka it means that we have different networking) """
+        #TODO move this function probably vm.py is a good candidate
+        try:
+            import rocks.vmconstant
+            if rocks.vmconstant.virt_engine != "kvm":
+                return False
+        except ImportError:
+            #xen or kvm roll not installed
+            return False
+
+        #
+        # I want to be able to undefine kvm bridging on a frontend
+        # now defining  kvm == false will disable that
+        #
+        bridged = self.db.getHostAttr(host, 'kvm')
+        if bridged == 'true':
+            return True
+        elif bridged == 'false':
+            return False
+
+        # if kvm is not defined move to the old method
+        appliance = self.db.getHostAttr(host, 'appliance' )
+        if appliance and appliance == 'frontend':
+            return True
+        return False
+
+
+    def writeIPMI(self, host, ip, channel, netmask):
+        defaults = [ ('IPMI_SI', 'yes'),
+            ('DEV_IPMI', 'yes'),
+            ('IPMI_WATCHDOG', 'no'),
+            ('IPMI_WATCHDOG_OPTIONS', '"timeout=60"'),
+            ('IPMI_POWEROFF', 'no'),
+            ('IPMI_POWERCYCLE', 'no'),
+            ('IPMI_IMB', 'no') ]
+
+        self.addOutput(host,
+            '<file name="/etc/sysconfig/ipmi" perms="500">')
+
+        for var, default in defaults:
+            attr = self.db.getHostAttr(host, var)
+            if not attr:
+                attr = default
+            self.addOutput(host, '%s=%s' % (var, attr))
+
+        self.addOutput(host, 'ipmitool lan set %s ipsrc static'
+            % (channel))
+        self.addOutput(host, 'ipmitool lan set %s ipaddr %s'
+            % (channel, ip))
+        self.addOutput(host, 'ipmitool lan set %s netmask %s'
+            % (channel, netmask))
+        self.addOutput(host, 'ipmitool lan set %s arp respond on'
+            % (channel))
+
+        attr = self.db.getHostAttr(host, 'ipmi_password')
+        if attr:
+            password = attr
+        else:
+            password = 'admin'
+
+        attr = self.db.getHostAttr(host, 'ipmi_admin_user_number')
+        if attr:
+            user_number = attr
+        else:
+            user_number = '1'
+
+        self.addOutput(host, 'ipmitool user set password %s %s'
+            % (user_number, password))
+
+        self.addOutput(host, 'ipmitool lan set %s access on'
+            % (channel))
+        self.addOutput(host, 'ipmitool lan set %s user'
+            % (channel))
+        self.addOutput(host, 'ipmitool lan set %s auth ADMIN PASSWORD'
+            % (channel))
+
+        self.addOutput(host, '</file>')
+
+    def writeBridgedConfig(self, host, mac, ip, device, netmask,
+            vlanid, mtu, options, channel, active, net_id):
+        """ called when the interface is on a host that can host KVM VM """
+        outputText = []
+        brName = device
+        device = "p" + device
+        testOptions="%s" % options
+        if re.match('dhcp', testOptions.lower()):
+            dhcp = 1 # tell device to dhcp, explicitly
+        else:
+            dhcp = 0
+
+        #    ------      physical dev in promisc mode
+        s = '<file name="/etc/sysconfig/network-scripts/ifcfg-'
+        s += '%s">' % (device)
+        self.addOutput(host, s)
+        #add output
+        outputText.append( 'DEVICE=%s' % device)
+        if mac:
+            outputText.append( 'HWADDR=%s' % mac)
+        if vlanid:
+            #if this is a vlan we don't create the bridge 
+            #and we use the macvtap driver for kvm
+            outputText.append( 'VLAN=yes')
+        if ip and netmask:
+            outputText.append( 'BRIDGE="%s"' % brName)
+        if active :
+            outputText.append( 'ONBOOT=yes')
+        else : 
+            outputText.append( 'ONBOOT=no' )
+        outputText.append( 'BOOTPROTO=none' )
+        if mtu:
+            outputText.append( 'MTU=%s' % mtu)
+    
+        ## run the plugins to mod this text
+        self.helperRunPlugin(host, net_id, outputText)
+        for line in outputText:
+            self.addOutput(host, line)
+        self.addOutput(host, '</file>')
+
+        # bridge with the name of IP address of the original interface
+        # attached to the physical interface
+        if ip and netmask:
+            outputText = []
+            s = '<file name="/etc/sysconfig/network-scripts/ifcfg-'
+            s += '%s">' % brName
+            self.addOutput(host, s)
+            #    ------      bridge dev with IP
+            outputText.append('DEVICE=%s' % brName)
+            outputText.append( 'TYPE=Bridge')
+            if ip and netmask:
+                outputText.append( 'IPADDR=%s' % ip)
+                outputText.append( 'NETMASK=%s' % netmask)
+            if dhcp:
+                outputText.append( 'BOOTPROTO=dhcp')
+            else:
+                outputText.append( 'BOOTPROTO=none' )
+            if active :
+                outputText.append( 'ONBOOT=yes')
+            else : 
+                outputText.append( 'ONBOOT=no' )
+            if mtu:
+                outputText.append( 'MTU=%s' % mtu)
+            self.helperRunPlugin(host, net_id, outputText)
+            for line in outputText:
+                self.addOutput(host, line)
+            self.addOutput(host, '</file>')
+        else:
+            # if the original brName file is not written we need
+            # to make sure default Anaconda file gets deleted
+            self.addOutput(host,
+                'rm -f /etc/sysconfig/network-scripts/ifcfg-%s'
+                % brName)
+
+
+
+
+
+    def writeConfig(self, host, mac, ip, device, netmask, vlanid, mtu,
+            options, channel, interfaces_name, net_id):
+
+        configured = 0
+        outputText = []
+
+        # Should we set up DHCP on this device?
+        testOptions="%s" % options
+        if re.match('dhcp', testOptions.lower()):
+            dhcp = 1 # tell device to dhcp, explicitly
+        else:
+            dhcp = 0
+
+        reg = re.compile('bond[0-9]+')
+
+        outputText.append('DEVICE=%s' % device )
+
+        # we use dhcp in cloud configurations so mac addresses are no good
+        if mac and not dhcp:
+            outputText.append('HWADDR=%s' % mac)
+
+        if ip and netmask:
+            if dhcp:
+                outputText.append( 'BOOTPROTO=dhcp')
+            else:    
+                outputText.append( 'IPADDR=%s' % ip)
+                outputText.append( 'NETMASK=%s' % netmask)
+                outputText.append( 'BOOTPROTO=none')
+
+            outputText.append( 'ONBOOT=yes')
+
+            if reg.match(device) and options:
+                outputText.append( 'BONDING_OPTS="%s"' %
+                    options)
+
+            configured = 1
+
+        if vlanid:
+            outputText.append( 'VLAN=yes')
+            outputText.append( 'ONBOOT=yes')
+            configured = 1
+
+        #
+        # check if this is part of a bonded channel
+        #
+        if channel and reg.match(channel):
+            outputText.append( 'BOOTPROTO=none')
+            outputText.append( 'ONBOOT=yes')
+            outputText.append( 'MASTER=%s' % channel)
+            outputText.append( 'SLAVE=yes')
+            configured = 1
+
+        if not configured:
+            if dhcp:
+                outputText.append( 'BOOTPROTO=dhcp')
+                outputText.append( 'ONBOOT=yes')
+            else:
+                outputText.append( 'BOOTPROTO=none')
+                if interfaces_name and any([device + '.' in temp for temp in interfaces_name]):
+                    # this is a ethN and we have a ethN.vlanid so this 
+                    # dev must be active, red hat init madness
+                    outputText.append( 'ONBOOT=yes')
+                else:
+                    outputText.append( 'ONBOOT=no')
+
+        if mtu:
+            outputText.append( 'MTU=%s' % mtu)
+        self.helperRunPlugin(host, net_id, outputText)
+        for line in outputText:
+            self.addOutput(host,line)
+        
+
+    def writeModprobe(self, host, device, module, options):
+        if not module:
+            return
+
+        #self.isKVMContainer(host)
+        #
+        # new module loading mechanism
+        #
+        self.addOutput(host, '<file name="/etc/modprobe.d/%s.conf">' % device)
+        if self.isKVMContainer(host):
+            #on a kvm host the device is called p<devicename>
+            self.addOutput(host, 'alias p%s %s' % (device, module))
+        else:
+            self.addOutput(host, 'alias %s %s' % (device, module))
+
+        reg = re.compile('bond[0-9]+')
+
+        #
+        # don't write the options here if this is a bonded interface,
+        # they written in the ifcfg-bond* file (see writeConfig() above)
+        #
+        if options and not reg.match(device):
+            self.addOutput(host, 'options %s %s' % (module, options))
+        self.addOutput(host, '</file>')
+
+
+    def run(self, params, args):
+
+        self.iface, = self.fillParams([('iface', ), ])
+        self.beginOutput()
+
+        self.plugins = self.loadPlugins()
+
+        for host in self.getHostnames(args):
+            osname = self.db.getHostAttr(host, 'os')               
+            f = getattr(self, 'run_%s' % (osname))
+            f(host)
+
+        self.endOutput(padChar = '')
+
+
+    def helperRunPlugin(self, host, net_id, configText):
+        # we need to check if anyplugin exists or not
+        # if not runPlugin will invoke loadPlugin every time
+        args = {'host': host, 'net_id': net_id, 'text' : configText}
+        if self.plugins:
+            self.runPlugins(args, plugins=self.plugins)
+
+
+    def run_sunos(self, host):
+        # Ignore IPMI devices and get all the other configured
+        # interfaces
+        self.db.execute("select networks.ip, networks.device, "    +\
+                "subnets.netmask from networks, nodes, " +\
+                "subnets where nodes.name='%s' " % (host)+\
+                "and networks.subnet=subnets.id " +\
+                "and networks.device!='ipmi' "    +\
+                "and networks.node=nodes.id")
+
+        for row in self.db.fetchall():
+            (ip, device, netmask) = row
+            if ip is not None:
+                self.write_host_file_sunos(ip, netmask, device)
+        
+        # Get all the IPMI interfaces
+        self.db.execute("select networks.ip, networks.module, " +\
+                "subnets.netmask from networks, nodes, "+\
+                "subnets where nodes.name='%s' " %(host)+\
+                "and networks.device='ipmi' "        +\
+                "and networks.subnet=subnets.id "        +\
+                "and networks.node=nodes.id")
+
+        for row in self.db.fetchall():
+            (ip, channel, netmask) = row
+            self.addOutput(host, 'ipmitool lan set %s ipsrc static'
+                % (channel))
+            self.addOutput(host, 'ipmitool lan set %s ipaddr %s'
+                % (channel, ip))
+            self.addOutput(host, 'ipmitool lan set %s netmask %s'
+                % (channel, netmask))
+            self.addOutput(host, 'ipmitool lan set %s arp respond on'
+                % (channel))
+            self.addOutput(host, 'ipmitool user set password 1 admin')
+            self.addOutput(host, 'ipmitool lan set %s access on'
+                % (channel))
+            self.addOutput(host, 'ipmitool lan set %s user'
+                % (channel))
+            self.addOutput(host, 'ipmitool lan set %s auth ADMIN PASSWORD'
+                % (channel))
+    
+    def write_host_file_sunos(self, ip, netmask, device):
+        s = '<file name="/etc/hostname.%s">\n' % device
+        s += "%s netmask %s\n" % (ip, netmask)
+        s += '</file>\n'
+        self.addText(s)
+        
+    def run_linux(self, host):
+
+        self.db.execute("""select net.device from networks net, nodes n
+            where net.node = n.id and n.name = "%s"; """ % (host))
+
+        interfaces_name = []
+        for row in self.db.fetchall():
+            interfaces_name.append(row[0])
+
+        self.db.execute("""select distinctrow 
+            net.mac, net.ip, net.device, s.netmask, net.vlanid, net.subnet, 
+            net.module, s.mtu, net.options, net.channel, net.id
+            from nodes n, networks net 
+            left outer join subnets s 
+            on net.subnet = s.id  
+            where net.node = n.id and n.name = "%s" 
+            order by net.id;""" % (host))
+
+
+        for row in self.db.fetchall():
+            (mac, ip, device, netmask, vlanid, subnetid, module,
+                mtu, options, channel, net_id) = row
+
+            testOptions="%s" % options
+            if re.match('noreport', testOptions.lower()):
+                continue # don't do anything if noreport set
+
+            if device == 'ipmi':
+                self.writeIPMI(host, ip, channel, netmask)
+                continue # ipmi is special, skip the standard stuff
+
+            if module == 'ovs-bridge' or module == 'ovs-link':
+                s = '<file name="'
+                s += '/etc/sysconfig/network-scripts/ifcfg-'
+                s += '%s">' % (device)
+                self.addOutput(host, s)
+                self.writeConfig(host, mac, ip, device, netmask, vlanid,
+                    mtu, options, channel, interfaces_name, net_id)
+                self.addOutput(host, '</file>')
+                continue
+
+            if device and device[0:4] != 'vlan':
+                #
+                # output a script to update modprobe.conf
+                #
+                self.writeModprobe(host, device, module,
+                    options)
+
+            if self.iface:
+                if self.iface == device:
+                    self.writeConfig(host, mac, ip, device,
+                        netmask, vlanid, mtu, options,
+                        channel, interfaces_name, net_id)
+            else:
+                if self.isKVMContainer(host) and \
+                        testOptions.find("nobridge") <=0:
+                    #we have to set up bridged devices
+                    if device.startswith( 'vlan' ):
+                        # vlan interfaces are not configured by RH network script
+                        # any more but by the rocks sync host vlan command
+                        pass
+                    elif device.startswith('ib'):
+                        # this is an infiniband interface and it deserve special
+                        # treatment
+                        s = '<file name="'
+                        s += '/etc/sysconfig/network-scripts/ifcfg-'
+                        s += '%s">' % (device)
+                        self.addOutput(host, s)
+                        self.writeConfig(host, mac, ip, device, netmask, vlanid,
+                            mtu, options, channel, interfaces_name, net_id)
+                        self.addOutput(host, '</file>')
+                    else:
+                        if subnetid:
+                            # the interface is active bring it up at boot
+                            self.writeBridgedConfig(host, mac, ip, device, netmask,
+                                vlanid, mtu, options, channel, True, net_id)
+                        else:
+                            # inactive... don't bring it up when you boot
+                            self.writeBridgedConfig(host, mac, ip, device, netmask,
+                                vlanid, mtu, options, channel, False, net_id)
+                else:
+                    s = '<file name="'
+                    s += '/etc/sysconfig/network-scripts/ifcfg-'
+                    s += '%s">' % (device)
+                    self.addOutput(host, s)
+                    self.writeConfig(host, mac, ip, device, netmask, vlanid,
+                            mtu, options, channel, interfaces_name, net_id)
+                    self.addOutput(host, '</file>')
 
 
 

@@ -4,13 +4,13 @@
 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,9 +27,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -61,37 +61,37 @@
 import rocks.commands
 
 class Command(rocks.commands.NetworkArgumentProcessor,
-	rocks.commands.set.command):
-	"""
-	Set the zone/domain name associated with a subnet
-	<arg name='network' type='string'>
-	Network Name
-	</arg>
-	<arg name='zone' type='string'>
-	Zone / Domain that the network belongs to.
-	Example: optiputer.net
-	</arg>
-	<param name='zone' type='string'>
-	Zone / Domain that the network belongs to.
-	Example: optiputer.net
-	</param>
-	"""
-	def run(self, params, args):
-		args, zone = self.fillPositionalArgs(('zone',))
-		if len(args) != 1:
-			self.abort('must supply a network')
-		if not zone:
-			self.abort('must supply zone')
+    rocks.commands.set.command):
+    """
+    Set the zone/domain name associated with a subnet
+    <arg name='network' type='string'>
+    Network Name
+    </arg>
+    <arg name='zone' type='string'>
+    Zone / Domain that the network belongs to.
+    Example: optiputer.net
+    </arg>
+    <param name='zone' type='string'>
+    Zone / Domain that the network belongs to.
+    Example: optiputer.net
+    </param>
+    """
+    def run(self, params, args):
+        args, zone = self.fillPositionalArgs(('zone',))
+        if len(args) != 1:
+            self.abort('must supply a network')
+        if not zone:
+            self.abort('must supply zone')
 
-		network = self.getNetworkNames(args)[0]
-		r = self.db.execute('select name from subnets ' +\
-			'where dnszone="%s"' % zone)
-		if r > 0:
-			n, = self.db.fetchone()
-			if n is not network:
-				self.abort('zone %s already exists' % zone)
+        network = self.getNetworkNames(args)[0]
+        r = self.db.execute('select name from subnets ' +\
+            'where dnszone="%s"' % zone)
+        if r > 0:
+            n, = self.db.fetchone()
+            if n is not network:
+                self.abort('zone %s already exists' % zone)
 
-		self.db.execute('update subnets '	+\
-			'set dnszone="%s" ' % zone	+\
-			'where name="%s"' % network)
+        self.db.execute('update subnets '    +\
+            'set dnszone="%s" ' % zone    +\
+            'where name="%s"' % network)
 

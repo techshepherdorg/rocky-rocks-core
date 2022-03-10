@@ -4,13 +4,13 @@
 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -27,9 +27,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -84,29 +84,29 @@
 import rocks.commands
 
 class Command(rocks.commands.NetworkArgumentProcessor,
-	rocks.commands.set.command):
-	"""
-	Sets/Unsets the capability for serving DNS
-	for a given subnet
-	<arg name='network' type='string'>
-	Name of the Network
-	</arg>
-	<arg name='servedns' type='bool'>
-	True/False
-	</arg>
-	<param name='servedns' type='bool'>
-	True/False
-	</param>
-	
-	"""
-	def run(self, params, args):
-		(args,servedns) = self.fillPositionalArgs(('servedns',))
-		if len(args) < 1:
-			self.abort('must supply network name')
+    rocks.commands.set.command):
+    """
+    Sets/Unsets the capability for serving DNS
+    for a given subnet
+    <arg name='network' type='string'>
+    Name of the Network
+    </arg>
+    <arg name='servedns' type='bool'>
+    True/False
+    </arg>
+    <param name='servedns' type='bool'>
+    True/False
+    </param>
+    
+    """
+    def run(self, params, args):
+        (args,servedns) = self.fillPositionalArgs(('servedns',))
+        if len(args) < 1:
+            self.abort('must supply network name')
 
-		servedns = self.str2bool(servedns)
-		for network in self.getNetworkNames(args):
-			self.db.execute('update subnets set '	+\
-				'servedns=%s ' % servedns	+\
-				'where name="%s"' % network)
+        servedns = self.str2bool(servedns)
+        for network in self.getNetworkNames(args):
+            self.db.execute('update subnets set '    +\
+                'servedns=%s ' % servedns    +\
+                'where name="%s"' % network)
 

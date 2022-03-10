@@ -2,13 +2,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -520,1521 +520,1521 @@ from xml.sax._exceptions import SAXParseException
 
 
 def Abort(message, doExit=1):
-	"""Print a standard error message and throw a
-	rocks.util.CommandError"""
-	
-	syslog.syslog(syslog.LOG_ERR, message)
-	raise rocks.util.CommandError(message)
+    """Print a standard error message and throw a
+    rocks.util.CommandError"""
+    
+    syslog.syslog(syslog.LOG_ERR, message)
+    raise rocks.util.CommandError(message)
 
 
 class OSArgumentProcessor:
-	"""An Interface class to add the ability to process os arguments."""
+    """An Interface class to add the ability to process os arguments."""
 
-	def getOSNames(self, args=None):
-		"""Returns a list of OS names.  For each arg in the ARGS list
-		normalize the name to one of either 'linux' or 'sunos' as
-		they are the only supported OSes.  If the ARGS list is empty
-		return a list of all supported OS names.
-		"""
+    def getOSNames(self, args=None):
+        """Returns a list of OS names.  For each arg in the ARGS list
+        normalize the name to one of either 'linux' or 'sunos' as
+        they are the only supported OSes.  If the ARGS list is empty
+        return a list of all supported OS names.
+        """
 
-		list = []
-		for arg in args:
-			s = arg.lower()
-			if s == 'linux':
-				list.append(s)
-			elif s == 'sunos':
-				list.append(s)
-			else:
-				self.abort('unknown os "%s"' % arg)
-		if not list:
-			list.append('linux')
-			list.append('sunos')
+        list = []
+        for arg in args:
+            s = arg.lower()
+            if s == 'linux':
+                list.append(s)
+            elif s == 'sunos':
+                list.append(s)
+            else:
+                self.abort('unknown os "%s"' % arg)
+        if not list:
+            list.append('linux')
+            list.append('sunos')
 
-		return list
-	
+        return list
+    
 
 class MembershipArgumentProcessor:
-	"""An Interface class to add the ability to process membership
-	arguments."""
-	
-	def getMembershipNames(self, args=None):
-		"""Returns a list of membership names from the database.
-		For each arg in the ARGS list find all the membership
-		names that match the arg (assume SQL regexp).  If an
-		arg does not match anything in the database we Abort.  If the
-		ARGS list is empty return all membership names.
-		"""
-		list = []
-		if not args:
-			args = [ '%' ] # find all memberships
-		for arg in args:
-			rows = self.db.execute("""select name from memberships 
-				where name like '%s'""" % arg)
-			if rows == 0 and arg == '%': # empty table is OK
-				continue
-			if rows < 1:
-				self.abort('unknown membership "%s"' % arg)
-			for name, in self.db.fetchall():
-				list.append(name)
-		return list
+    """An Interface class to add the ability to process membership
+    arguments."""
+    
+    def getMembershipNames(self, args=None):
+        """Returns a list of membership names from the database.
+        For each arg in the ARGS list find all the membership
+        names that match the arg (assume SQL regexp).  If an
+        arg does not match anything in the database we Abort.  If the
+        ARGS list is empty return all membership names.
+        """
+        list = []
+        if not args:
+            args = [ '%' ] # find all memberships
+        for arg in args:
+            rows = self.db.execute("""select name from memberships 
+                where name like '%s'""" % arg)
+            if rows == 0 and arg == '%': # empty table is OK
+                continue
+            if rows < 1:
+                self.abort('unknown membership "%s"' % arg)
+            for name, in self.db.fetchall():
+                list.append(name)
+        return list
 
 
 class DistributionArgumentProcessor:
-	"""An Interface class to add the ability to process distribution
-	arguments."""
-		
-	def getDistributionNames(self, args=None):
-		"""Returns a list of distribution names from the database.
-		For each arg in the ARGS list find all the distribution
-		names that match the arg (assume SQL regexp).  If an
-		arg does not match anything in the database we Abort.  If the
-		ARGS list is empty return all distribution names.
-		"""	
-		list = []
-		if not args:
-			args = [ '%' ] # find all distributions
+    """An Interface class to add the ability to process distribution
+    arguments."""
+        
+    def getDistributionNames(self, args=None):
+        """Returns a list of distribution names from the database.
+        For each arg in the ARGS list find all the distribution
+        names that match the arg (assume SQL regexp).  If an
+        arg does not match anything in the database we Abort.  If the
+        ARGS list is empty return all distribution names.
+        """    
+        list = []
+        if not args:
+            args = [ '%' ] # find all distributions
 
-		for arg in args:
-			rows = self.db.execute("""select name from
-				distributions where name like '%s'""" % arg)
-			if rows == 0 and arg == '%': # empty table is OK
-				continue
-			if rows < 1:
-				if arg == '%':
-					# special processing for when the table
-					# is empty
-					continue
-				else:
-					self.abort('unknown distribution "%s"' % arg)
+        for arg in args:
+            rows = self.db.execute("""select name from
+                distributions where name like '%s'""" % arg)
+            if rows == 0 and arg == '%': # empty table is OK
+                continue
+            if rows < 1:
+                if arg == '%':
+                    # special processing for when the table
+                    # is empty
+                    continue
+                else:
+                    self.abort('unknown distribution "%s"' % arg)
 
-			for name, in self.db.fetchall():
-				list.append(name)
+            for name, in self.db.fetchall():
+                list.append(name)
 
-		return list
-		
+        return list
+        
 
 class NetworkArgumentProcessor:
-	"""An Interface class to add the ability to process network (subnet)
-	argument."""
-	
-	def getNetworkNames(self, args=None):
-		"""Returns a list of network (subnet) names from the database.
-		For each arg in the ARGS list find all the network
-		names that match the arg (assume SQL regexp).  If an
-		arg does not match anything in the database we Abort.  If the
-		ARGS list is empty return all network names.
-		"""
-		list = []
-		if not args:
-			args = [ '%' ] # find all networks
-		for arg in args:
-			rows = self.db.execute("""select name from subnets
-				where name like '%s'""" % arg)
-			if rows == 0 and arg == '%': # empty table is OK
-				continue
-			if rows < 1:
-				self.abort('unknown network "%s"' % arg)
-			for name, in self.db.fetchall():
-				list.append(name)
-		return list
+    """An Interface class to add the ability to process network (subnet)
+    argument."""
+    
+    def getNetworkNames(self, args=None):
+        """Returns a list of network (subnet) names from the database.
+        For each arg in the ARGS list find all the network
+        names that match the arg (assume SQL regexp).  If an
+        arg does not match anything in the database we Abort.  If the
+        ARGS list is empty return all network names.
+        """
+        list = []
+        if not args:
+            args = [ '%' ] # find all networks
+        for arg in args:
+            rows = self.db.execute("""select name from subnets
+                where name like '%s'""" % arg)
+            if rows == 0 and arg == '%': # empty table is OK
+                continue
+            if rows < 1:
+                self.abort('unknown network "%s"' % arg)
+            for name, in self.db.fetchall():
+                list.append(name)
+        return list
 
-	def getNetworkName(self, netid):
-		"""Returns a network (subnet) name from the database that
-		is associated with the id 'netid'.
-		"""
-		if not netid:
-			return ''
+    def getNetworkName(self, netid):
+        """Returns a network (subnet) name from the database that
+        is associated with the id 'netid'.
+        """
+        if not netid:
+            return ''
 
-		rows = self.db.execute("""select name from subnets where
-			id = %s""" % netid)
+        rows = self.db.execute("""select name from subnets where
+            id = %s""" % netid)
 
-		if rows > 0:
-			netname, = self.db.fetchone()
-		else:
-			netname = ''
+        if rows > 0:
+            netname, = self.db.fetchone()
+        else:
+            netname = ''
 
-		return netname
-	
-	
+        return netname
+    
+    
 class RollArgumentProcessor:
-	"""An Interface class to add the ability to process roll arguments."""
-	
-	def getRollNames(self, args, params):
-		"""Returns a list of (name, version) tuples from the roll
-		table in the database.  If the PARAMS['version'] is provided
-		only Rolls of that version are included otherwise no filtering
-		on version number is performed.  If the ARGS list is empty then
-		all Roll names are returned.  SQL regexps acan be used in 
-		both the version parameter and arg list, but must expand to 
-		something.
-		"""
+    """An Interface class to add the ability to process roll arguments."""
+    
+    def getRollNames(self, args, params):
+        """Returns a list of (name, version) tuples from the roll
+        table in the database.  If the PARAMS['version'] is provided
+        only Rolls of that version are included otherwise no filtering
+        on version number is performed.  If the ARGS list is empty then
+        all Roll names are returned.  SQL regexps acan be used in 
+        both the version parameter and arg list, but must expand to 
+        something.
+        """
 
-		if 'version' in params:
-			version = params['version']
-		else:
-			version = '%' # SQL wildcard
-	
-		list = []
-		if not args:
-			args = [ '%' ] # find all roll names
-		for arg in args:
-			rows = self.db.execute("""select distinct name,version
-				from rolls where name like '%s' and 
-				version like '%s'""" % (arg, version))
-			if rows == 0 and arg == '%': # empty table is OK
-				continue
-			if rows < 1:
-				self.abort('unknown roll name "%s"' % arg)
-			for (name, ver) in self.db.fetchall():
-				list.append((name, ver))
-				
-		return list
-		
+        if 'version' in params:
+            version = params['version']
+        else:
+            version = '%' # SQL wildcard
+    
+        list = []
+        if not args:
+            args = [ '%' ] # find all roll names
+        for arg in args:
+            rows = self.db.execute("""select distinct name,version
+                from rolls where name like '%s' and 
+                version like '%s'""" % (arg, version))
+            if rows == 0 and arg == '%': # empty table is OK
+                continue
+            if rows < 1:
+                self.abort('unknown roll name "%s"' % arg)
+            for (name, ver) in self.db.fetchall():
+                list.append((name, ver))
+                
+        return list
+        
 
 class HostArgumentProcessor:
-	"""An Interface class to add the ability to process host arguments."""
-	
-	def getHostnames(self, names=None, managed_only=0):
-		"""Expands the given list of names to valid cluster 
-		hostnames.  A name can be a hostname, IP address, our
-		group (membership name), or a MAC address. Any combination of
-		these is valid.
-		If the names list is empty a list of all hosts in the cluster
-		is returned.
-		
-		The following groups are recognized:
-		
-		rackN - All non-frontend host in rack N
-		appliancename - All appliances of a given type (e.g. compute)
-		select ... - an SQL statement that returns a list of hosts
+    """An Interface class to add the ability to process host arguments."""
+    
+    def getHostnames(self, names=None, managed_only=0):
+        """Expands the given list of names to valid cluster 
+        hostnames.  A name can be a hostname, IP address, our
+        group (membership name), or a MAC address. Any combination of
+        these is valid.
+        If the names list is empty a list of all hosts in the cluster
+        is returned.
+        
+        The following groups are recognized:
+        
+        rackN - All non-frontend host in rack N
+        appliancename - All appliances of a given type (e.g. compute)
+        select ... - an SQL statement that returns a list of hosts
 
-		The 'managed_only' flag means that the list of hosts will
-		*not* contain hosts that traditionally don't have ssh login
-		shells (for example, the following appliances usually don't
-		have ssh login access: 'Ethernet Switches', 'Power Units',
-		'Remote Management')
-		"""
-		
-		# Handle the simple case first and just return a complete
-		# list of hosts in the cluster if no list of names was
-		# provided
-		
-		list = []
-		if not names:
-			query = 'select name from nodes'
+        The 'managed_only' flag means that the list of hosts will
+        *not* contain hosts that traditionally don't have ssh login
+        shells (for example, the following appliances usually don't
+        have ssh login access: 'Ethernet Switches', 'Power Units',
+        'Remote Management')
+        """
+        
+        # Handle the simple case first and just return a complete
+        # list of hosts in the cluster if no list of names was
+        # provided
+        
+        list = []
+        if not names:
+            query = 'select name from nodes'
 
-			self.db.execute(query)
-			for host, in self.db.fetchall():
-				list.append(host)
-			# If we're looking for managed nodes only, filter out
-			# the unmanaged ones using host attributes
-			if managed_only:
-				managed_list = []
-				for hostname in list:
-					if self.db.getHostAttr(hostname, 
-						'managed') == 'true':
-						managed_list.append(hostname)
-				return managed_list
-			return list
+            self.db.execute(query)
+            for host, in self.db.fetchall():
+                list.append(host)
+            # If we're looking for managed nodes only, filter out
+            # the unmanaged ones using host attributes
+            if managed_only:
+                managed_list = []
+                for hostname in list:
+                    if self.db.getHostAttr(hostname, 
+                        'managed') == 'true':
+                        managed_list.append(hostname)
+                return managed_list
+            return list
 
-		# The names list was not empty so we now need to build
-		# a list of acceptable group names based on the rack numbers
-		# and appliance names (not membership names).  This 
-		# convention follows the original idea (but not code) for
-		# "dbreport tentakel".
-		
-		groups = {}
-		self.db.execute('select min(rack), max(rack) from nodes')
-		min,max = self.db.fetchone()
-		for i in range(min, max+1): # racks
-			self.db.execute("""select n.name from 
-				nodes n, memberships m, appliances a where
-				n.membership=m.id and m.appliance=a.id and
-				a.name!="frontend" and n.rack=%d""" % i)
-			l = []
-			for node, in self.db.fetchall():
-				l.append(node)
-			groups['rack%d' % i] = l
-		self.db.execute('select name from appliances')
-		for name, in self.db.fetchall(): # appliances
-			self.db.execute("""select n.name from 
-				nodes n, memberships m, appliances a where
-				n.membership=m.id and m.appliance=a.id and
-				a.name="%s" """ % name)
-			l = []
-			for node, in self.db.fetchall():
-				l.append(node)
-			groups[name] = l
-		
-		# Iterate through the list and expand all names to a list of
-		# host names.  Also handle any names that start with 'select'
-		# and expand them as an SQL queury.  Populate a dictionary 
-		# to make sure we only have one entry for each host.  
-		# Then return a sorted list of keys.
-		#
-		# We may want to add other expansion rules like the old 
-		# FDS style %d stuff here.
-		
-		dict = {}
-		for name in names:
-			if name.find('select') == 0:	# SQL select
-				self.db.execute(name)
-				for host, in self.db.fetchall():
-					dict[host] = 1
-			elif name.find('%') >= 0:	# SQL % pattern
-				self.db.execute("""select name from nodes where
-					name like '%s'""" % name)
-				for h, in self.db.fetchall():
-					dict[h] = 1
-			elif name in groups:	# group name
-				for host in groups[name]:
-					dict[host] = 1
-			else:				# host name
-				dict[self.db.getHostname(name)] = 1
-		list = list(dict.keys())
-		list.sort()
-		return list
+        # The names list was not empty so we now need to build
+        # a list of acceptable group names based on the rack numbers
+        # and appliance names (not membership names).  This 
+        # convention follows the original idea (but not code) for
+        # "dbreport tentakel".
+        
+        groups = {}
+        self.db.execute('select min(rack), max(rack) from nodes')
+        min,max = self.db.fetchone()
+        for i in range(min, max+1): # racks
+            self.db.execute("""select n.name from 
+                nodes n, memberships m, appliances a where
+                n.membership=m.id and m.appliance=a.id and
+                a.name!="frontend" and n.rack=%d""" % i)
+            l = []
+            for node, in self.db.fetchall():
+                l.append(node)
+            groups['rack%d' % i] = l
+        self.db.execute('select name from appliances')
+        for name, in self.db.fetchall(): # appliances
+            self.db.execute("""select n.name from 
+                nodes n, memberships m, appliances a where
+                n.membership=m.id and m.appliance=a.id and
+                a.name="%s" """ % name)
+            l = []
+            for node, in self.db.fetchall():
+                l.append(node)
+            groups[name] = l
+        
+        # Iterate through the list and expand all names to a list of
+        # host names.  Also handle any names that start with 'select'
+        # and expand them as an SQL queury.  Populate a dictionary 
+        # to make sure we only have one entry for each host.  
+        # Then return a sorted list of keys.
+        #
+        # We may want to add other expansion rules like the old 
+        # FDS style %d stuff here.
+        
+        dict = {}
+        for name in names:
+            if name.find('select') == 0:    # SQL select
+                self.db.execute(name)
+                for host, in self.db.fetchall():
+                    dict[host] = 1
+            elif name.find('%') >= 0:    # SQL % pattern
+                self.db.execute("""select name from nodes where
+                    name like '%s'""" % name)
+                for h, in self.db.fetchall():
+                    dict[h] = 1
+            elif name in groups:    # group name
+                for host in groups[name]:
+                    dict[host] = 1
+            else:                # host name
+                dict[self.db.getHostname(name)] = 1
+        list = list(dict.keys())
+        list.sort()
+        return list
 
 
 class CategoryArgumentProcessor(HostArgumentProcessor):
-	"""An Interface class to add the ability to process Category=Member arguments."""
+    """An Interface class to add the ability to process Category=Member arguments."""
 
-	def getCategoryIndices(self, args=None, wildcard=0):
-		"""Returns a list of tuples (category,index), 
-		   based upon those available in the database  
+    def getCategoryIndices(self, args=None, wildcard=0):
+        """Returns a list of tuples (category,index), 
+           based upon those available in the database  
                    Special case: args=None, args[0]='global=', 
-		   args[0]='global' returns the tuple ('global','global').
-	           An empty list signifies category or index not found
+           args[0]='global' returns the tuple ('global','global').
+               An empty list signifies category or index not found
 
-		"""
+        """
 
-		indexList=[]
-		if args is None or len(args) == 0 :
-			if wildcard:
-				indexList.append(('%','%'))
-			else:
-				indexList.append(('global','global'))
+        indexList=[]
+        if args is None or len(args) == 0 :
+            if wildcard:
+                indexList.append(('%','%'))
+            else:
+                indexList.append(('global','global'))
 
-			return indexList
+            return indexList
 
-		if len(args[0].split('=',1)) == 2:
-			(category,index) = args[0].split('=',1)
-		else:
-			category = args[0]
-			index=None
-			if wildcard:
-				indexList.append((category,'%'))
-				return indexList
+        if len(args[0].split('=',1)) == 2:
+            (category,index) = args[0].split('=',1)
+        else:
+            category = args[0]
+            index=None
+            if wildcard:
+                indexList.append((category,'%'))
+                return indexList
 
-		if category == 'global':
-			indexList.append(('global','global'))
-			return indexList
-
-
-		if index is None:
-			self.abort('Cannot have a Null index for category:%s' % category)
-		# Check of category is valid
-		rows = self.db.execute("""SELECT ID FROM categories 
-				WHERE name='%s'""" % category)
-		if rows < 1:
-			self.abort('unknown category "%s"' % category)
+        if category == 'global':
+            indexList.append(('global','global'))
+            return indexList
 
 
-		# Check if member of category is valid
-		# ?? handling of wild-carded hosts for category=host
-		#   
-		if category == 'host':
-			hostlist=index.split()
-			print("host list:" ,hostlist)
-			for index in self.getHostnames(hostlist):
-				print("checking for host" ,index)
+        if index is None:
+            self.abort('Cannot have a Null index for category:%s' % category)
+        # Check of category is valid
+        rows = self.db.execute("""SELECT ID FROM categories 
+                WHERE name='%s'""" % category)
+        if rows < 1:
+            self.abort('unknown category "%s"' % category)
 
-				rows = self.db.execute("""SELECT ID FROM vcatindex 
-				WHERE catindex='%s' and category='%s'""" % (index,category))
-				if rows < 1:
-					self.abort('Unknown index "%s" of category "%s"' % (index,category))
-				indexList.append((category,index))
 
-		else:
-			rows = self.db.execute("""SELECT ID FROM vcatindex 
-				WHERE catindex='%s' and category='%s'""" % (index,category))
-			if rows < 1:
-				self.abort('Unknown index "%s" of category "%s"' % (index,category))
-			indexList.append((category,index))
+        # Check if member of category is valid
+        # ?? handling of wild-carded hosts for category=host
+        #   
+        if category == 'host':
+            hostlist=index.split()
+            print("host list:" ,hostlist)
+            for index in self.getHostnames(hostlist):
+                print("checking for host" ,index)
 
-		return indexList
+                rows = self.db.execute("""SELECT ID FROM vcatindex 
+                WHERE catindex='%s' and category='%s'""" % (index,category))
+                if rows < 1:
+                    self.abort('Unknown index "%s" of category "%s"' % (index,category))
+                indexList.append((category,index))
 
-		
+        else:
+            rows = self.db.execute("""SELECT ID FROM vcatindex 
+                WHERE catindex='%s' and category='%s'""" % (index,category))
+            if rows < 1:
+                self.abort('Unknown index "%s" of category "%s"' % (index,category))
+            indexList.append((category,index))
+
+        return indexList
+
+        
 class DocStringHandler(handler.ContentHandler,
-	handler.DTDHandler,
-	handler.EntityResolver,
-	handler.ErrorHandler):
-	
-	def __init__(self, name='', users=[]):
-		handler.ContentHandler.__init__(self)
-		self.text			= ''
-		self.name			= name
-		self.users			= users
-		self.section			= {}
-		self.section['description']	= ''
-		self.section['arg']		= []
-		self.section['param']		= []
-		self.section['example']		= []
-		self.section['related']		= []
-		self.parser = make_parser()
-		self.parser.setContentHandler(self)
+    handler.DTDHandler,
+    handler.EntityResolver,
+    handler.ErrorHandler):
+    
+    def __init__(self, name='', users=[]):
+        handler.ContentHandler.__init__(self)
+        self.text            = ''
+        self.name            = name
+        self.users            = users
+        self.section            = {}
+        self.section['description']    = ''
+        self.section['arg']        = []
+        self.section['param']        = []
+        self.section['example']        = []
+        self.section['related']        = []
+        self.parser = make_parser()
+        self.parser.setContentHandler(self)
 
-	def getDocbookText(self):
-		s  = ''
-		s += '<section id="rocks-%s" xreflabel="%s">\n' % \
-			(string.join(self.name.split(' '), '-'), self.name)
-		s += '<title>%s</title>\n' % self.name
-		s += '<cmdsynopsis>\n'
-		s += '\t<command>rocks %s</command>\n' % self.name
-		for ((name, type, opt, rep), txt) in self.section['arg']:
-			if opt:
-				choice = 'opt'
-			else:
-				choice = 'req'
-			if rep:
-				repeat = 'repeat'
-			else:
-				repeat = 'norepeat'
-			s += '\t<arg rep="%s" choice="%s">%s</arg>\n' % \
-				(repeat, choice, name)
-		for ((name, type, opt, rep), txt) in self.section['param']:
-			if opt:
-				choice = 'opt'
-			else:
-				choice = 'req'
-			if rep:
-				repeat = 'repeat'
-			else:
-				repeat = 'norepeat'
-			s += '\t<arg rep="%s" choice="%s">' % (repeat, choice)
-			s += '%s=<replaceable>%s</replaceable>' % (name, type)
-			s += '</arg>\n'
-		s += '</cmdsynopsis>\n'
-		s += '<para>\n'
-		s += saxutils.escape(self.section['description'])
-		s += '\n</para>\n'
-		if self.section['arg']:
-			s += '<variablelist><title>arguments</title>\n'
-			for ((name, type, opt, rep), txt) in \
-				self.section['arg']:
-				s += '\t<varlistentry>\n'
-				if opt:
-					term = '<optional>%s</optional>' % name
-				else:
-					term = name
-				s += '\t<term>%s</term>\n' % term
-				s += '\t<listitem>\n'
-				s += '\t<para>\n'
-				s += saxutils.escape(txt)
-				s += '\n\t</para>\n'
-				s += '\t</listitem>\n'
-				s += '\t</varlistentry>\n'
-			s += '</variablelist>\n'
-		if self.section['param']:
-			s += '<variablelist><title>parameters</title>\n'
-			for ((name, type, opt, rep), txt) in \
-				self.section['param']:
-				s += '\t<varlistentry>\n'
-				if opt:
-					optStart = '<optional>'
-					optEnd   = '</optional>'
-				else:
-					optStart = ''
-					optEnd   = ''
-				key = '%s=' % name
-				val = '<replaceable>%s</replaceable>' % type
-				s += '\t<term>%s%s%s%s</term>\n' % \
-					(optStart, key, val, optEnd)
-				s += '\t<listitem>\n'
-				s += '\t<para>\n'
-				s += saxutils.escape(txt)
-				s += '\n\t</para>\n'
-				s += '\t</listitem>\n'
-				s += '\t</varlistentry>\n'
-			s += '</variablelist>\n'
-		if self.section['example']:
-			s += '<variablelist><title>examples</title>\n'
-			for (cmd, txt) in self.section['example']:
-				s += '\t<varlistentry>\n'
-				s += '\t<term>\n'
-				if 'root' in self.users:
-					s += '# '
-				else:
-					s += '$ '
-				s += 'rocks %s' % cmd
-				s += '\n\t</term>\n'
-				s += '\t<listitem>\n'
-				s += '\t<para>\n'
-				s += saxutils.escape(txt)
-				s += '\n\t</para>\n'
-				s += '\t</listitem>\n'
-				s += '\t</varlistentry>\n'
-			s += '</variablelist>\n'
-		if self.section['related']:
-			s += '<variablelist><title>related commands</title>\n'
-			for related in self.section['related']:
-				s += '\t<varlistentry>\n'
-				s += '\t<term>'
-				s += '<xref linkend="rocks-%s">' % \
-					string.join(related.split(' '), '-')
-				s += '</term>\n'
-				s += '\t<listitem>\n'
-				s += '\t<para>\n'
-				s += '\n\t</para>\n'
-				s += '\t</listitem>\n'
-				s += '\t</varlistentry>\n'
-			s += '</variablelist>\n'
-		s += '</section>'
-		return s
+    def getDocbookText(self):
+        s  = ''
+        s += '<section id="rocks-%s" xreflabel="%s">\n' % \
+            (string.join(self.name.split(' '), '-'), self.name)
+        s += '<title>%s</title>\n' % self.name
+        s += '<cmdsynopsis>\n'
+        s += '\t<command>rocks %s</command>\n' % self.name
+        for ((name, type, opt, rep), txt) in self.section['arg']:
+            if opt:
+                choice = 'opt'
+            else:
+                choice = 'req'
+            if rep:
+                repeat = 'repeat'
+            else:
+                repeat = 'norepeat'
+            s += '\t<arg rep="%s" choice="%s">%s</arg>\n' % \
+                (repeat, choice, name)
+        for ((name, type, opt, rep), txt) in self.section['param']:
+            if opt:
+                choice = 'opt'
+            else:
+                choice = 'req'
+            if rep:
+                repeat = 'repeat'
+            else:
+                repeat = 'norepeat'
+            s += '\t<arg rep="%s" choice="%s">' % (repeat, choice)
+            s += '%s=<replaceable>%s</replaceable>' % (name, type)
+            s += '</arg>\n'
+        s += '</cmdsynopsis>\n'
+        s += '<para>\n'
+        s += saxutils.escape(self.section['description'])
+        s += '\n</para>\n'
+        if self.section['arg']:
+            s += '<variablelist><title>arguments</title>\n'
+            for ((name, type, opt, rep), txt) in \
+                self.section['arg']:
+                s += '\t<varlistentry>\n'
+                if opt:
+                    term = '<optional>%s</optional>' % name
+                else:
+                    term = name
+                s += '\t<term>%s</term>\n' % term
+                s += '\t<listitem>\n'
+                s += '\t<para>\n'
+                s += saxutils.escape(txt)
+                s += '\n\t</para>\n'
+                s += '\t</listitem>\n'
+                s += '\t</varlistentry>\n'
+            s += '</variablelist>\n'
+        if self.section['param']:
+            s += '<variablelist><title>parameters</title>\n'
+            for ((name, type, opt, rep), txt) in \
+                self.section['param']:
+                s += '\t<varlistentry>\n'
+                if opt:
+                    optStart = '<optional>'
+                    optEnd   = '</optional>'
+                else:
+                    optStart = ''
+                    optEnd   = ''
+                key = '%s=' % name
+                val = '<replaceable>%s</replaceable>' % type
+                s += '\t<term>%s%s%s%s</term>\n' % \
+                    (optStart, key, val, optEnd)
+                s += '\t<listitem>\n'
+                s += '\t<para>\n'
+                s += saxutils.escape(txt)
+                s += '\n\t</para>\n'
+                s += '\t</listitem>\n'
+                s += '\t</varlistentry>\n'
+            s += '</variablelist>\n'
+        if self.section['example']:
+            s += '<variablelist><title>examples</title>\n'
+            for (cmd, txt) in self.section['example']:
+                s += '\t<varlistentry>\n'
+                s += '\t<term>\n'
+                if 'root' in self.users:
+                    s += '# '
+                else:
+                    s += '$ '
+                s += 'rocks %s' % cmd
+                s += '\n\t</term>\n'
+                s += '\t<listitem>\n'
+                s += '\t<para>\n'
+                s += saxutils.escape(txt)
+                s += '\n\t</para>\n'
+                s += '\t</listitem>\n'
+                s += '\t</varlistentry>\n'
+            s += '</variablelist>\n'
+        if self.section['related']:
+            s += '<variablelist><title>related commands</title>\n'
+            for related in self.section['related']:
+                s += '\t<varlistentry>\n'
+                s += '\t<term>'
+                s += '<xref linkend="rocks-%s">' % \
+                    string.join(related.split(' '), '-')
+                s += '</term>\n'
+                s += '\t<listitem>\n'
+                s += '\t<para>\n'
+                s += '\n\t</para>\n'
+                s += '\t</listitem>\n'
+                s += '\t</varlistentry>\n'
+            s += '</variablelist>\n'
+        s += '</section>'
+        return s
 
-	
-	def getUsageText(self):
-		s = ''
-		for ((name, type, opt, rep), txt) in self.section['arg']:
-			if opt:
-				s += '[%s]' % name
-			else:
-				s += '{%s}' % name
-			if rep:
-				s += '...'
-			s += ' '
-		for ((name, type, opt, rep), txt) in self.section['param']:
-			if opt:
-				s += '[%s=%s]' % (name, type)
-			else:
-				s += '{%s=%s}' % (name, type)
-			if rep:
-				s += '...'
-			s += ' '
-		if s and s[-1] == ' ':
-			return s[:-1]
-		else:
-			return s
-	
-	def getSphinxText(self):
-		if 'root' in self.users:
-			prompt = '#'
-		else:
-			prompt = '$'
+    
+    def getUsageText(self):
+        s = ''
+        for ((name, type, opt, rep), txt) in self.section['arg']:
+            if opt:
+                s += '[%s]' % name
+            else:
+                s += '{%s}' % name
+            if rep:
+                s += '...'
+            s += ' '
+        for ((name, type, opt, rep), txt) in self.section['param']:
+            if opt:
+                s += '[%s=%s]' % (name, type)
+            else:
+                s += '{%s=%s}' % (name, type)
+            if rep:
+                s += '...'
+            s += ' '
+        if s and s[-1] == ' ':
+            return s[:-1]
+        else:
+            return s
+    
+    def getSphinxText(self):
+        if 'root' in self.users:
+            prompt = '#'
+        else:
+            prompt = '$'
 
-		s  = ':orphan:\n\n'
-		s += '%s\n' % self.name
-		s += '%s\n\n' % ("-" * len(self.name))
-		s += '.. role:: defn\n\n' 
-		utxt = self.getUsageText()
-		if len(utxt): 
-		    s += ':defn:`rocks %s` *%s*\n' % (self.name, utxt)
-		else:         
-		    s += ':defn:`rocks %s` %s\n' % (self.name, utxt)
-		s += '\n\n**Description:**\n'
-		s += self.section['description'].replace('\t','   ')
-		if self.section['arg']:
-			s += '\n**Arguments:**\n\n'
-			for ((name, type, opt, rep), txt) in \
-				self.section['arg']:
-				if opt:
-					s += '*[%s]*' % name
-				else:
-					s += '*{%s}*' % name
-				txt = txt.replace('*', '\*')
-				s += '\n%s\n' % txt.replace('\t', '   ')
-		if self.section['param']:
-			s += '\n**Parameters:**\n\n'
-			for ((name, type, opt, rep), txt) in \
-				self.section['param']:
-				if opt:
-					s += '*[%s=%s]*' % (name, type)
-				else:
-					s += '*{%s=%s}*' % (name, type)
-				txt = txt.replace('*', '\*')
-				s += '\n%s\n' % txt.replace('\t', '   ')
-		if self.section['example']:
-			s += '\n**Examples:**\n'
-			for (cmd, txt) in self.section['example']:
-				txt = txt.replace('*', '\*')
-				s += '%s::\n\n' % txt.replace('\t','   ')
-				s += '        %s rocks %s\n' % (prompt, cmd)
-		if self.section['related']:
-			s += '\n**Related Commands:**\n\n'
-			for related in self.section['related']:
-				s += '   * :ref:`rocks-%s`\n' % related.replace(' ','-')
+        s  = ':orphan:\n\n'
+        s += '%s\n' % self.name
+        s += '%s\n\n' % ("-" * len(self.name))
+        s += '.. role:: defn\n\n' 
+        utxt = self.getUsageText()
+        if len(utxt): 
+            s += ':defn:`rocks %s` *%s*\n' % (self.name, utxt)
+        else:         
+            s += ':defn:`rocks %s` %s\n' % (self.name, utxt)
+        s += '\n\n**Description:**\n'
+        s += self.section['description'].replace('\t','   ')
+        if self.section['arg']:
+            s += '\n**Arguments:**\n\n'
+            for ((name, type, opt, rep), txt) in \
+                self.section['arg']:
+                if opt:
+                    s += '*[%s]*' % name
+                else:
+                    s += '*{%s}*' % name
+                txt = txt.replace('*', '\*')
+                s += '\n%s\n' % txt.replace('\t', '   ')
+        if self.section['param']:
+            s += '\n**Parameters:**\n\n'
+            for ((name, type, opt, rep), txt) in \
+                self.section['param']:
+                if opt:
+                    s += '*[%s=%s]*' % (name, type)
+                else:
+                    s += '*{%s=%s}*' % (name, type)
+                txt = txt.replace('*', '\*')
+                s += '\n%s\n' % txt.replace('\t', '   ')
+        if self.section['example']:
+            s += '\n**Examples:**\n'
+            for (cmd, txt) in self.section['example']:
+                txt = txt.replace('*', '\*')
+                s += '%s::\n\n' % txt.replace('\t','   ')
+                s += '        %s rocks %s\n' % (prompt, cmd)
+        if self.section['related']:
+            s += '\n**Related Commands:**\n\n'
+            for related in self.section['related']:
+                s += '   * :ref:`rocks-%s`\n' % related.replace(' ','-')
 
-		word = self.name.split()[0]
-		s += '\n:ref:`%s commands <%s-ref>`\n' % (word, word)
+        word = self.name.split()[0]
+        s += '\n:ref:`%s commands <%s-ref>`\n' % (word, word)
 
-		return s
+        return s
 
-	def getPlainText(self):
-		if 'root' in self.users:
-			prompt = '#'
-		else:
-			prompt = '$'
-		s  = ''
-		s += 'rocks %s %s' % (self.name, self.getUsageText())
-		s += '\n\nDescription:\n'
-		s += self.section['description']
-		if self.section['arg']:
-			s += '\nArguments:\n\n'
-			for ((name, type, opt, rep), txt) in \
-				self.section['arg']:
-				if opt:
-					s += '\t[%s]' % name
-				else:
-					s += '\t{%s}' % name
-				s += '\n%s\n' % txt
-		if self.section['param']:
-			s += '\nParameters:\n\n'
-			for ((name, type, opt, rep), txt) in \
-				self.section['param']:
-				if opt:
-					s += '\t[%s=%s]' % (name, type)
-				else:
-					s += '\t{%s=%s}' % (name, type)
-				s += '\n%s\n' % txt
-		if self.section['example']:
-			s += '\nExamples:\n\n'
-			for (cmd, txt) in self.section['example']:
-				s += '\t%s rocks %s\n' % (prompt, cmd)
-				s += '%s\n' % txt
-		if self.section['related']:
-			s += '\nRelated Commands:\n\n'
-			for related in self.section['related']:
-				s += '\trocks %s\n' % related
-		return s
-		
-	def getParsedText(self):
-		return '%s' % self.section
-		
-	def startElement(self, name, attrs):
-		if not self.section['description']:
-			self.section['description'] = self.text
-		self.key  = None
-		self.text = ''
-		if name in [ 'arg', 'param' ]:
-			try:
-				type = attrs.get('type')
-			except:
-				type = 'string'
-			try:
-				optional = int(attrs.get('optional'))
-			except:
-				if name == 'arg':
-					optional = 0
-				if name == 'param':
-					optional = 1
-			try:
-				repeat = int(attrs.get('repeat'))
-			except:
-				repeat = 0
-			name = attrs.get('name')
-			self.key = (name, type, optional, repeat)
-		elif name == 'example':
-			self.key = attrs.get('cmd')
-		
-	def endElement(self, name):
-		if name == 'docstring':
-			# we are done so sort the param and related lists
-			self.section['param'].sort()
-			self.section['related'].sort()
-		elif name in [ 'arg', 'param', 'example' ]:
-			self.section[name].append((self.key, self.text))
-		else:
-			if name in self.section:
-				self.section[name].append(self.text)
-		
-	def characters(self, s):
-		self.text += s
-			
-			
+    def getPlainText(self):
+        if 'root' in self.users:
+            prompt = '#'
+        else:
+            prompt = '$'
+        s  = ''
+        s += 'rocks %s %s' % (self.name, self.getUsageText())
+        s += '\n\nDescription:\n'
+        s += self.section['description']
+        if self.section['arg']:
+            s += '\nArguments:\n\n'
+            for ((name, type, opt, rep), txt) in \
+                self.section['arg']:
+                if opt:
+                    s += '\t[%s]' % name
+                else:
+                    s += '\t{%s}' % name
+                s += '\n%s\n' % txt
+        if self.section['param']:
+            s += '\nParameters:\n\n'
+            for ((name, type, opt, rep), txt) in \
+                self.section['param']:
+                if opt:
+                    s += '\t[%s=%s]' % (name, type)
+                else:
+                    s += '\t{%s=%s}' % (name, type)
+                s += '\n%s\n' % txt
+        if self.section['example']:
+            s += '\nExamples:\n\n'
+            for (cmd, txt) in self.section['example']:
+                s += '\t%s rocks %s\n' % (prompt, cmd)
+                s += '%s\n' % txt
+        if self.section['related']:
+            s += '\nRelated Commands:\n\n'
+            for related in self.section['related']:
+                s += '\trocks %s\n' % related
+        return s
+        
+    def getParsedText(self):
+        return '%s' % self.section
+        
+    def startElement(self, name, attrs):
+        if not self.section['description']:
+            self.section['description'] = self.text
+        self.key  = None
+        self.text = ''
+        if name in [ 'arg', 'param' ]:
+            try:
+                type = attrs.get('type')
+            except:
+                type = 'string'
+            try:
+                optional = int(attrs.get('optional'))
+            except:
+                if name == 'arg':
+                    optional = 0
+                if name == 'param':
+                    optional = 1
+            try:
+                repeat = int(attrs.get('repeat'))
+            except:
+                repeat = 0
+            name = attrs.get('name')
+            self.key = (name, type, optional, repeat)
+        elif name == 'example':
+            self.key = attrs.get('cmd')
+        
+    def endElement(self, name):
+        if name == 'docstring':
+            # we are done so sort the param and related lists
+            self.section['param'].sort()
+            self.section['related'].sort()
+        elif name in [ 'arg', 'param', 'example' ]:
+            self.section[name].append((self.key, self.text))
+        else:
+            if name in self.section:
+                self.section[name].append(self.text)
+        
+    def characters(self, s):
+        self.text += s
+            
+            
 
 class DatabaseConnection:
 
-	"""Wrapper class for all database access.  The methods are based on
-	those provided from the MySQLdb library and some other Rocks
-	specific methods are added.  All RocksCommands own an instance of
-	this object (self.db).
-	
-	Special Environment Variables:
-	
-	ROCKS_VARS_HOSTNAME	- If defined specified the Rocks host
-				that all app_globals lookups are 
-				relative to.  If unspecified the localhost
-				is assumed.  All methods that use this
-				also also the value to be passed as an
-				argument.
-	"""
-	
-	def __init__(self, db):
-		# self.database : is a rocks.db.database.Database object
-		self.database = db
-		
-	def execute(self, command):
-		return self.database.execute(command)
+    """Wrapper class for all database access.  The methods are based on
+    those provided from the MySQLdb library and some other Rocks
+    specific methods are added.  All RocksCommands own an instance of
+    this object (self.db).
+    
+    Special Environment Variables:
+    
+    ROCKS_VARS_HOSTNAME    - If defined specified the Rocks host
+                that all app_globals lookups are 
+                relative to.  If unspecified the localhost
+                is assumed.  All methods that use this
+                also also the value to be passed as an
+                argument.
+    """
+    
+    def __init__(self, db):
+        # self.database : is a rocks.db.database.Database object
+        self.database = db
+        
+    def execute(self, command):
+        return self.database.execute(command)
 
-	def fetchone(self):
-		return self.database.fetchone()
+    def fetchone(self):
+        return self.database.fetchone()
 
-	def fetchall(self):
-		return self.database.fetchall()
+    def fetchall(self):
+        return self.database.fetchall()
 
-	def getSession(self):
-		"""helper function to get the session"""
-		return self.database.getSession()
+    def getSession(self):
+        """helper function to get the session"""
+        return self.database.getSession()
 
-	def getHostRoutes(self, host, showsource=0):
+    def getHostRoutes(self, host, showsource=0):
 
-		host = self.getHostname(host)
-		routes = {}
-		
-		# global
-		self.execute("""select network, netmask, gateway, subnet from
-			global_routes""")
-		for (n, m, g, s) in self.fetchall():
-			if s:
-				rows = self.execute("""select net.device from
-					subnets s, networks net, nodes n where
-					s.id = %s and s.id = net.subnet and
-					net.node = n.id and n.name = '%s'
-					and net.device not like 'vlan%%' """
-					% (s, host))
-				if rows == 1:
-					g, = self.fetchone()
-			
-			if showsource:
-				routes[n] = (m, g, 'G')
-			else:
-				routes[n] = (m, g)
+        host = self.getHostname(host)
+        routes = {}
+        
+        # global
+        self.execute("""select network, netmask, gateway, subnet from
+            global_routes""")
+        for (n, m, g, s) in self.fetchall():
+            if s:
+                rows = self.execute("""select net.device from
+                    subnets s, networks net, nodes n where
+                    s.id = %s and s.id = net.subnet and
+                    net.node = n.id and n.name = '%s'
+                    and net.device not like 'vlan%%' """
+                    % (s, host))
+                if rows == 1:
+                    g, = self.fetchone()
+            
+            if showsource:
+                routes[n] = (m, g, 'G')
+            else:
+                routes[n] = (m, g)
 
-		# os
-		self.execute("""select r.network, r.netmask, r.gateway,
-			r.subnet from os_routes r, nodes n where
-			r.os=n.os and n.name='%s'"""  % host)
-		for (n, m, g, s) in self.fetchall():
-			if s:
-				rows = self.execute("""select net.device from
-					subnets s, networks net, nodes n where
-					s.id = %s and s.id = net.subnet and
-					net.node = n.id and n.name = '%s' 
-					and net.device not like 'vlan%%' """
-					% (s, host))
-				if rows == 1:
-					g, = self.fetchone()
+        # os
+        self.execute("""select r.network, r.netmask, r.gateway,
+            r.subnet from os_routes r, nodes n where
+            r.os=n.os and n.name='%s'"""  % host)
+        for (n, m, g, s) in self.fetchall():
+            if s:
+                rows = self.execute("""select net.device from
+                    subnets s, networks net, nodes n where
+                    s.id = %s and s.id = net.subnet and
+                    net.node = n.id and n.name = '%s' 
+                    and net.device not like 'vlan%%' """
+                    % (s, host))
+                if rows == 1:
+                    g, = self.fetchone()
 
-			if showsource:
-				routes[n] = (m, g, 'O')
-			else:
-				routes[n] = (m, g)
+            if showsource:
+                routes[n] = (m, g, 'O')
+            else:
+                routes[n] = (m, g)
 
-		# appliance		
-		self.execute("""select r.network, r.netmask, r.gateway,
-			r.subnet from
-			appliance_routes r,
-			nodes n,
-			memberships m,
-			appliances app where
-			n.membership=m.id and m.appliance=app.id and 
-			r.appliance=app.id and n.name='%s'""" % host)
-		for (n, m, g, s) in self.fetchall():
-			if s:
-				rows = self.execute("""select net.device from
-					subnets s, networks net, nodes n where
-					s.id = %s and s.id = net.subnet and
-					net.node = n.id and n.name = '%s' 
-					and net.device not like 'vlan%%' """
-					% (s, host))
-				if rows == 1:
-					g, = self.fetchone()
+        # appliance        
+        self.execute("""select r.network, r.netmask, r.gateway,
+            r.subnet from
+            appliance_routes r,
+            nodes n,
+            memberships m,
+            appliances app where
+            n.membership=m.id and m.appliance=app.id and 
+            r.appliance=app.id and n.name='%s'""" % host)
+        for (n, m, g, s) in self.fetchall():
+            if s:
+                rows = self.execute("""select net.device from
+                    subnets s, networks net, nodes n where
+                    s.id = %s and s.id = net.subnet and
+                    net.node = n.id and n.name = '%s' 
+                    and net.device not like 'vlan%%' """
+                    % (s, host))
+                if rows == 1:
+                    g, = self.fetchone()
 
-			if showsource:
-				routes[n] = (m, g, 'A')
-			else:
-				routes[n] = (m, g)
+            if showsource:
+                routes[n] = (m, g, 'A')
+            else:
+                routes[n] = (m, g)
 
-		# host				
-		self.execute("""select r.network, r.netmask, r.gateway,
-			r.subnet from node_routes r, nodes n where
-			n.name='%s' and n.id=r.node""" % host)
-		for (n, m, g, s) in self.fetchall():
-			if s:
-				rows = self.execute("""select net.device from
-					subnets s, networks net, nodes n where
-					s.id = %s and s.id = net.subnet and
-					net.node = n.id and n.name = '%s'
-					and net.device not like 'vlan%%' """
-					% (s, host))
-				if rows == 1:
-					g, = self.fetchone()
+        # host                
+        self.execute("""select r.network, r.netmask, r.gateway,
+            r.subnet from node_routes r, nodes n where
+            n.name='%s' and n.id=r.node""" % host)
+        for (n, m, g, s) in self.fetchall():
+            if s:
+                rows = self.execute("""select net.device from
+                    subnets s, networks net, nodes n where
+                    s.id = %s and s.id = net.subnet and
+                    net.node = n.id and n.name = '%s'
+                    and net.device not like 'vlan%%' """
+                    % (s, host))
+                if rows == 1:
+                    g, = self.fetchone()
 
-			if showsource:
-				routes[n] = (m, g, 'H')
-			else:
-				routes[n] = (m, g)
-			
-		return routes
+            if showsource:
+                routes[n] = (m, g, 'H')
+            else:
+                routes[n] = (m, g)
+            
+        return routes
 
-	def getHostAttrs(self, host, showsource=0):
-		"""Return a dictionary of KEY x VALUE pairs for the host
-		specific attributes for the given host.
-		"""
-		hostname = self.getHostname(host)
-		return self.database.getHostAttrs(hostname, showsource)
-
-
-	def getHostAttr(self, host, key):
-		"""Return the value for the host specific attribute KEY or
-		None if it does not exist.
-		"""
-		
-		# This should be its own SQL but cheat until the code
-		# stabilizes.
-		
-		return self.getHostAttrs(host).get(key)
+    def getHostAttrs(self, host, showsource=0):
+        """Return a dictionary of KEY x VALUE pairs for the host
+        specific attributes for the given host.
+        """
+        hostname = self.getHostname(host)
+        return self.database.getHostAttrs(hostname, showsource)
 
 
-	def getSecAttr(self, attr = None):
-		""" Get a globally defined named, secure attribute """
-		if attr is None:
-			return {}
-		attrs = {}
-		self.execute('select value, enc from sec_global_attributes ' +\
-			'where attr="%s"' % attr)
-		for (v, e) in self.fetchone():
-			attrs[attr] = (v, e)
-		return attrs
+    def getHostAttr(self, host, key):
+        """Return the value for the host specific attribute KEY or
+        None if it does not exist.
+        """
+        
+        # This should be its own SQL but cheat until the code
+        # stabilizes.
+        
+        return self.getHostAttrs(host).get(key)
 
-	def getSecAttrs(self):
-		""" Get all globally defined secure attribute """
-		attrs = {}
-		self.execute('select attr, value, enc from sec_global_attributes')
-		for (a, v, e) in self.fetchall():
-			attrs[a] = (v, e)
 
-		return attrs
+    def getSecAttr(self, attr = None):
+        """ Get a globally defined named, secure attribute """
+        if attr is None:
+            return {}
+        attrs = {}
+        self.execute('select value, enc from sec_global_attributes ' +\
+            'where attr="%s"' % attr)
+        for (v, e) in self.fetchone():
+            attrs[attr] = (v, e)
+        return attrs
 
-	def getHostSecAttrs(self, host):
-		""" Get all secure attributes for a host """
-		attrs = self.getSecAttrs() 
+    def getSecAttrs(self):
+        """ Get all globally defined secure attribute """
+        attrs = {}
+        self.execute('select attr, value, enc from sec_global_attributes')
+        for (a, v, e) in self.fetchall():
+            attrs[a] = (v, e)
 
-		self.execute('select s.attr, s.value, s.enc from sec_node_attributes s, nodes n ' +\
-			'where s.node=n.id and n.name="%s"' % host)
-		for (a, v, e) in self.fetchall():
-			attrs[a] = (v, e)
+        return attrs
 
-		return attrs
+    def getHostSecAttrs(self, host):
+        """ Get all secure attributes for a host """
+        attrs = self.getSecAttrs() 
 
-	def getHostSecAttr(self, host, attr = None):
-		""" Get named, secure attribute for a host """
-		if attr is None:
-			return {}
+        self.execute('select s.attr, s.value, s.enc from sec_node_attributes s, nodes n ' +\
+            'where s.node=n.id and n.name="%s"' % host)
+        for (a, v, e) in self.fetchall():
+            attrs[a] = (v, e)
 
-		attrs = self.getSecAttr(attr) 
+        return attrs
 
-		self.execute('select s.value, s.enc from sec_node_attributes s, nodes n ' +\
-			'where s.attr="%s" s.node=n.id and n.name="%s"' % (attr, host))
-		for (v, e) in self.fetchone():
-			attrs[a] = (v, e)
-	
-		return attrs	
+    def getHostSecAttr(self, host, attr = None):
+        """ Get named, secure attribute for a host """
+        if attr is None:
+            return {}
 
-	def getHostname(self, hostname=None):
-		"""Returns the name of the given host as referred to in
-		the database.  This is used to normalize a hostname before
-		using it for any database queries."""
+        attrs = self.getSecAttr(attr) 
 
-		# moved in rocks.db.helper.DatabaseHelper
-		return self.database.getHostname(hostname)
+        self.execute('select s.value, s.enc from sec_node_attributes s, nodes n ' +\
+            'where s.attr="%s" s.node=n.id and n.name="%s"' % (attr, host))
+        for (v, e) in self.fetchone():
+            attrs[a] = (v, e)
+    
+        return attrs    
+
+    def getHostname(self, hostname=None):
+        """Returns the name of the given host as referred to in
+        the database.  This is used to normalize a hostname before
+        using it for any database queries."""
+
+        # moved in rocks.db.helper.DatabaseHelper
+        return self.database.getHostname(hostname)
 
 
 class Command:
-	"""Base class for all Rocks commands the general command line form
-	is as follows:
+    """Base class for all Rocks commands the general command line form
+    is as follows:
 
-		rocks ACTION COMPONENT OBJECT [ <ARGNAME ARGS> ... ]
-		
-		ACTION(s):
-			add
-			create
-			list
-			load
-			sync
-	"""
-
-	MustBeRoot = 1
-
-	def __init__(self, database):
-		"""Creates a DatabaseConnection for the RocksCommand to use.
-		This is called for all commands, including those that do not
-		require a database connection."""
-
-		self.db = DatabaseConnection(database)
-		# new database connection in rocks.db
-		# soon (or later) self.db will be removed and only newdb will be left
-		self.newdb = self.db.database
-
-		self.text = ''
-		
-		self.output = []
+        rocks ACTION COMPONENT OBJECT [ <ARGNAME ARGS> ... ]
         
-		self.arch = os.uname()[4]
-		if self.arch in [ 'i386', 'i486', 'i586', 'i686' ]:
-			self.arch = 'i386'
-		self.os = os.uname()[0].lower()
+        ACTION(s):
+            add
+            create
+            list
+            load
+            sync
+    """
 
-		self._args = None
-		self._params = None
-		if 'ROCKSDEBUG' in os.environ:
-			self._debug = True
-		else:
-			self._debug = False
+    MustBeRoot = 1
 
-		self.json = False
+    def __init__(self, database):
+        """Creates a DatabaseConnection for the RocksCommand to use.
+        This is called for all commands, including those that do not
+        require a database connection."""
+
+        self.db = DatabaseConnection(database)
+        # new database connection in rocks.db
+        # soon (or later) self.db will be removed and only newdb will be left
+        self.newdb = self.db.database
+
+        self.text = ''
+        
+        self.output = []
+        
+        self.arch = os.uname()[4]
+        if self.arch in [ 'i386', 'i486', 'i586', 'i686' ]:
+            self.arch = 'i386'
+        self.os = os.uname()[0].lower()
+
+        self._args = None
+        self._params = None
+        if 'ROCKSDEBUG' in os.environ:
+            self._debug = True
+        else:
+            self._debug = False
+
+        self.json = False
 
 
-	def debug(self):
-		"""return true if we are in debug mode"""
-		return self._debug
-		
-	def abort(self, msg):
-		syslog.syslog(syslog.LOG_ERR, msg.split('\n')[0])
-		raise rocks.util.CommandError(msg)
-	
-	def fillPositionalArgs(self, names, params=None, args=None):
-		# The helper function will allow named parameters
-		# to be used in lieu of positional arguments
-		# Example:  
-		#   Suppose command is of the form: 
+    def debug(self):
+        """return true if we are in debug mode"""
+        return self._debug
+        
+    def abort(self, msg):
+        syslog.syslog(syslog.LOG_ERR, msg.split('\n')[0])
+        raise rocks.util.CommandError(msg)
+    
+    def fillPositionalArgs(self, names, params=None, args=None):
+        # The helper function will allow named parameters
+        # to be used in lieu of positional arguments
+        # Example:  
+        #   Suppose command is of the form: 
                 #            command <arg1> <arg2> <arg3>
-		#   Usually called as:
-		#            command foo bar baz
+        #   Usually called as:
+        #            command foo bar baz
                 #   However if you name the arguments as parameters, say
-		#           arg1, arg2, arg3
-		#   Then, equivalent calls of the command are
-		#	    command arg1=foo arg2=bar arg3=baz 
-		#           command foo arg2=bar arg3=baz
+        #           arg1, arg2, arg3
+        #   Then, equivalent calls of the command are
+        #        command arg1=foo arg2=bar arg3=baz 
+        #           command foo arg2=bar arg3=baz
                 #           command foo bar arg3=baz
-		#           command foo bar baz
-		#           command foo arg2=bar baz
-		#
-		#   Arguments:
-		#           paramlist = list of parameter names in the order
-		#                       that their unnamed argument counterparts
-		#			 appear eg. paramlist=('iface','mac')
-		#	    params    = list of parameters (e.g param=value) 
-		#           args      = args
-		#
-		#  Returns:
-		#           remaining args, Filled parameters
-		#  Example:
-		#           hostlist,iface,mac=self.fillPositionalArgs( \
-	        #			('iface','mac'),params,args)
-	
-		if not type(names) in [ list, tuple ]:
-			names = [ names ]
-			 
-		if not params:
-			params = self._params
-		if not args:
-			args = self._args
-			
-		list = []
-		for name in names:
-			if name in params:
-				list.append(params[name])
-			else:
-				list.append(None)
+        #           command foo bar baz
+        #           command foo arg2=bar baz
+        #
+        #   Arguments:
+        #           paramlist = list of parameter names in the order
+        #                       that their unnamed argument counterparts
+        #             appear eg. paramlist=('iface','mac')
+        #        params    = list of parameters (e.g param=value) 
+        #           args      = args
+        #
+        #  Returns:
+        #           remaining args, Filled parameters
+        #  Example:
+        #           hostlist,iface,mac=self.fillPositionalArgs( \
+            #            ('iface','mac'),params,args)
+    
+        if not type(names) in [ list, tuple ]:
+            names = [ names ]
+             
+        if not params:
+            params = self._params
+        if not args:
+            args = self._args
+            
+        list = []
+        for name in names:
+            if name in params:
+                list.append(params[name])
+            else:
+                list.append(None)
 
-		# now walk backwards through the args and pull off
-		# positional arguments that have not already been set
-		# as a param=<parameter>
+        # now walk backwards through the args and pull off
+        # positional arguments that have not already been set
+        # as a param=<parameter>
 
-		trimmedArgs = args
-		vars = []
-		list.reverse()
-		for e in list:
-			if not e and len(trimmedArgs):
-				vars.append(trimmedArgs[-1])
-				trimmedArgs = trimmedArgs[:-1]
-			else:
-				vars.append(e)
-		
-		# need to reverse the 'vars' to get them in the correct order
-		# since we processed them above in reverse order
-		vars.reverse()
+        trimmedArgs = args
+        vars = []
+        list.reverse()
+        for e in list:
+            if not e and len(trimmedArgs):
+                vars.append(trimmedArgs[-1])
+                trimmedArgs = trimmedArgs[:-1]
+            else:
+                vars.append(e)
+        
+        # need to reverse the 'vars' to get them in the correct order
+        # since we processed them above in reverse order
+        vars.reverse()
 
-		rlist=[]
-		rlist.append(trimmedArgs)
-		rlist.extend(vars)
-		return rlist 
+        rlist=[]
+        rlist.append(trimmedArgs)
+        rlist.extend(vars)
+        return rlist 
 
-	def fillParams(self, names, params=None):
-		"""
+    def fillParams(self, names, params=None):
+        """
                 Returns a list of variables with either default
-		values of the values in the PARAMS dictionary.
+        values of the values in the PARAMS dictionary.
 
-		:type names: list
-		:param names: a list of (KEY, DEFAULT) tuples, where KEY
-			is a key name of PARAMS dictionary and DEFAULT
-			is the default value if key in not in dict
+        :type names: list
+        :param names: a list of (KEY, DEFAULT) tuples, where KEY
+            is a key name of PARAMS dictionary and DEFAULT
+            is the default value if key in not in dict
 
-		:type params: dict
-		:param params: optional dictionary
+        :type params: dict
+        :param params: optional dictionary
 
-		For example::
+        For example::
 
-		  (svc, comp) = self.fillParams(
-		           ('service', None),
-		           ('component', None))
+          (svc, comp) = self.fillParams(
+                   ('service', None),
+                   ('component', None))
 
-		Can also be written as::
+        Can also be written as::
 
-		  (svc, comp) = self.fillParams(('service',), ('component', ))
-		"""
+          (svc, comp) = self.fillParams(('service',), ('component', ))
+        """
 
-		# make sure names is a list or tuple
-		
-		if not type(names) in [ list, tuple ]:
-			names = [ names ]
+        # make sure names is a list or tuple
+        
+        if not type(names) in [ list, tuple ]:
+            names = [ names ]
 
-		# for each element in the names list make sure it is also
-		# a tuple.  If the second element (default value) is missing
-		# use None.  The resulting PDLIST is a list of (key, default) 
-		# tuples.
-		
-		pdlist = []
-		for e in names:
-			if type(e) in [ list, tuple] \
-				and len(e) == 2:
-				tuple = ( e[0], e[1] )
-			else:
-				tuple = ( e[0], None )
-			pdlist.append(tuple)
-				
-		if not params:
-			params = self._params
+        # for each element in the names list make sure it is also
+        # a tuple.  If the second element (default value) is missing
+        # use None.  The resulting PDLIST is a list of (key, default) 
+        # tuples.
+        
+        pdlist = []
+        for e in names:
+            if type(e) in [ list, tuple] \
+                and len(e) == 2:
+                tuple = ( e[0], e[1] )
+            else:
+                tuple = ( e[0], None )
+            pdlist.append(tuple)
+                
+        if not params:
+            params = self._params
 
-		list = []
-		for (key, default) in pdlist:
-			if key in params:
-				list.append(params[key])
-			else:
-				list.append(default)
-		return list
-
-
-	def command(self, command, args=[]):
-		"""Import and run a Rocks command.
-		Returns and output string."""
-
-		modpath = 'rocks.commands.%s' % command
-		__import__(modpath)
-		mod = eval(modpath)
-
-		try:
-			o = getattr(mod, 'Command')(self.newdb)
-			name = string.join(string.split(command, '.'), ' ')
-		except AttributeError:
-			return ''
-
-		# flash to the DB and expire any ORM object to avoid reading 
-		# cached values in future DB query
-		self.newdb.commit()
-
-		o.runWrapper(name, args)
-		return o.getText()
+        list = []
+        for (key, default) in pdlist:
+            if key in params:
+                list.append(params[key])
+            else:
+                list.append(default)
+        return list
 
 
-	def loadPlugins(self):
-		dict	= {}
-		graph	= rocks.graph.Graph()
-		
-		dir = eval('%s.__path__[0]' % self.__module__)
-		for file in os.listdir(dir):
-			if file.split('_')[0] != 'plugin':
-				continue
-			if os.path.splitext(file)[1] != '.py':
-				continue
-			module = '%s.%s' % (self.__module__,
-				os.path.splitext(file)[0])
-			__import__(module)
-			module = eval(module)
-			try:
-				o = getattr(module, 'Plugin')(self)
-			except AttributeError:
-				continue
-			
-			# All nodes point to TAIL.  This insures a fully
-			# connected graph, otherwise partial ordering
-			# will fail
+    def command(self, command, args=[]):
+        """Import and run a Rocks command.
+        Returns and output string."""
 
-			if graph.hasNode(o.provides()):
-				plugin = graph.getNode(o.provides())
-			else:
-				plugin = rocks.graph.Node(o.provides())
-			dict[plugin] = o
+        modpath = 'rocks.commands.%s' % command
+        __import__(modpath)
+        mod = eval(modpath)
 
-			if graph.hasNode('TAIL'):
-				tail = graph.getNode('TAIL')
-			else:
-				tail = rocks.graph.Node('TAIL')
-			graph.addEdge(rocks.graph.Edge(plugin, tail))
-			
-			for pre in o.precedes():
-				if graph.hasNode(pre):
-					tail = graph.getNode(pre)
-				else:
-					tail = rocks.graph.Node(pre)
-				graph.addEdge(rocks.graph.Edge(plugin, tail))
-					
-			for req in o.requires():
-				if graph.hasNode(req):
-					head = graph.getNode(req)
-				else:
-					head = rocks.graph.Node(req)
-				graph.addEdge(rocks.graph.Edge(head, plugin))
-			
-		list = []
-		for node in PluginOrderIterator(graph).run():
-			if node in dict:
-				list.append(dict[node])
-		return list
+        try:
+            o = getattr(mod, 'Command')(self.newdb)
+            name = string.join(string.split(command, '.'), ' ')
+        except AttributeError:
+            return ''
 
-		
-	def runPlugins(self, args='', plugins=None):
-		if not plugins:
-			plugins = self.loadPlugins()
-		for plugin in plugins:
-                        syslog.syslog(syslog.LOG_INFO, 'run %s' % plugin)
-			plugin.run(args)
+        # flash to the DB and expire any ORM object to avoid reading 
+        # cached values in future DB query
+        self.newdb.commit()
+
+        o.runWrapper(name, args)
+        return o.getText()
 
 
-	def isRootUser(self):
-		"""Returns TRUE if running as the root account."""
-		if os.geteuid() == 0:
-			return 1
-		else:
-			return 0
-			
-	def isApacheUser(self):
-		"""Returns TRUE if running as the apache account."""
-		try:
-			if os.geteuid() == pwd.getpwnam('apache')[3]:
-				return 1
-		except:
-			pass
-		return 0
-		
-	
-	def str2bool(self, s):
-		"""Converts an on/off, yes/no, true/false string to 1/0.
-		TODO remove me. This functions are now in rocks.util"""
-		if s and s.upper() in [ 'ON', 'YES', 'Y', 'TRUE', '1' ]:
-			return 1
-		else:
-			return 0
+    def loadPlugins(self):
+        dict    = {}
+        graph    = rocks.graph.Graph()
+        
+        dir = eval('%s.__path__[0]' % self.__module__)
+        for file in os.listdir(dir):
+            if file.split('_')[0] != 'plugin':
+                continue
+            if os.path.splitext(file)[1] != '.py':
+                continue
+            module = '%s.%s' % (self.__module__,
+                os.path.splitext(file)[0])
+            __import__(module)
+            module = eval(module)
+            try:
+                o = getattr(module, 'Plugin')(self)
+            except AttributeError:
+                continue
+            
+            # All nodes point to TAIL.  This insures a fully
+            # connected graph, otherwise partial ordering
+            # will fail
 
-	def bool2str(self, b):
-		"""Converts an 1/0 to a yes/no"""
-		if b:
-			return 'yes'
-		else:
-			return 'no'
+            if graph.hasNode(o.provides()):
+                plugin = graph.getNode(o.provides())
+            else:
+                plugin = rocks.graph.Node(o.provides())
+            dict[plugin] = o
 
-	
-	def strWordWrap(self, line, indent=''):
-		if 'COLUMNS' in os.environ:
-			cols = os.environ['COLUMNS']
-		else:
-			cols = 80
-		l = 0
-		s = ''
-		for word in line.split(' '):
-			if l + len(word) < cols:
-				s += '%s ' % word
-				l += len(word) + 1 # space
-			else:
-				s += '\n%s%s ' % (indent, word)
-				l += len(indent) + len(word) + 1 # space
-		return s
-			
-	def clearText(self):
-		"""Reset the output text buffer."""
-		self.text = ''
-		
-	def addText(self, s):
-		"""Append a string to the output text buffer."""
-		if s:
-			self.text += s
-		
-	def getText(self):
-		"""Returns the output text buffer."""
-		return self.text	
+            if graph.hasNode('TAIL'):
+                tail = graph.getNode('TAIL')
+            else:
+                tail = rocks.graph.Node('TAIL')
+            graph.addEdge(rocks.graph.Edge(plugin, tail))
+            
+            for pre in o.precedes():
+                if graph.hasNode(pre):
+                    tail = graph.getNode(pre)
+                else:
+                    tail = rocks.graph.Node(pre)
+                graph.addEdge(rocks.graph.Edge(plugin, tail))
+                    
+            for req in o.requires():
+                if graph.hasNode(req):
+                    head = graph.getNode(req)
+                else:
+                    head = rocks.graph.Node(req)
+                graph.addEdge(rocks.graph.Edge(head, plugin))
+            
+        list = []
+        for node in PluginOrderIterator(graph).run():
+            if node in dict:
+                list.append(dict[node])
+        return list
 
-	def beginOutput(self):
-		"""Reset the output list buffer."""
-		self.output = []
+        
+    def runPlugins(self, args='', plugins=None):
+        if not plugins:
+            plugins = self.loadPlugins()
+        for plugin in plugins:
+            syslog.syslog(syslog.LOG_INFO, 'run %s' % plugin)
+            plugin.run(args)
 
 
-	def addOutput(self, owner, vals):
-		"""Append a list to the output list buffer."""
+    def isRootUser(self):
+        """Returns TRUE if running as the root account."""
+        if os.geteuid() == 0:
+            return 1
+        else:
+            return 0
+            
+    def isApacheUser(self):
+        """Returns TRUE if running as the apache account."""
+        try:
+            if os.geteuid() == pwd.getpwnam('apache')[3]:
+                return 1
+        except:
+            pass
+        return 0
+        
+    
+    def str2bool(self, s):
+        """Converts an on/off, yes/no, true/false string to 1/0.
+        TODO remove me. This functions are now in rocks.util"""
+        if s and s.upper() in [ 'ON', 'YES', 'Y', 'TRUE', '1' ]:
+            return 1
+        else:
+            return 0
 
-		# VALS can be a list, tuple, or primitive type.
-		list = [ '%s:' % owner ]
+    def bool2str(self, b):
+        """Converts an 1/0 to a yes/no"""
+        if b:
+            return 'yes'
+        else:
+            return 'no'
 
-		if isinstance(vals, list):
-			list.extend(vals)
-		elif isinstance(vals, tuple) or \
-			isinstance(vals, sqlalchemy.engine.result.RowProxy):
-			for e in vals:
-				list.append(e)
-		else:
-			list.append(vals)
-			
-		self.output.append(list)
-		
-		
-	def JSONOutput(self,header):
-		"""Do JSON output for various reports, header contains """
-		what = self.__module__.split('.')[-1]
-		jsonOutput = []
-		ownerKey = header[0]
-		if ownerKey == what:
-			what = self.__module__.split('.')[-2]
-		currentOwner = None
-		ownerDict = None
-		for kk in self.output:
-			tmpOwner = kk[0].replace(":","")
-			if tmpOwner != currentOwner:
-				if currentOwner is not None:
-					jsonOutput.append(ownerDict)
-				currentOwner = tmpOwner
-				ownerDict={}
-				ownerDict[ownerKey] = currentOwner
-				ownerDict[what]=[]
-			dict = {}
-			for k,v in zip(header[1:],kk[1:]):
-				dict[k] = v
-			ownerDict[what].append(dict)
+    
+    def strWordWrap(self, line, indent=''):
+        if 'COLUMNS' in os.environ:
+            cols = os.environ['COLUMNS']
+        else:
+            cols = 80
+        l = 0
+        s = ''
+        for word in line.split(' '):
+            if l + len(word) < cols:
+                s += '%s ' % word
+                l += len(word) + 1 # space
+            else:
+                s += '\n%s%s ' % (indent, word)
+                l += len(indent) + len(word) + 1 # space
+        return s
+            
+    def clearText(self):
+        """Reset the output text buffer."""
+        self.text = ''
+        
+    def addText(self, s):
+        """Append a string to the output text buffer."""
+        if s:
+            self.text += s
+        
+    def getText(self):
+        """Returns the output text buffer."""
+        return self.text    
 
-		if currentOwner is not None:
-			jsonOutput.append(ownerDict)
-
-		jsonText = json.dumps(jsonOutput,indent=4)
-		self.addText(jsonText)
-			
-		
-
-	def endOutput(self, header=[], padChar='-', trimOwner=1,linesep='\n'):
-		"""Pretty prints the output list buffer."""
-
-		# Handle the simple case of no output, and bail out
-		# early.  We do this to avoid printing out nothing
-		# but a header w/o any rows.
-		
-		if not self.output:
-			return
-
-		# check if the user has selected output-header=flase to
-		# disable output of the header
-		# or output-col to disable output of some column
-
-		# Check if JSON output
-		if self.json:
-			self.JSONOutput(header)
-			return
-		
-		showHeader      = True
-		if 'output-header' in self._params:
-			showHeader = self.str2bool(self._params['output-header'])
-
-		self.outputCols = []
-		if 'output-col' in self._params:
-			showCols = self._params['output-col'].split(',')
-			for i in header:
-				if i.lower() in showCols:
-					self.outputCols.append(True)
-				else:
-					self.outputCols.append(False)
-			
-		# Loop over the output and check if there is more than
-		# one owner (usually a hostname).  We have only one owner
-		# there is no reason to display it.  The caller can use
-		# trimOwner=0 to disable this optimization.
-
-		if trimOwner:
-			owner = ''
-			self.startOfLine = 1
-			for line in self.output:
-				if not owner:
-					owner = line[0]
-				if not owner == line[0]:
-					self.startOfLine = 0
-		else:
-			self.startOfLine = 0
-				
-		# Add the header to the output and start formatting.  We
-		# keep the header optional and separate from the output
-		# so the above decision (startOfLine) can be made.
-		
-		if header and showHeader:
-			list = []
-			for field in header:
-				list.append(field.upper())
-			output = [ list ]
-			output.extend(self.output)
-		else:
-			output = self.output
-			
-		colwidth = []
-		for line in output:
-			for i in range(0, len(line)):
-				if len(colwidth) <= i:
-					colwidth.append(0)
-				if type(line[i]) != bytes:
-					if line[i] == None:
-						itemlen = 0
-					else:
-						itemlen = len(repr(line[i]))
-				else:
-					itemlen = len(line[i])
-
-				if itemlen > colwidth[i]:
-					colwidth[i] = itemlen
-				
-		o = ''
-		for line in output:
-			list = []
-			for i in range(self.startOfLine, len(line)):
-				if line[i] == None:
-					s = ''
-				else:
-					s = str(line[i])
-				if padChar != '':
-					if s:
-						o = s.ljust(colwidth[i])
-					else:
-						o = ''.ljust(colwidth[i],
-							padChar)
-				else:
-					o = s
-				list.append(o)
-			self.addText('%s%s' % (self.outputRow(list),linesep))
+    def beginOutput(self):
+        """Reset the output list buffer."""
+        self.output = []
 
 
-	def outputRow(self, list):
-		if self.outputCols:
-			l = []
-			for i in range(0, len(list)):
-				if self.outputCols[i + self.startOfLine]:
-					l.append(list[i])
-			return string.join(l, ' ')
-		else:
-			return string.join(list, ' ')
+    def addOutput(self, owner, vals):
+        """Append a list to the output list buffer."""
+
+        # VALS can be a list, tuple, or primitive type.
+        list = [ '%s:' % owner ]
+
+        if isinstance(vals, list):
+            list.extend(vals)
+        elif isinstance(vals, tuple) or \
+            isinstance(vals, sqlalchemy.engine.result.RowProxy):
+            for e in vals:
+                list.append(e)
+        else:
+            list.append(vals)
+            
+        self.output.append(list)
+        
+        
+    def JSONOutput(self,header):
+        """Do JSON output for various reports, header contains """
+        what = self.__module__.split('.')[-1]
+        jsonOutput = []
+        ownerKey = header[0]
+        if ownerKey == what:
+            what = self.__module__.split('.')[-2]
+        currentOwner = None
+        ownerDict = None
+        for kk in self.output:
+            tmpOwner = kk[0].replace(":","")
+            if tmpOwner != currentOwner:
+                if currentOwner is not None:
+                    jsonOutput.append(ownerDict)
+                currentOwner = tmpOwner
+                ownerDict={}
+                ownerDict[ownerKey] = currentOwner
+                ownerDict[what]=[]
+            dict = {}
+            for k,v in zip(header[1:],kk[1:]):
+                dict[k] = v
+            ownerDict[what].append(dict)
+
+        if currentOwner is not None:
+            jsonOutput.append(ownerDict)
+
+        jsonText = json.dumps(jsonOutput,indent=4)
+        self.addText(jsonText)
+            
+        
+
+    def endOutput(self, header=[], padChar='-', trimOwner=1,linesep='\n'):
+        """Pretty prints the output list buffer."""
+
+        # Handle the simple case of no output, and bail out
+        # early.  We do this to avoid printing out nothing
+        # but a header w/o any rows.
+        
+        if not self.output:
+            return
+
+        # check if the user has selected output-header=flase to
+        # disable output of the header
+        # or output-col to disable output of some column
+
+        # Check if JSON output
+        if self.json:
+            self.JSONOutput(header)
+            return
+        
+        showHeader      = True
+        if 'output-header' in self._params:
+            showHeader = self.str2bool(self._params['output-header'])
+
+        self.outputCols = []
+        if 'output-col' in self._params:
+            showCols = self._params['output-col'].split(',')
+            for i in header:
+                if i.lower() in showCols:
+                    self.outputCols.append(True)
+                else:
+                    self.outputCols.append(False)
+            
+        # Loop over the output and check if there is more than
+        # one owner (usually a hostname).  We have only one owner
+        # there is no reason to display it.  The caller can use
+        # trimOwner=0 to disable this optimization.
+
+        if trimOwner:
+            owner = ''
+            self.startOfLine = 1
+            for line in self.output:
+                if not owner:
+                    owner = line[0]
+                if not owner == line[0]:
+                    self.startOfLine = 0
+        else:
+            self.startOfLine = 0
+                
+        # Add the header to the output and start formatting.  We
+        # keep the header optional and separate from the output
+        # so the above decision (startOfLine) can be made.
+        
+        if header and showHeader:
+            list = []
+            for field in header:
+                list.append(field.upper())
+            output = [ list ]
+            output.extend(self.output)
+        else:
+            output = self.output
+            
+        colwidth = []
+        for line in output:
+            for i in range(0, len(line)):
+                if len(colwidth) <= i:
+                    colwidth.append(0)
+                if type(line[i]) != bytes:
+                    if line[i] == None:
+                        itemlen = 0
+                    else:
+                        itemlen = len(repr(line[i]))
+                else:
+                    itemlen = len(line[i])
+
+                if itemlen > colwidth[i]:
+                    colwidth[i] = itemlen
+                
+        o = ''
+        for line in output:
+            list = []
+            for i in range(self.startOfLine, len(line)):
+                if line[i] == None:
+                    s = ''
+                else:
+                    s = str(line[i])
+                if padChar != '':
+                    if s:
+                        o = s.ljust(colwidth[i])
+                    else:
+                        o = ''.ljust(colwidth[i],
+                            padChar)
+                else:
+                    o = s
+                list.append(o)
+            self.addText('%s%s' % (self.outputRow(list),linesep))
 
 
-
-	def usage(self):
-		if self.__doc__:
-			handler = DocStringHandler()
-			parser = make_parser()
-			parser.setContentHandler(handler)
-			try:
-				parser.feed('<docstring>%s</docstring>' %
-					self.__doc__)
-			except:
-				return '-- invalid doc string --'
-			return handler.getUsageText()
-		else:
-			return '-- missing doc string --'
-
-		
-	def help(self, command, flags={}):
-		if not self.__doc__:
-			return
-
-		if self.MustBeRoot:
-			users = [ 'root', 'apache' ]
-		else:
-			users = []
-			
-		if 'format' in flags:
-			format = flags['format'].lower()
-		else:
-			format = 'plain'
-		
-		if format == 'raw':
-			i = 1
-			for line in self.__doc__.split('\n'):
-				self.addText('%d:%s\n' % (i, line))
-				i += 1
-		else:
-			handler = DocStringHandler(command, users)
-			parser = make_parser()
-			parser.setContentHandler(handler)
-			parser.feed('<docstring>%s</docstring>' % self.__doc__)
-			if format == 'docbook':
-				self.addText(handler.getDocbookText())
-			elif format == 'parsed':
-				self.addText(handler.getParsedText())
-			elif format == 'sphinx':
-				self.addText(handler.getSphinxText())
-			else:
-				self.addText(handler.getPlainText())
-
-	
-	def runWrapper(self, name, args):
-		"""Performs various checks and logging on the command before 
-		the run() method is called.  Derived classes should NOT
-		need to override this."""
-
-		username = pwd.getpwuid(os.geteuid())[0]
-		if args:
-			command = '%s %s' % (name, string.join(args,' '))
-		else:
-			command = name
-
-		syslog.syslog(syslog.LOG_INFO,
-			'user %s called "%s"' % (username, command))
-			
-		# Split the args and flags apart.  Args have no '='
-		# with the exception of select statements (special case), and
-		# flags have one or more '='.
-		
-		dict = {} # flags
-		list = [] # arguments
-		
-		nparams = 0
-		flagpattern=re.compile("^[a-zA-z0-9\-_+]+=")
-
-		for arg in args:
-			tokens = arg.split()
-			if tokens[0] == 'select':
-				list.append(arg)
-			#there is an equal and 
-			#the left side of the equal does not contains spaces
-			elif flagpattern.match(arg):
-				(key, val) = arg.split('=', 1)
-				dict[key] = val
-				if nparams == 0:
-					dict['@ROCKSPARAM0']=arg
-				nparams += 1
-			else:
-				list.append(arg)
-
-		if  "json" in list(dict.keys()):
-			if self.str2bool(dict['json']):
-				self.json=True
-
-		if list and list[0] == 'help':
-			self.help(name, dict)
-		else:
-			if self.MustBeRoot and not \
-				(self.isRootUser() or self.isApacheUser()):
-				self.abort('command "%s" requires root' % name)
-			else:
-				self._args   = list
-				self._params = dict
-				try:
-					self.run(self._params, self._args)
-					if self.newdb is not None:
-						self.newdb.commit()
-				except rocks.util.HostnotfoundException as e:
-					if self.debug():
-						traceback.print_exc()
-					self.abort(str(e))
-				except sqlalchemy.exc.OperationalError as e:
-					if self.debug():
-						traceback.print_exc()
-					self.abort("Dabase error: " + str(e))
+    def outputRow(self, list):
+        if self.outputCols:
+            l = []
+            for i in range(0, len(list)):
+                if self.outputCols[i + self.startOfLine]:
+                    l.append(list[i])
+            return string.join(l, ' ')
+        else:
+            return string.join(list, ' ')
 
 
 
-	def run(self, flags, args):
-		"""All derived classes should override this method.
-		This method is called by the rocks command line as the
-		entry point into the Command object.
-		
-		flags: dictionary of key=value flags
-		args: list of string arguments"""
-		
-		pass
+    def usage(self):
+        if self.__doc__:
+            handler = DocStringHandler()
+            parser = make_parser()
+            parser.setContentHandler(handler)
+            try:
+                parser.feed('<docstring>%s</docstring>' %
+                    self.__doc__)
+            except:
+                return '-- invalid doc string --'
+            return handler.getUsageText()
+        else:
+            return '-- missing doc string --'
 
-		
+        
+    def help(self, command, flags={}):
+        if not self.__doc__:
+            return
+
+        if self.MustBeRoot:
+            users = [ 'root', 'apache' ]
+        else:
+            users = []
+            
+        if 'format' in flags:
+            format = flags['format'].lower()
+        else:
+            format = 'plain'
+        
+        if format == 'raw':
+            i = 1
+            for line in self.__doc__.split('\n'):
+                self.addText('%d:%s\n' % (i, line))
+                i += 1
+        else:
+            handler = DocStringHandler(command, users)
+            parser = make_parser()
+            parser.setContentHandler(handler)
+            parser.feed('<docstring>%s</docstring>' % self.__doc__)
+            if format == 'docbook':
+                self.addText(handler.getDocbookText())
+            elif format == 'parsed':
+                self.addText(handler.getParsedText())
+            elif format == 'sphinx':
+                self.addText(handler.getSphinxText())
+            else:
+                self.addText(handler.getPlainText())
+
+    
+    def runWrapper(self, name, args):
+        """Performs various checks and logging on the command before 
+        the run() method is called.  Derived classes should NOT
+        need to override this."""
+
+        username = pwd.getpwuid(os.geteuid())[0]
+        if args:
+            command = '%s %s' % (name, string.join(args,' '))
+        else:
+            command = name
+
+        syslog.syslog(syslog.LOG_INFO,
+            'user %s called "%s"' % (username, command))
+            
+        # Split the args and flags apart.  Args have no '='
+        # with the exception of select statements (special case), and
+        # flags have one or more '='.
+        
+        dict = {} # flags
+        list = [] # arguments
+        
+        nparams = 0
+        flagpattern=re.compile("^[a-zA-z0-9\-_+]+=")
+
+        for arg in args:
+            tokens = arg.split()
+            if tokens[0] == 'select':
+                list.append(arg)
+            #there is an equal and 
+            #the left side of the equal does not contains spaces
+            elif flagpattern.match(arg):
+                (key, val) = arg.split('=', 1)
+                dict[key] = val
+                if nparams == 0:
+                    dict['@ROCKSPARAM0']=arg
+                nparams += 1
+            else:
+                list.append(arg)
+
+        if  "json" in list(dict.keys()):
+            if self.str2bool(dict['json']):
+                self.json=True
+
+        if list and list[0] == 'help':
+            self.help(name, dict)
+        else:
+            if self.MustBeRoot and not \
+                (self.isRootUser() or self.isApacheUser()):
+                self.abort('command "%s" requires root' % name)
+            else:
+                self._args   = list
+                self._params = dict
+                try:
+                    self.run(self._params, self._args)
+                    if self.newdb is not None:
+                        self.newdb.commit()
+                except rocks.util.HostnotfoundException as e:
+                    if self.debug():
+                        traceback.print_exc()
+                    self.abort(str(e))
+                except sqlalchemy.exc.OperationalError as e:
+                    if self.debug():
+                        traceback.print_exc()
+                    self.abort("Dabase error: " + str(e))
+
+
+
+    def run(self, flags, args):
+        """All derived classes should override this method.
+        This method is called by the rocks command line as the
+        entry point into the Command object.
+        
+        flags: dictionary of key=value flags
+        args: list of string arguments"""
+        
+        pass
+
+        
 class Plugin:
-	"""Base class for all Rocks command plug-ins."""
-	
-	def __init__(self, command):
-		self.owner = command
-		self.db    = command.db
-		
-	def provides(self):
-		"""Returns a unique string to identify the plug-in.  All
-		Plugins must override this method."""
+    """Base class for all Rocks command plug-ins."""
+    
+    def __init__(self, command):
+        self.owner = command
+        self.db    = command.db
+        
+    def provides(self):
+        """Returns a unique string to identify the plug-in.  All
+        Plugins must override this method."""
 
-		return None
-		
-	def requires(self):
-		"""Returns a list of plug-in identifiers that must be
-		run before this Plugin.  This is optional for all 
-		derived classes."""
+        return None
+        
+    def requires(self):
+        """Returns a list of plug-in identifiers that must be
+        run before this Plugin.  This is optional for all 
+        derived classes."""
 
-		return []
+        return []
 
-	def precedes(self):
-		"""Returns a list of plug-in identifiers that can only by
-		run after this Plugin.  This is optional for all derived
-		classes."""
+    def precedes(self):
+        """Returns a list of plug-in identifiers that can only by
+        run after this Plugin.  This is optional for all derived
+        classes."""
 
-		return []
-	
-		
-	def run(self, args):
-		"""All derived classes should override this method. This
-		is the entry point into the Plugin object."""
-		
-		pass
+        return []
+    
+        
+    def run(self, args):
+        """All derived classes should override this method. This
+        is the entry point into the Plugin object."""
+        
+        pass
 
 
 class PluginOrderIterator(rocks.graph.GraphIterator):
-	"""Iterator for Partial Ordering of Plugins"""
+    """Iterator for Partial Ordering of Plugins"""
 
-	def __init__(self, graph):
-		rocks.graph.GraphIterator.__init__(self, graph)
-		self.nodes = []
-		self.time  = 0
+    def __init__(self, graph):
+        rocks.graph.GraphIterator.__init__(self, graph)
+        self.nodes = []
+        self.time  = 0
 
-	def run(self):
-		rocks.graph.GraphIterator.run(self)
-		list = []
-		self.nodes.sort()
-		for time, node in self.nodes:
-			list.append(node)
-		list.reverse()
-		return list
+    def run(self):
+        rocks.graph.GraphIterator.run(self)
+        list = []
+        self.nodes.sort()
+        for time, node in self.nodes:
+            list.append(node)
+        list.reverse()
+        return list
 
-	def visitHandler(self, node, edge):
-		rocks.graph.GraphIterator.visitHandler(self, node, edge)
-		self.time = self.time + 1
+    def visitHandler(self, node, edge):
+        rocks.graph.GraphIterator.visitHandler(self, node, edge)
+        self.time = self.time + 1
 
-	def finishHandler(self, node, edge):
-		rocks.graph.GraphIterator.finishHandler(self, node, edge)
-		self.time = self.time + 1
-		self.nodes.append((self.time, node))
-		
+    def finishHandler(self, node, edge):
+        rocks.graph.GraphIterator.finishHandler(self, node, edge)
+        self.time = self.time + 1
+        self.nodes.append((self.time, node))
+        
 
 class sec_attr_plugin:
-	"""Base Plugin class for processing secure attributes
-	This is based on the 411 plugin architecture"""
-	def __init__(self):
-		pass
+    """Base Plugin class for processing secure attributes
+    This is based on the 411 plugin architecture"""
+    def __init__(self):
+        pass
 
-	def get_sec_attr(self):
-		return None
+    def get_sec_attr(self):
+        return None
 
-	def filter(self, value = None):
-		return None
+    def filter(self, value = None):
+        return None
 

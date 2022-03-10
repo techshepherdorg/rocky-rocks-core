@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -140,85 +140,85 @@ import string
 import rocks.commands
 
 class Command(rocks.commands.add.command):
-	"""
-	Add a network to the database. By default both the "public" and
-	"private" networks are already defined by Rocks.
-		
-	<arg type='string' name='name'>
-	Name of the new network.
-	</arg>
-	
-	<arg type='string' name='subnet'>
-	The IP network address for the new network.
-	</arg>
+    """
+    Add a network to the database. By default both the "public" and
+    "private" networks are already defined by Rocks.
+        
+    <arg type='string' name='name'>
+    Name of the new network.
+    </arg>
+    
+    <arg type='string' name='subnet'>
+    The IP network address for the new network.
+    </arg>
 
-	<arg type='string' name='netmask'>
-	The IP network mask for the new network.
-	</arg>
+    <arg type='string' name='netmask'>
+    The IP network mask for the new network.
+    </arg>
 
-	<param type='string' name='subnet'>
-	Can be used in place of the subnet argument.
-	</param>
-	
-	<param type='string' name='netmask'>
-	Can be used in place of the netmask argument.
-	</param>
-	
-	<param type='string' name='mtu'>
-	The MTU for the new network. Default is 1500.
-	</param>
+    <param type='string' name='subnet'>
+    Can be used in place of the subnet argument.
+    </param>
+    
+    <param type='string' name='netmask'>
+    Can be used in place of the netmask argument.
+    </param>
+    
+    <param type='string' name='mtu'>
+    The MTU for the new network. Default is 1500.
+    </param>
 
-	<param type='string' name='dnszone'>
-	The Domain name or the DNS Zone name to use
-	for all hosts of this particular subnet. Default
-	is set to the name of the subnet
-	</param>
-	
-	<param type='boolean' name='servedns'>
-	Parameter to decide whether this zone will be
-	served by the nameserver on the frontend.
-	</param>
+    <param type='string' name='dnszone'>
+    The Domain name or the DNS Zone name to use
+    for all hosts of this particular subnet. Default
+    is set to the name of the subnet
+    </param>
+    
+    <param type='boolean' name='servedns'>
+    Parameter to decide whether this zone will be
+    served by the nameserver on the frontend.
+    </param>
 
-	<example cmd='add network optiputer 192.168.1.0 255.255.255.0'>
-	Adds the optiputer network address of 192.168.1.0/255.255.255.0.
-	</example>
+    <example cmd='add network optiputer 192.168.1.0 255.255.255.0'>
+    Adds the optiputer network address of 192.168.1.0/255.255.255.0.
+    </example>
 
-	<example cmd='add network optiputer subnet=192.168.1.0 netmask=255.255.255.0 mtu=9000
-		dnszone="optiputer.net" servedns=true'>
-	Same as above, but set the MTU to 9000.
-	</example>
-	"""
+    <example cmd='add network optiputer subnet=192.168.1.0 netmask=255.255.255.0 mtu=9000
+        dnszone="optiputer.net" servedns=true'>
+    Same as above, but set the MTU to 9000.
+    </example>
+    """
 
-        def run(self, params, args):
-        	
-        	(args, subnet, netmask) = self.fillPositionalArgs(
-        		('subnet', 'netmask'))
+    def run(self, params, args):
+        
+        (args, subnet, netmask) = self.fillPositionalArgs(
+            ('subnet', 'netmask'))
 
-		(mtu,) = self.fillParams([('mtu', '1500')])
+    (mtu,) = self.fillParams([('mtu', '1500')])
 
-        	if len(args) != 1:
-        		self.abort('must supply one network')
-        	name = args[0]
+    if len(args) != 1:
+        self.abort('must supply one network')
+    name = args[0]
 
-		if not subnet:
-                        self.abort('subnet not specified')
-		if not netmask:
-                        self.abort('netmask not specified')
+    if not subnet:
+                    self.abort('subnet not specified')
+    if not netmask:
+                    self.abort('netmask not specified')
 
-		(dnszone, servedns) = self.fillParams([('dnszone', name),
-			('servedns','n')])
+    (dnszone, servedns) = self.fillParams([('dnszone', name),
+        ('servedns','n')])
 
-		servedns = self.str2bool(servedns)
-		# Insert the name of the new network into the subnets
-		# table if it does not already exist
-			
-		rows = self.db.execute("""select * from subnets where 
-			name='%s'""" % name)
-		if rows > 0:
-			self.abort('network "%s" exists' % name)
-		
-		self.db.execute("""insert into subnets (name, subnet, netmask,
-			mtu, dnszone, servedns) values ('%s', '%s', '%s', %s, '%s', %s)"""\
-			% (name, subnet, netmask, mtu, dnszone, servedns))
+    servedns = self.str2bool(servedns)
+    # Insert the name of the new network into the subnets
+    # table if it does not already exist
+        
+    rows = self.db.execute("""select * from subnets where 
+        name='%s'""" % name)
+    if rows > 0:
+        self.abort('network "%s" exists' % name)
+    
+    self.db.execute("""insert into subnets (name, subnet, netmask,
+        mtu, dnszone, servedns) values ('%s', '%s', '%s', %s, '%s', %s)"""\
+        % (name, subnet, netmask, mtu, dnszone, servedns))
 
 

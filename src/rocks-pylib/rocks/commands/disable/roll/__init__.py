@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -138,50 +138,50 @@ import rocks.commands
 
 
 class Command(rocks.commands.RollArgumentProcessor,
-	rocks.commands.disable.command):
-	"""
-	Disable an available roll. The roll must already be copied on the
-	system using the command "rocks add roll".
-	
-	<arg type='string' name='roll' repeat='1'>
-	List of rolls to disable. This should be the roll base name (e.g.,
-	base, hpc, kernel).
-	</arg>
-	
-	<param type='string' name='version'>
-	The version number of the roll to be disabled. If no version number is
-	supplied, then all versions of a roll will be disabled.
-	</param>
-	
-	<param type='string' name='arch'>
-	The architecture to disable this roll for. If no architecture is
-	supplied, then the roll will be disabled for all architectures.
-	</param>	
+    rocks.commands.disable.command):
+    """
+    Disable an available roll. The roll must already be copied on the
+    system using the command "rocks add roll".
+    
+    <arg type='string' name='roll' repeat='1'>
+    List of rolls to disable. This should be the roll base name (e.g.,
+    base, hpc, kernel).
+    </arg>
+    
+    <param type='string' name='version'>
+    The version number of the roll to be disabled. If no version number is
+    supplied, then all versions of a roll will be disabled.
+    </param>
+    
+    <param type='string' name='arch'>
+    The architecture to disable this roll for. If no architecture is
+    supplied, then the roll will be disabled for all architectures.
+    </param>    
 
-	<example cmd='disable roll kernel'>
-	Disable the kernel roll
-	</example>
-	
-	<example cmd='disable roll ganglia version=5.0 arch=i386'>
-	Disable version 5.0 the Ganglia roll for i386 nodes
-	</example>
-	
-	<related>add roll</related>
-	<related>remove roll</related>
-	<related>enable roll</related>
-	<related>list roll</related>
-	<related>create roll</related>
-	"""		
+    <example cmd='disable roll kernel'>
+    Disable the kernel roll
+    </example>
+    
+    <example cmd='disable roll ganglia version=5.0 arch=i386'>
+    Disable version 5.0 the Ganglia roll for i386 nodes
+    </example>
+    
+    <related>add roll</related>
+    <related>remove roll</related>
+    <related>enable roll</related>
+    <related>list roll</related>
+    <related>create roll</related>
+    """        
 
-	def run(self, params, args):
-                (arch, ) = self.fillParams([('arch', '%')])
+    def run(self, params, args):
+        (arch, ) = self.fillParams([('arch', '%')])
 
-                if len(args) < 1:
-                        self.abort('must supply one or more rolls')
+        if len(args) < 1:
+                self.abort('must supply one or more rolls')
 
-		for (roll, version) in self.getRollNames(args, params):
-			self.db.execute("""update rolls set enabled='no' where
-				name='%s' and version='%s' and arch like '%s'"""
-				% (roll, version, arch))
+        for (roll, version) in self.getRollNames(args, params):
+            self.db.execute("""update rolls set enabled='no' where
+                name='%s' and version='%s' and arch like '%s'"""
+                % (roll, version, arch))
 
 

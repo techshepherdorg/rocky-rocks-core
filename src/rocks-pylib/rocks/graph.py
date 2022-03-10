@@ -2,13 +2,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -156,173 +156,173 @@ import string
 import rocks.util
 
 class Node:
-	def __init__(self, name):
-		self.name      = name
-		self.marked    = 0
-		self.inDegree  = 0
-		self.outDegree = 0
+    def __init__(self, name):
+        self.name      = name
+        self.marked    = 0
+        self.inDegree  = 0
+        self.outDegree = 0
 
-	def reverse(self):
-		inDegree  = self.inDegree
-		outDegree = self.outDegree
-		self.inDegree  = outDegree
-		self.outDegree = inDegree
+    def reverse(self):
+        inDegree  = self.inDegree
+        outDegree = self.outDegree
+        self.inDegree  = outDegree
+        self.outDegree = inDegree
 
-	def setInDegree(self, n):
-		self.inDegree = n
+    def setInDegree(self, n):
+        self.inDegree = n
 
-	def setOutDegree(self, n):
-		self.outDegree = n
+    def setOutDegree(self, n):
+        self.outDegree = n
 
-	def getInDegree(self):
-		return self.inDegree
+    def getInDegree(self):
+        return self.inDegree
 
-	def getOutDegree(self):
-		return self.outDegree
+    def getOutDegree(self):
+        return self.outDegree
 
-	def mark(self):
-		self.marked = 1
+    def mark(self):
+        self.marked = 1
 
-	def unmark(self):
-		self.marked = 0
+    def unmark(self):
+        self.marked = 0
 
-	def isMarked(self):
-		return self.marked
+    def isMarked(self):
+        return self.marked
 
-	def __repr__(self):
-		return self.name
+    def __repr__(self):
+        return self.name
 
 
 
 class Edge:
-	def __init__(self, a, b):
-		self.parent	= a
-		self.child	= b
-		self.isReversed	= 0 
-		a.setOutDegree(a.getOutDegree()+1)
-		b.setInDegree(b.getInDegree()+1)
+    def __init__(self, a, b):
+        self.parent    = a
+        self.child    = b
+        self.isReversed    = 0 
+        a.setOutDegree(a.getOutDegree()+1)
+        b.setInDegree(b.getInDegree()+1)
 
-	def reverse(self):
-		if self.isReversed:
-			self.isReversed = 0
-		else:
-			self.isReversed = 1
-		
-	def getParent(self):
-		if self.isReversed:
-			return self.child
-		return self.parent
+    def reverse(self):
+        if self.isReversed:
+            self.isReversed = 0
+        else:
+            self.isReversed = 1
+        
+    def getParent(self):
+        if self.isReversed:
+            return self.child
+        return self.parent
 
-	def getChild(self):
-		if self.isReversed:
-			return self.parent
-		return self.child
+    def getChild(self):
+        if self.isReversed:
+            return self.parent
+        return self.child
 
-	def __repr__(self):
-		line = '%s -> %s' % (self.getParent(), self.getChild())
-		return line
+    def __repr__(self):
+        line = '%s -> %s' % (self.getParent(), self.getChild())
+        return line
 
 
 class Graph:
 
-	def __init__(self):
-		self.adjList	= {}
-		self.nodes      = {}
+    def __init__(self):
+        self.adjList    = {}
+        self.nodes      = {}
 
-	def getNodes(self):
-		list = []
-		for key,val in list(self.nodes.items()):
-			list.append(val)
-		return list
+    def getNodes(self):
+        list = []
+        for key,val in list(self.nodes.items()):
+            list.append(val)
+        return list
 
-	def getEdges(self):
-		list = []
-		for key,val in list(self.adjList.items()):
-			list.extend(val)
-		return list
-			
+    def getEdges(self):
+        list = []
+        for key,val in list(self.adjList.items()):
+            list.extend(val)
+        return list
+            
 
-	def reverse(self):
-		adjList      = self.adjList
-		self.adjList = {}
-		for key, node in list(self.nodes.items()):
-			node.reverse()
-		for key,val in list(adjList.items()):
-			for edge in val:
-				edge.reverse()
-				self.addEdge(edge)
+    def reverse(self):
+        adjList      = self.adjList
+        self.adjList = {}
+        for key, node in list(self.nodes.items()):
+            node.reverse()
+        for key,val in list(adjList.items()):
+            for edge in val:
+                edge.reverse()
+                self.addEdge(edge)
 
-		
-	def addEdge(self, e):
-		if e.getParent().name not in self.nodes:
-			self.nodes[e.getParent().name] = e.getParent()
-		if e.getChild().name not in self.nodes:
-			self.nodes[e.getChild().name] = e.getChild()
+        
+    def addEdge(self, e):
+        if e.getParent().name not in self.nodes:
+            self.nodes[e.getParent().name] = e.getParent()
+        if e.getChild().name not in self.nodes:
+            self.nodes[e.getChild().name] = e.getChild()
 
-		if e.getParent() in self.adjList:
-			self.adjList[e.getParent()].append(e)
-		else:
-			self.adjList[e.getParent()] = [ e ]
+        if e.getParent() in self.adjList:
+            self.adjList[e.getParent()].append(e)
+        else:
+            self.adjList[e.getParent()] = [ e ]
 
-	def hasNode(self, node):
-		if node in self.nodes:
-			return 1
-		return 0
+    def hasNode(self, node):
+        if node in self.nodes:
+            return 1
+        return 0
 
-        def getNode(self, node):
-		if self.hasNode(node):
-			return self.nodes[node]
-		return None
+    def getNode(self, node):
+        if self.hasNode(node):
+            return self.nodes[node]
+        return None
 
-	def __getitem__(self, node):
-		if node in self.adjList:
-			return self.adjList[node]
-		else:
-			return []
-		
-	def __repr__(self):
-		list = []
-		for key,val in list(self.adjList.items()):
-			for e in val:
-				list.append(e.__repr__())
-		return string.join(list, '\n')
-	
+    def __getitem__(self, node):
+        if node in self.adjList:
+            return self.adjList[node]
+        else:
+            return []
+        
+    def __repr__(self):
+        list = []
+        for key,val in list(self.adjList.items()):
+            for e in val:
+                list.append(e.__repr__())
+        return string.join(list, '\n')
+    
 
 class GraphIterator:
 
-	def __init__(self, graph):
-		self.graph	= graph
-		self.visited	= {}
-		self.finished	= {}
+    def __init__(self, graph):
+        self.graph    = graph
+        self.visited    = {}
+        self.finished    = {}
 
-	def run(self, root=None):
-		nodes = self.graph.getNodes()
-		for node in nodes:
-			self.visited[node]  = 0
-			self.finished[node] = 0
+    def run(self, root=None):
+        nodes = self.graph.getNodes()
+        for node in nodes:
+            self.visited[node]  = 0
+            self.finished[node] = 0
 
-		if root:
-			self.visit(root)
-		else:
-			for node in nodes:
-				if self.visited[node] or node.getInDegree():
-					continue
-				self.visit(node)
+        if root:
+            self.visit(root)
+        else:
+            for node in nodes:
+                if self.visited[node] or node.getInDegree():
+                    continue
+                self.visit(node)
 
-	def visit(self, parent, edge=None):
-		self.visitHandler(parent, edge)
-		for e in self.graph[parent]:
-			child = e.getChild()
-			if not self.visited[child]:
-				self.visit(child, e)
-		self.finishHandler(parent, edge)
-		
+    def visit(self, parent, edge=None):
+        self.visitHandler(parent, edge)
+        for e in self.graph[parent]:
+            child = e.getChild()
+            if not self.visited[child]:
+                self.visit(child, e)
+        self.finishHandler(parent, edge)
+        
 
-	def visitHandler(self, n, e):
-		self.visited[n] = 1
-	
-	def finishHandler(self, n, e):
-		self.finished[n] = 1
-		
-	
+    def visitHandler(self, n, e):
+        self.visited[n] = 1
+    
+    def finishHandler(self, n, e):
+        self.finished[n] = 1
+        
+    
 

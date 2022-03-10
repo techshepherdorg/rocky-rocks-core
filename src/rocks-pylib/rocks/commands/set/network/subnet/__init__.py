@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -121,48 +121,48 @@ import rocks.commands
 
 
 class Command(rocks.commands.NetworkArgumentProcessor,
-	rocks.commands.set.command):
-	"""
-	Sets the subnet for one or more named networks.
+    rocks.commands.set.command):
+    """
+    Sets the subnet for one or more named networks.
 
-	<arg type='string' name='network' repeat='1'> 
-	One or more named networks that should have the defined subnet.
-	</arg>
-	
-	<arg type='string' name='subnet'>
-	Subnet that named networks should have.
-	</arg>
-	
-	<param type='string' name='subnet'>
-	Can be used in place of subnet argument.
-	</param>
+    <arg type='string' name='network' repeat='1'> 
+    One or more named networks that should have the defined subnet.
+    </arg>
+    
+    <arg type='string' name='subnet'>
+    Subnet that named networks should have.
+    </arg>
+    
+    <param type='string' name='subnet'>
+    Can be used in place of subnet argument.
+    </param>
 
-	<example cmd='set network subnet optiputer 132.239.51.0'>
-	Sets the "optiputer" subnet address to 132.239.51.0.
-	</example>
-	
-	<example cmd='set network subnet optiputer subnet=132.239.51.0'>
-	Same as above.
-	</example>
-	
-	<example cmd='set network subnet optiputer cavewave 67.58.32.0'>
-	Sets both the "optiputer" and "cavewave" subnet addresses to the
-	same value of 67.58.32.0.
-	</example>
+    <example cmd='set network subnet optiputer 132.239.51.0'>
+    Sets the "optiputer" subnet address to 132.239.51.0.
+    </example>
+    
+    <example cmd='set network subnet optiputer subnet=132.239.51.0'>
+    Same as above.
+    </example>
+    
+    <example cmd='set network subnet optiputer cavewave 67.58.32.0'>
+    Sets both the "optiputer" and "cavewave" subnet addresses to the
+    same value of 67.58.32.0.
+    </example>
 
-	<related>add network</related>
-	<related>set network netmask</related>
-	"""
+    <related>add network</related>
+    <related>set network netmask</related>
+    """
                 
-        def run(self, flags, args):
-        	(args, subnet) = self.fillPositionalArgs(('subnet',))
-        	
-        	if not len(args):
-        		self.abort('must supply network')
-		if not subnet:
-			self.abort('must supply subnet')
-			        	
-        	for network in self.getNetworkNames(args):
-			self.db.execute("""update subnets set subnet='%s' where
-				subnets.name='%s'""" % (subnet, network))
+    def run(self, flags, args):
+        (args, subnet) = self.fillPositionalArgs(('subnet',))
+        
+        if not len(args):
+            self.abort('must supply network')
+    if not subnet:
+        self.abort('must supply subnet')
+                    
+        for network in self.getNetworkNames(args):
+            self.db.execute("""update subnets set subnet='%s' where
+            subnets.name='%s'""" % (subnet, network))
 

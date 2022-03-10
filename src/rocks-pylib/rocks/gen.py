@@ -2,13 +2,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -421,1561 +421,1561 @@ import rocks.js
 import rocks.cond
 import yaml
 import random
-	
-		
+    
+        
 
 class NodeFilter(xml.dom.NodeFilter.NodeFilter):
 
-	def __init__(self, attrs):
-		self.attrs = attrs
-                self.phases = set(['pre','post'])
+    def __init__(self, attrs):
+        self.attrs = attrs
+        self.phases = set(['pre','post'])
 
-	def set_phases(self, values):
-		""" if reconfigure is set to true we are reconfiguring 
-		if it is set to false we are installing""" 
-		self.phases = set(values)
+    def set_phases(self, values):
+        """ if reconfigure is set to true we are reconfiguring 
+        if it is set to false we are installing""" 
+        self.phases = set(values)
 
-	def isCorrectCond(self, node):
+    def isCorrectCond(self, node):
 
-		attr = node.attributes.getNamedItem((None, 'arch'))
-		if attr:
-			arch = attr.value
-		else:
-			arch = None
+        attr = node.attributes.getNamedItem((None, 'arch'))
+        if attr:
+            arch = attr.value
+        else:
+            arch = None
 
-		attr = node.attributes.getNamedItem((None, 'os'))
-		if attr:
-			os = attr.value
-		else:
-			os = None
+        attr = node.attributes.getNamedItem((None, 'os'))
+        if attr:
+            os = attr.value
+        else:
+            os = None
 
-		attr = node.attributes.getNamedItem((None, 'release'))
-		if attr:
-			release = attr.value
-		else:
-			release = None
+        attr = node.attributes.getNamedItem((None, 'release'))
+        if attr:
+            release = attr.value
+        else:
+            release = None
 
-		attr = node.attributes.getNamedItem((None, 'cond'))
-		if attr:
-			cond = attr.value
-		else:
-			cond = None
+        attr = node.attributes.getNamedItem((None, 'cond'))
+        if attr:
+            cond = attr.value
+        else:
+            cond = None
 
-		attr = node.attributes.getNamedItem((None, 'phase'))
-		if attr :
-			phaseVal = set(attr.value.split(','))
-		else :
-			# by default post section are install only
-			phaseVal = set(["pre", "post"])
+        attr = node.attributes.getNamedItem((None, 'phase'))
+        if attr :
+            phaseVal = set(attr.value.split(','))
+        else :
+            # by default post section are install only
+            phaseVal = set(["pre", "post"])
 
-		if not phaseVal.intersection(self.phases):
-			return False
+        if not phaseVal.intersection(self.phases):
+            return False
 
-		expr = rocks.cond.CreateCondExpr(arch, os, release, cond)
-		return rocks.cond.EvalCondExpr(expr, self.attrs)
+        expr = rocks.cond.CreateCondExpr(arch, os, release, cond)
+        return rocks.cond.EvalCondExpr(expr, self.attrs)
 
-		
+        
 class Generator:
-	"""Base class for various DOM based kickstart graph generators.
-	The input to all Generators is assumed to be the XML output of KPP."""
-	
-	def __init__(self):
-		self.attrs	= {}
-		self.arch	= None
-		self.rcsFiles	= {}
+    """Base class for various DOM based kickstart graph generators.
+    The input to all Generators is assumed to be the XML output of KPP."""
+    
+    def __init__(self):
+        self.attrs    = {}
+        self.arch    = None
+        self.rcsFiles    = {}
 
-	def setArch(self, arch):
-		self.arch = arch
-		
-	def getArch(self):
-		return self.arch
-	
-	def setOS(self, osname):
-		self.os = osname
-		
-	def getOS(self):
-		return self.os
+    def setArch(self, arch):
+        self.arch = arch
+        
+    def getArch(self):
+        return self.arch
+    
+    def setOS(self, osname):
+        self.os = osname
+        
+    def getOS(self):
+        return self.os
 
-	def isDisabled(self, node):
-		return node.attributes.getNamedItem((None, 'disable'))
+    def isDisabled(self, node):
+        return node.attributes.getNamedItem((None, 'disable'))
 
-	def isMeta(self, node):
-		attr  = node.attributes
-		type  = attr.getNamedItem((None, 'type'))
-		if type:
-			type = type.value
-		else:
-			type = 'rpm'
-		if type  == 'meta':
-			return 1
-		return 0
-	
-	def randomString(self,len=12,basename=''):
-		return basename + \
-			''.join([random.choice(string.ascii_letters + string.digits) 
-				for n in range(len)])
+    def isMeta(self, node):
+        attr  = node.attributes
+        type  = attr.getNamedItem((None, 'type'))
+        if type:
+            type = type.value
+        else:
+            type = 'rpm'
+        if type  == 'meta':
+            return 1
+        return 0
+    
+    def randomString(self,len=12,basename=''):
+        return basename + \
+            ''.join([random.choice(string.ascii_letters + string.digits) 
+                for n in range(len)])
 
-	def rcsBegin(self, file, owner, perms):
-		"""
-		If the is the first time we've seen a file ci/co it.  Otherwise
-		just track the ownership and perms from the <file> tag .
-		"""
-		
-		rcsdir	= os.path.join(os.path.dirname(file), 'RCS')
-		rcsfile = '%s,v' % os.path.join(rcsdir, os.path.basename(file))
-		l	= []
+    def rcsBegin(self, file, owner, perms):
+        """
+        If the is the first time we've seen a file ci/co it.  Otherwise
+        just track the ownership and perms from the <file> tag .
+        """
+        
+        rcsdir    = os.path.join(os.path.dirname(file), 'RCS')
+        rcsfile = '%s,v' % os.path.join(rcsdir, os.path.basename(file))
+        l    = []
 
-		l.append('')
+        l.append('')
 
-		if file not in self.rcsFiles:
-			l.append('if [ ! -f %s ]; then' % rcsfile)
-			l.append('\tif [ ! -f %s ]; then' % file)
-			l.append('\t\ttouch %s;' % file)
-			l.append('\tfi')
-			l.append('\tif [ ! -d %s ]; then' % rcsdir)
-			l.append('\t\tmkdir -m 700 %s' % rcsdir)
-			l.append('\t\tchown 0:0 %s' % rcsdir)
-		 	l.append('\tfi;')
-			l.append('\techo "original" | /opt/rocks/bin/ci %s;' %
-			 	file)
-			l.append('\t/opt/rocks/bin/co -f -l %s;' % file)
-			l.append('fi')
+        if file not in self.rcsFiles:
+            l.append('if [ ! -f %s ]; then' % rcsfile)
+            l.append('\tif [ ! -f %s ]; then' % file)
+            l.append('\t\ttouch %s;' % file)
+            l.append('\tfi')
+            l.append('\tif [ ! -d %s ]; then' % rcsdir)
+            l.append('\t\tmkdir -m 700 %s' % rcsdir)
+            l.append('\t\tchown 0:0 %s' % rcsdir)
+            l.append('\tfi;')
+            l.append('\techo "original" | /opt/rocks/bin/ci %s;' %
+                 file)
+            l.append('\t/opt/rocks/bin/co -f -l %s;' % file)
+            l.append('fi')
 
-		# If this is a subsequent file tag and the optional PERMS
-		# or OWNER attributes are missing, use the previous value(s).
-		
-		if file in self.rcsFiles:
-			(orig_owner, orig_perms) = self.rcsFiles[file]
-			if not perms:
-				perms = orig_perms
-			if not owner:
-				owner = orig_owner
+        # If this is a subsequent file tag and the optional PERMS
+        # or OWNER attributes are missing, use the previous value(s).
+        
+        if file in self.rcsFiles:
+            (orig_owner, orig_perms) = self.rcsFiles[file]
+            if not perms:
+                perms = orig_perms
+            if not owner:
+                owner = orig_owner
 
-		self.rcsFiles[file] = (owner, perms)
-		
-		if owner:
-			l.append('chown %s %s' % (owner, file))
-			l.append('chown %s %s' % (owner, rcsfile))
+        self.rcsFiles[file] = (owner, perms)
+        
+        if owner:
+            l.append('chown %s %s' % (owner, file))
+            l.append('chown %s %s' % (owner, rcsfile))
 
-		l.append('')
+        l.append('')
 
-		return string.join(l, '\n')
+        return string.join(l, '\n')
 
-	def rcsEnd(self, file, owner, perms):
-		"""
-		Run the final ci/co of a <file>.  The ownership of both the
-		file and rcs file are changed to match the last requested
-		owner in the file tag.  The perms of the file (not the file
-		file) are also modified.
+    def rcsEnd(self, file, owner, perms):
+        """
+        Run the final ci/co of a <file>.  The ownership of both the
+        file and rcs file are changed to match the last requested
+        owner in the file tag.  The perms of the file (not the file
+        file) are also modified.
 
-		The file is checked out locked, which is why we don't modify
-		the perms of the RCS file itself.
-		"""
-		rcsdir	= os.path.join(os.path.dirname(file), 'RCS')
-		rcsfile = '%s,v' % os.path.join(rcsdir, os.path.basename(file))
-		l	= []
+        The file is checked out locked, which is why we don't modify
+        the perms of the RCS file itself.
+        """
+        rcsdir    = os.path.join(os.path.dirname(file), 'RCS')
+        rcsfile = '%s,v' % os.path.join(rcsdir, os.path.basename(file))
+        l    = []
 
-		l.append('')
-		l.append('if [ -f %s ]; then' % file)
-		l.append('\techo "rocks" | /opt/rocks/bin/ci %s;' % file)
-		l.append('\t/opt/rocks/bin/co -f -l %s;' % file)
-		l.append('fi')		
+        l.append('')
+        l.append('if [ -f %s ]; then' % file)
+        l.append('\techo "rocks" | /opt/rocks/bin/ci %s;' % file)
+        l.append('\t/opt/rocks/bin/co -f -l %s;' % file)
+        l.append('fi')        
 
-		if owner:
-			l.append('chown %s %s' % (owner, file))
-			l.append('chown %s %s' % (owner, rcsfile))
+        if owner:
+            l.append('chown %s %s' % (owner, file))
+            l.append('chown %s %s' % (owner, rcsfile))
 
-		if perms:
-			l.append('chmod %s %s' % (perms, file))
+        if perms:
+            l.append('chmod %s %s' % (perms, file))
 
-		return string.join(l, '\n')
+        return string.join(l, '\n')
 
-	
-	def order(self, node):
-		"""
-		Stores the order of traversal of the nodes
-		Useful for debugging.
-		"""
-		attr = node.attributes
-		
-		if attr.getNamedItem((None, 'file')):
-			file = attr.getNamedItem((None, 'file')).value
-		else:
-			file = ''
-		if attr.getNamedItem((None, 'roll')):
-			roll = attr.getNamedItem((None, 'roll')).value
-		else:
-			roll = ''
-			
-		if (file,roll) not in self.ks['order']:
-			self.ks['order'].append((file,roll))
-		
-	def handle_mainChild(self, node):
-		try:
-			eval('self.handle_main_%s(node)' % node.nodeName)
-		except AttributeError:
-			self.ks['main'].append('%s %s' % (node.nodeName,
-				self.getChildText(node)))
+    
+    def order(self, node):
+        """
+        Stores the order of traversal of the nodes
+        Useful for debugging.
+        """
+        attr = node.attributes
+        
+        if attr.getNamedItem((None, 'file')):
+            file = attr.getNamedItem((None, 'file')).value
+        else:
+            file = ''
+        if attr.getNamedItem((None, 'roll')):
+            roll = attr.getNamedItem((None, 'roll')).value
+        else:
+            roll = ''
+            
+        if (file,roll) not in self.ks['order']:
+            self.ks['order'].append((file,roll))
+        
+    def handle_mainChild(self, node):
+        try:
+            eval('self.handle_main_%s(node)' % node.nodeName)
+        except AttributeError:
+            self.ks['main'].append('%s %s' % (node.nodeName,
+                self.getChildText(node)))
 
-		
-	def parseFile(self, node):
-		attr = node.attributes
+        
+    def parseFile(self, node):
+        attr = node.attributes
 
-		if attr.getNamedItem((None, 'os')):
-			os = attr.getNamedItem((None, 'os')).value
-			if os != self.getOS():
-				return ''
+        if attr.getNamedItem((None, 'os')):
+            os = attr.getNamedItem((None, 'os')).value
+            if os != self.getOS():
+                return ''
 
-		if attr.getNamedItem((None, 'name')):
-			fileName = attr.getNamedItem((None, 'name')).value
-		else:
-			fileName = ''
+        if attr.getNamedItem((None, 'name')):
+            fileName = attr.getNamedItem((None, 'name')).value
+        else:
+            fileName = ''
 
-		if attr.getNamedItem((None, 'src')):
-			source = attr.getNamedItem((None, 'src')).value
-		else:
-			source = ''
+        if attr.getNamedItem((None, 'src')):
+            source = attr.getNamedItem((None, 'src')).value
+        else:
+            source = ''
 
-		if attr.getNamedItem((None, 'mode')):
-			fileMode = attr.getNamedItem((None, 'mode')).value
-		else:
-			fileMode = 'create'
+        if attr.getNamedItem((None, 'mode')):
+            fileMode = attr.getNamedItem((None, 'mode')).value
+        else:
+            fileMode = 'create'
 
-		if attr.getNamedItem((None, 'owner')):
-			fileOwner = attr.getNamedItem((None, 'owner')).value
-		else:
-			fileOwner = ''
+        if attr.getNamedItem((None, 'owner')):
+            fileOwner = attr.getNamedItem((None, 'owner')).value
+        else:
+            fileOwner = ''
 
-		if attr.getNamedItem((None, 'perms')):
-			filePerms = attr.getNamedItem((None, 'perms')).value
-		else:
-			filePerms = ''
+        if attr.getNamedItem((None, 'perms')):
+            filePerms = attr.getNamedItem((None, 'perms')).value
+        else:
+            filePerms = ''
 
-		if attr.getNamedItem((None, 'vars')):
-			fileQuoting = attr.getNamedItem((None, 'vars')).value
-		else:
-			fileQuoting = 'literal'
+        if attr.getNamedItem((None, 'vars')):
+            fileQuoting = attr.getNamedItem((None, 'vars')).value
+        else:
+            fileQuoting = 'literal'
 
-		if attr.getNamedItem((None, 'expr')):
-			fileCommand = attr.getNamedItem((None, 'expr')).value
-		else:
-			fileCommand = None
+        if attr.getNamedItem((None, 'expr')):
+            fileCommand = attr.getNamedItem((None, 'expr')).value
+        else:
+            fileCommand = None
 
-		if attr.getNamedItem((None, 'rcs')):
-			rcs = attr.getNamedItem((None, 'rcs')).value
-			rcs = rocks.util.str2bool(rcs)
-		else:
-			rcs = True
+        if attr.getNamedItem((None, 'rcs')):
+            rcs = attr.getNamedItem((None, 'rcs')).value
+            rcs = rocks.util.str2bool(rcs)
+        else:
+            rcs = True
 
-		fileText = self.getChildText(node)
+        fileText = self.getChildText(node)
 
-		s = ''
-		if fileName:
+        s = ''
+        if fileName:
 
-			if rcs:
-				s = self.rcsBegin(fileName, fileOwner, filePerms)
+            if rcs:
+                s = self.rcsBegin(fileName, fileOwner, filePerms)
 
-			if fileMode == 'append':
-				gt = '>>'
-			else:
-				gt = '>'
+            if fileMode == 'append':
+                gt = '>>'
+            else:
+                gt = '>'
 
-			if fileCommand:
-				s += '%s %s %s\n' % (fileCommand, gt, fileName)
-			if not fileText:
-				s += 'touch %s\n' % fileName
-			elif fileMode == 'pipe':
-				# pipe mode it's all different from the other case
-				# we have fileText and we have fileName
-				fileText = fileText.strip()
-				if source:
-					s += "cat %s | (%s) > %s\n" % (source, fileText, fileName)
-				else:
-					tmpfile = tempfile.mktemp()
-					s += "cat %s | (%s) > %s\n" % (fileName, fileText, tmpfile)
-					s += "mv %s %s\n" % (tmpfile, fileName)
-			else:
-				if fileQuoting == 'expanded':
-					eof = "EOF"
-				else:
-					eof = "'EOF'"
+            if fileCommand:
+                s += '%s %s %s\n' % (fileCommand, gt, fileName)
+            if not fileText:
+                s += 'touch %s\n' % fileName
+            elif fileMode == 'pipe':
+                # pipe mode it's all different from the other case
+                # we have fileText and we have fileName
+                fileText = fileText.strip()
+                if source:
+                    s += "cat %s | (%s) > %s\n" % (source, fileText, fileName)
+                else:
+                    tmpfile = tempfile.mktemp()
+                    s += "cat %s | (%s) > %s\n" % (fileName, fileText, tmpfile)
+                    s += "mv %s %s\n" % (tmpfile, fileName)
+            else:
+                if fileQuoting == 'expanded':
+                    eof = "EOF"
+                else:
+                    eof = "'EOF'"
 
-				s += "cat %s %s << %s" % (gt, fileName, eof)
-				if fileText[0] != '\n':
-					s += '\n'
-				s += fileText
-				if fileText[-1] != '\n':
-					s += '\n'
-				s += 'EOF\n'
+                s += "cat %s %s << %s" % (gt, fileName, eof)
+                if fileText[0] != '\n':
+                    s += '\n'
+                s += fileText
+                if fileText[-1] != '\n':
+                    s += '\n'
+                s += 'EOF\n'
 
-			if filePerms:
-				s += 'chmod %s %s\n' % (filePerms, fileName)
+            if filePerms:
+                s += 'chmod %s %s\n' % (filePerms, fileName)
 
-			s +=  'dn=$(dirname %s)\n' % fileName
-			s +=  'mkdir -p %s/$dn \n' % "/var/rocks"
-			s +=  '/bin/cp -p %s %s/$dn\n' % (fileName,"/var/rocks")
+            s +=  'dn=$(dirname %s)\n' % fileName
+            s +=  'mkdir -p %s/$dn \n' % "/var/rocks"
+            s +=  '/bin/cp -p %s %s/$dn\n' % (fileName,"/var/rocks")
 
-		return s
-	
-	# <*>
-	#	<*> - tags that can go inside any other tags
-	# </*>
+        return s
+    
+    # <*>
+    #    <*> - tags that can go inside any other tags
+    # </*>
 
-	def getChildText(self, node):
-		text = ''
-		for child in node.childNodes:
-			if child.nodeType == child.TEXT_NODE:
-				text += child.nodeValue
-			elif child.nodeType == child.ELEMENT_NODE:
-				text += eval('self.handle_child_%s(child)' \
-					% (child.nodeName))
-		return text
+    def getChildText(self, node):
+        text = ''
+        for child in node.childNodes:
+            if child.nodeType == child.TEXT_NODE:
+                text += child.nodeValue
+            elif child.nodeType == child.ELEMENT_NODE:
+                text += eval('self.handle_child_%s(child)' \
+                    % (child.nodeName))
+        return text
 
-	
-	# <*>
-	#	<file>
-	# </*>
-	
-	def handle_child_file(self, node):
-		return self.parseFile(node)
+    
+    # <*>
+    #    <file>
+    # </*>
+    
+    def handle_child_file(self, node):
+        return self.parseFile(node)
 
-	##
-	## Generator Section
-	##
-			
-	def generate(self, section):
-		"""Dump the requested section of the kickstart file.  If none 
-		exists do nothing."""
-		list = []
-		try:
-			f = getattr(self, "generate_%s" % section)
-		except AttributeError:
-			f = None
-		if f:
-			list += f()
-		return list
-		
-	def generate_order(self):
-		list = []
-		list.append('#')
-		list.append('# Node Traversal Order')
-		list.append('#')
-		for (line,roll) in self.ks['order']:
-			if roll:
-				list.append('# %s (%s)' % (line, roll))
-			else:
-				list.append('# %s' % (line))
-		list.append('#')
-		return list
+    ##
+    ## Generator Section
+    ##
+            
+    def generate(self, section):
+        """Dump the requested section of the kickstart file.  If none 
+        exists do nothing."""
+        list = []
+        try:
+            f = getattr(self, "generate_%s" % section)
+        except AttributeError:
+            f = None
+        if f:
+            list += f()
+        return list
+        
+    def generate_order(self):
+        list = []
+        list.append('#')
+        list.append('# Node Traversal Order')
+        list.append('#')
+        for (line,roll) in self.ks['order']:
+            if roll:
+                list.append('# %s (%s)' % (line, roll))
+            else:
+                list.append('# %s' % (line))
+        list.append('#')
+        return list
 
-	def generate_debug(self):
-		list = []
-		list.append('#')
-		list.append('# Debugging Information')
-		list.append('#')
-		for text in self.ks['debug']:
-			for line in string.split(text, '\n'):
-				list.append('# %s' % line)
-		list.append('#')
-		return list
-			
+    def generate_debug(self):
+        list = []
+        list.append('#')
+        list.append('# Debugging Information')
+        list.append('#')
+        for text in self.ks['debug']:
+            for line in string.split(text, '\n'):
+                list.append('# %s' % line)
+        list.append('#')
+        return list
+            
 
 
 class MainNodeFilter_linux(NodeFilter):
 
-	def acceptNode(self, node):
-	
-		if node.nodeName == 'kickstart':
-			return self.FILTER_ACCEPT
-				
-		if node.nodeName not in [
-			'include',
-			'main',
-			'auth',
-			'clearpart',
-			'autopart',
-			'device',
-			'driverdisk',
-			'eula',
-			'firstboot',
-			'ignoredisk',
-			'install',
-			'nfs',
-			'cdrom',
-			'interactive',
-			'harddrive',
-			'url',
-			'keyboard',
-			'lang',
-			'langsupport',
-			'lilo',
-			'lilocheck',
-			'bootloader',
-			'mouse',
-			'network',
-			'part',
-			'volgroup',
-			'logvol',
-			'raid',
-			'reboot',
-			'rootpw',
-			'skipx',
-			'sshpw',
-			'text',
-			'timezone',
-			'upgrade',
-			'xconfig',
-			'zerombr'
-			]:
-			return self.FILTER_SKIP
+    def acceptNode(self, node):
+    
+        if node.nodeName == 'kickstart':
+            return self.FILTER_ACCEPT
+                
+        if node.nodeName not in [
+            'include',
+            'main',
+            'auth',
+            'clearpart',
+            'autopart',
+            'device',
+            'driverdisk',
+            'eula',
+            'firstboot',
+            'ignoredisk',
+            'install',
+            'nfs',
+            'cdrom',
+            'interactive',
+            'harddrive',
+            'url',
+            'keyboard',
+            'lang',
+            'langsupport',
+            'lilo',
+            'lilocheck',
+            'bootloader',
+            'mouse',
+            'network',
+            'part',
+            'volgroup',
+            'logvol',
+            'raid',
+            'reboot',
+            'rootpw',
+            'skipx',
+            'sshpw',
+            'text',
+            'timezone',
+            'upgrade',
+            'xconfig',
+            'zerombr'
+            ]:
+            return self.FILTER_SKIP
 
-		if not self.isCorrectCond(node):
-			return self.FILTER_SKIP
+        if not self.isCorrectCond(node):
+            return self.FILTER_SKIP
 
-		return self.FILTER_ACCEPT
+        return self.FILTER_ACCEPT
 
 
 class OtherNodeFilter_linux(NodeFilter):
-	def acceptNode(self, node):
+    def acceptNode(self, node):
 
-		if node.nodeName == 'kickstart':
-			return self.FILTER_ACCEPT
-			
-		if node.nodeName not in [
-			'attributes', 
-			'debug',
-			'description',
-			'package',
-			'pre', 
-			'post',
-			'boot',
-			'configure',
-			'ansible'
-			]:
-			return self.FILTER_SKIP
-			
-		if not self.isCorrectCond(node):
-			return self.FILTER_SKIP
+        if node.nodeName == 'kickstart':
+            return self.FILTER_ACCEPT
+            
+        if node.nodeName not in [
+            'attributes', 
+            'debug',
+            'description',
+            'package',
+            'pre', 
+            'post',
+            'boot',
+            'configure',
+            'ansible'
+            ]:
+            return self.FILTER_SKIP
+            
+        if not self.isCorrectCond(node):
+            return self.FILTER_SKIP
 
-		return self.FILTER_ACCEPT
+        return self.FILTER_ACCEPT
 
 
 class Generator_linux(Generator):
 
-	def __init__(self):
-		Generator.__init__(self)	
-		self.ks                 = {}
-		self.ks['order']	= []
-		self.ks['debug']	= []
-		self.ks['main']         = []
-		self.ks['rpms-on']	= []
-		self.ks['rpms-off']	= []
-		self.ks['pre' ]         = []
-		self.ks['post']         = []
-		self.ks['boot-pre']	= []
-		self.ks['boot-post']	= []
-		self.ks['playbooks']	= []
-
-		self.phases		= ['post', 'pre']
-
-		self.log = '/mnt/sysimage/var/log/rocks-install.log'
-		self.ansblBookpath = os.path.join(os.path.sep,"var","rocks",
-				"ansible")
-		self.ansblDistroPath = os.path.join("include","ansible")
-		self.ansblOnly 	= False
-
-
-	def set_phases(self, values):
-		""" this is a list of string containing the phases that will be generated by the 
-		generator. Default is 'post' and 'pre' aka the kickstart """
-		self.phases = values
-
-	def set_ansible(self,flag):
-		""" This controls whether only ansible stanzas are processed (True), ansible
-		    and post sections (False) """
-		self.ansblOnly = flag
-	
-	##
-	## Parsing Section
-	##
-	
-	def parse(self, xml_string):
-		import io
-		xml_buf = io.StringIO(xml_string)
-		doc = xml.dom.ext.reader.Sax2.FromXmlStream(xml_buf)
-		filter = MainNodeFilter_linux(self.attrs)
-		iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
-			filter, 0)
-		node = iter.nextNode()
-		
-		while node:
-			if node.nodeName == 'kickstart':
-				self.handle_kickstart(node)
-			elif node.nodeName == 'main':
-				child = iter.firstChild()
-				while child:
-					self.handle_mainChild(child)
-					child = iter.nextSibling()
-
-			node = iter.nextNode()
-			
-		filter = OtherNodeFilter_linux(self.attrs)
-		filter.set_phases(self.phases)
-		iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
-			filter, 0)
-		node = iter.nextNode()
-		while node:
-			if node.nodeName != 'kickstart':
-				self.order(node)
-				eval('self.handle_%s(node)' % (node.nodeName))
-			node = iter.nextNode()
-
-
-	# <kickstart>
-	
-	def handle_kickstart(self, node):
-		# pull out the attr to handle generic conditionals
-		# this replaces the old arch/os logic but still
-		# supports the old syntax
-
-		if node.attributes:
-			attrs = node.attributes.getNamedItem((None, 'attrs'))
-			if attrs:
-				dict = eval(attrs.value)
-				for (k,v) in list(dict.items()):
-					self.attrs[k] = v
-		
-	# <main>
-	#	<clearpart>
-	# </main>
-	
-	def handle_main_clearpart(self, node):
-		attr = node.attributes
-		if attr.getNamedItem((None, 'partition')):
-			arg = attr.getNamedItem((None, 'partition')).value
-		else:
-			arg = ''
-
-		#
-		# the web form sets the environment variable 'partition'
-		# (although, we may find that it makes sense for other
-		# sources to set it too).
-		#
-		try:
-			os_arg = os.environ['partition']
-		except:
-			os_arg = ''
-
-		clearpart = self.getChildText(node)
-
-		if (arg == '') or (os_arg == '') or (arg == os_arg):
-			self.ks['main'].append('clearpart %s' % clearpart)
-
-	
-	# <main>
-	#	<lilo>
-	# </main>
-	
-	def handle_main_lilo(self, node):
-		self.ks['main'].append('bootloader %s' %
-			self.getChildText(node))
-		return
-
-
-	# <main>
-	#	<bootloader>
-	# </main>
-
-	def handle_main_bootloader(self, node):
-		self.ks['main'].append('bootloader %s' % 
-			self.getChildText(node))
-		return
-
-	# <main>
-	#	<lang>
-	# </main>
-
-	def handle_main_lang(self, node):
-		self.ks['main'].append('lang %s' % 
-			self.getChildText(node))
-		return
-
-	# <main>
-	#	<langsupport>
-	# </main>
-
-	def handle_main_langsupport(self, node):
-		self.ks['main'].append('langsupport --default=%s' %
-			self.getChildText(node).strip())
-
-		return
-
-
-	# <main>
-	#	<sshpw>
-	# </main>
-
-	def handle_main_sshpw(self, node):
-		self.ks['main'].append('sshpw %s' %
-			self.getChildText(node).strip())
-		return
-
-	# <main>
-	#	<volgroup>
-	# </main>
-
-	def handle_main_volgroup(self, node):
-		self.ks['main'].append('volgroup %s' % 
-			self.getChildText(node))
-		return
-
-	# <main>
-	#	<logvol>
-	# </main>
-
-	def handle_main_logvol(self, node):
-		self.ks['main'].append('logvol %s' % 
-			self.getChildText(node))
-		return
-
-	# <debug>
-	
-	def handle_debug(self, node):
-		self.ks['debug'].append(self.getChildText(node))
-	
-	# <description>
-	
-	def handle_description(self, node):
-	 	dummy=self.getChildText(node)
-
-	
-	# <package>
-		
-	def handle_package(self, node):
-		rpm = self.getChildText(node).strip()
-
-		if self.isDisabled(node):
-			key = 'rpms-off'
-		else:
-			key = 'rpms-on'
-
-		if self.isMeta(node):
-			rpm = '@' + rpm	
-
-
-		# if the RPM is to be turned off, only add if it is not 
-		# in the on list.
-
-		if key == 'rpms-off':
-			if rpm not in self.ks['rpms-on']:
-				self.ks[key].append(rpm)
-
-		# if RPM is turned on, make sure it is not in the off list
-
-		if key == 'rpms-on':
-			self.ks[key].append(rpm)
-
-			if rpm in self.ks['rpms-off']:
-				self.ks['rpms-off'].remove(rpm)
-						
-
-	# <pre>
-	
-	def handle_pre(self, node):
-		attr = node.attributes
-		# Parse the interpreter attribute
-		if attr.getNamedItem((None, 'interpreter')):
-			interpreter = '--interpreter ' + \
-				attr.getNamedItem((None, 'interpreter')).value
-		else:
-			interpreter = ''
-		# Parse any additional arguments to the interpreter
-		# or to the post section
-		if attr.getNamedItem((None, 'arg')):
-			arg = attr.getNamedItem((None, 'arg')).value
-		else:
-			arg = ''
-		list = []
-		list.append(string.strip(string.join([interpreter, arg])))
-		list.append(self.getChildText(node))
-		self.ks['pre'].append(list)
-
-	# <post>
-	
-	def handle_post(self, node):
-		attr = node.attributes
-		# Parse the interpreter attribute
-		if attr.getNamedItem((None, 'interpreter')):
-			interpreter = \
-				attr.getNamedItem((None, 'interpreter')).value
-		else:
-			interpreter = '/bin/bash'
-		# Parse any additional arguments to the interpreter
-		# or to the post section
-		if attr.getNamedItem((None, 'arg')):
-			arg = attr.getNamedItem((None, 'arg')).value
-		else:
-			arg = ''
-		list = []
-		# Add the args to the %post line
-		list.append(string.strip(arg))
-		# Add the interpreter to use for this post section
-		list.append(string.strip('#!%s' % interpreter))
-		list.append(self.getChildText(node))
-		if not self.ansblOnly:
-			self.ks['post'].append(list)
-
-
-	# <ansible>
-	def parse_ansible(self,node):
-		attr = node.attributes
-		# Parse playbook attribute
-		try:
-			book = attr.getNamedItem((None,'playbook')).value
-		except:
-			book = None			
-
-		# Parse ansible_cmd attribute
-		try:
-			cmd = attr.getNamedItem((None,'ansible_cmd')).value
-		except:
-			cmd = '/usr/bin/ansible-playbook'			
-		# Parse args attribute
-		try:
-			args = attr.getNamedItem((None,'args')).value
-		except:
-			args = ''			
-		return (book, cmd, args)
-
-	def write_playbook(self,ymlfile,lines):
-		""" Write out lines into the named ymlfile as a HERE document in the shell """
-
-		# create a HERE document to write out playbook contents
-		# This is wrapped inside of standard post section
-		# only write out if there is "something"
-		doclist = []
-		if len(lines) > 1:
-			doclist.append('')
-			doclist.append("#!/bin/bash")
-			p = os.path.dirname(ymlfile)
-			doclist.append("#### WRITE PLAYBOOK '%s' in '%s' ####" % (os.path.basename(ymlfile),p))
-			doclist.append("if [ ! -d %s ]; then mkdir -p %s; fi" % (p,p))
-			doclist.append("cat > %s << 'ROCKS-KS-YML'" % ymlfile)
-			doclist.append("".join(lines))
-			doclist.append('\nROCKS-KS-YML')
-		return doclist
-
-	def handle_ansible(self, node):
-
-		# get the arguments to ansible
-		# <ansible playbook=  ansible_cmd=   args= >
-		(book,cmd, args) = self.parse_ansible(node)
-
-		# Attempt to read the playbook content from a file
-		playbook = None
-		lines = []
-		try:
-			bookpath = os.path.join(self.ansblDistroPath, book)
-			playbook = open(bookpath,'r')
-		except:
-			try:
-				playbook = open(book,'r')
-			except:
-				pass
-		if book is not None:
-			lines = playbook.readlines()	
-			book=os.path.basename(book)
-		else:
-			try:
-				nodename = node.attributes.getNamedItem((None,'file')).value
-			except:
-				nodename = self.randomString(len=8,basename='rocks-ansible-')
-
-			book = nodename + ".yml"
-			
-
-		# read any lines that are "inline"
-		lines.append(self.getChildText(node))
-
-		# create a HERE document to write out playbook contents
-		# This is wrapped inside of standard post section
-		# only write out if there is "something"
-		if len(lines) > 1:
-			ymlfile = os.path.join(self.ansblBookpath,book)
-			doclist = self.write_playbook(ymlfile,lines) 
-
-			# execute ansible as standalone playbook if this is a post section
-			# otherwise, the closing stanza will write out a Meta-playbook that
-			# invokes all others 
-			if not self.ansblOnly:
-				doclist.append("##### RUN the Playbook #####")
-				doclist.append("%s %s %s" % (cmd,args,ymlfile))
-			self.ks['post'].append(doclist)
-			self.ks['playbooks'].append(ymlfile)
-
-		# Extract any package information and place into the self.ks['rpms-on']
-		(iPkgs,dPkgs) = self.extractPkgsFromAnsible(lines)
-		for pkgList in iPkgs:
-			for pkg in pkgList.split(','):
-				pkg = pkg.strip()
-				self.ks['rpms-on'].append(pkg)
-				if pkg in self.ks['rpms-off']:
-					self.ks['rpms-off'].remove(pkg)
-
-		for pkgList in dPkgs:
-			for pkg in pkgList.split():
-				pkg = pkg.strip()
-				if pkg not in self.ks['rpms-on']:
-					self.ks['rpms-off'].append(pkg)
-
-	def extractPkgsFromAnsible(self,lines):
-		yString = "".join(lines)
-
-		ydata =  yaml.load(yString)
-		ye = []
-		try:
-			tasks = [x['tasks'] for x in [x for x in ydata if 'tasks' in x]]
-		except:
-			return ([],[])
-
-		for entry in tasks:
-			for task in entry:
-				try:
-					ye.append(task['yum'])	
-				except:
-					pass
-		yumentries = [x for x in ye if 'state' in x and 'name' in x]
-	
-		installStates = ('present','latest','installed')
-		removeStates = ('absent','removed')
-		iPkgs = [x['name'] for x in [x for x in yumentries if any(ext in x['state'] for ext in installStates)]]
-		dPkgs = [x['name'] for x in [x for x in yumentries if any(ext in x['state'] for ext in removeStates)]]
-		return(iPkgs,dPkgs)
-
-	def write_metaplaybook(self, playbooks):
-		""" playbooks have been defined (in order) by various <ansible> sections, this writes a
-		    a metaplaybook and then executes it """
-		if len(playbooks) < 1: 
-			return
-		book = self.randomString(len=8,basename='rocks-ansible-')
-		ymlfile = os.path.join(self.ansblBookpath,book)
-		lines = ["---\n"]
-		for playbook in playbooks:
-			lines.append("- import_playbook: %s\n" % playbook)
-		doclist = self.write_playbook(ymlfile,lines) 
-		doclist.append("##### RUN the Meta Playbook #####")
-		doclist.append("%s %s %s" % ('ansible-playbook','',ymlfile))
-		doclist.append("##### Remove the Meta Playbook #####")
-		doclist.append("/bin/rm %s" % (ymlfile))
-		self.ks['post'].append(doclist)   
-
-	def generate_boot(self):
-
-				 
-		# Add the args to the %post line
-		list.append(string.strip(arg))
-		# Add the interpreter to use for this post section
-		list.append(string.strip('#!%s' % interpreter))
-		list.append(self.getChildText(node))
-		self.ks['post'].append(list)
-
-
-	# <config>
-
-	def handle_configure(self, node):
-		""" for now we put everything in post"""
-		self.handle_post(node)
-
-		
-	# <boot>
-	
-	def handle_boot(self, node):
-		attr = node.attributes
-		if attr.getNamedItem((None, 'order')):
-			order = attr.getNamedItem((None, 'order')).value
-		else:
-			order = 'pre'
-
-		self.ks['boot-%s' % order].append(self.getChildText(node))
-
-
-	def generate_main(self):
-		list = []
-		list.append('')
-		list += self.ks['main']
-		return list
-
-	def generate_packages(self):
-		list = []
-		list.append('%packages --ignoremissing')
-		self.ks['rpms-on'].sort()
-		for e in self.ks['rpms-on']:
-			list.append(e)
-		self.ks['rpms-off'].sort()
-		for e in self.ks['rpms-off']:
-			list.append('-' + e)
-		list.append('%end')
-		return list
-
-	def generate_pre(self):
-		pre_list = []
-		pre_list.append('')
-
-		for list in self.ks['pre']:
-			pre_list.append('%%pre --log=/tmp/ks-pre.log %s' %
-				list[0])
-			pre_list.append(string.join(list[1:], '\n'))
-			pre_list.append('%end\n')
-			
-		return pre_list
-
-	def generate_post(self):
-		""" for backward compatibility"""
-		return self.generate_config_kickstart()
-
-
-	def generate_config_kickstart(self):
-		""" generate a kickstart configure script """
-		post_list = []
-		post_list.append('')
-
-		# we are only doing ansible, then write the metaplaybook
-		if self.ansblOnly:
-			self.write_metaplaybook(self.ks['playbooks'])	
-
-		for list in self.ks['post']:
-			post_list.append('%%post --log=%s %s\n' % \
-				(self.log, list[0]))
-			post_list += self._generate_config_script(list)
-			post_list.append('%end\n')
-
-		return post_list
-
-
-	def generate_config_script(self):
-		""" generate a generic configure scritp """
-
-		post_list = []
-		post_list.append('')
-
-		for list in self.ks['post']:
-			if list[0] == "--nochroot":
-				# there is not such a thing
-				continue
-			post_list += self._generate_config_script(list)
-
-		return post_list
-
-
-	def _generate_config_script(self, list):
-		""" generate a generic script which can be enbeded in kickstart of
-		run roll """
-		temp_list = []
-		tmpfile=tempfile.mktemp()
-		# Create a 'HERE' document that is executed
-		temp_list.append("cat > %s << 'ROCKS-KS-POST'\n" % tmpfile)
-		# Shell interpreter (python, bash, etc)
-		temp_list.append('%s\n' % list[1])
-		temp_list.append(string.join(list[2:], '\n'))
-		temp_list.append('\nROCKS-KS-POST\n')
-		# Chmod and execute the shell script just created
-		temp_list.append('/bin/chmod +x %s\n' % tmpfile)
-		temp_list.append('%s \n' % tmpfile)
-		# clean up
-		temp_list.append('/bin/rm %s \n' % tmpfile)
-		return temp_list
-
-	def generate_boot(self):
-		list = []
-		list.append('')
-		list.append('%%post --log=%s' % self.log)
-		
-		# Boot PRE
-		#	- check in/out all modified files
-		#	- write the <boot order="pre"> text
-		
-		list.append('')
-		list.append('cat >> /etc/sysconfig/rocks-pre << EOF')
-
-		for (file, (owner, perms)) in list(self.rcsFiles.items()):
-			s = self.rcsEnd(file, owner, perms)
-			list.append(s)
-
-		for l in self.ks['boot-pre']:
-			list.append(l)
-
-		list.append('EOF')
-
-		# Boot POST
-		#	- write the <boot order="post"> text
-		
-		list.append('')
-		list.append('cat >> /etc/sysconfig/rocks-post << EOF')
-
-		for l in self.ks['boot-post']:
-			list.append(l)
-
-		list.append('EOF')
-		list.append('')
-		list.append('%end\n')
-		
-		return list
-
-		
+    def __init__(self):
+        Generator.__init__(self)    
+        self.ks                 = {}
+        self.ks['order']    = []
+        self.ks['debug']    = []
+        self.ks['main']         = []
+        self.ks['rpms-on']    = []
+        self.ks['rpms-off']    = []
+        self.ks['pre' ]         = []
+        self.ks['post']         = []
+        self.ks['boot-pre']    = []
+        self.ks['boot-post']    = []
+        self.ks['playbooks']    = []
+
+        self.phases        = ['post', 'pre']
+
+        self.log = '/mnt/sysimage/var/log/rocks-install.log'
+        self.ansblBookpath = os.path.join(os.path.sep,"var","rocks",
+                "ansible")
+        self.ansblDistroPath = os.path.join("include","ansible")
+        self.ansblOnly     = False
+
+
+    def set_phases(self, values):
+        """ this is a list of string containing the phases that will be generated by the 
+        generator. Default is 'post' and 'pre' aka the kickstart """
+        self.phases = values
+
+    def set_ansible(self,flag):
+        """ This controls whether only ansible stanzas are processed (True), ansible
+            and post sections (False) """
+        self.ansblOnly = flag
+    
+    ##
+    ## Parsing Section
+    ##
+    
+    def parse(self, xml_string):
+        import io
+        xml_buf = io.StringIO(xml_string)
+        doc = xml.dom.ext.reader.Sax2.FromXmlStream(xml_buf)
+        filter = MainNodeFilter_linux(self.attrs)
+        iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
+            filter, 0)
+        node = iter.nextNode()
+        
+        while node:
+            if node.nodeName == 'kickstart':
+                self.handle_kickstart(node)
+            elif node.nodeName == 'main':
+                child = iter.firstChild()
+                while child:
+                    self.handle_mainChild(child)
+                    child = iter.nextSibling()
+
+            node = iter.nextNode()
+            
+        filter = OtherNodeFilter_linux(self.attrs)
+        filter.set_phases(self.phases)
+        iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
+            filter, 0)
+        node = iter.nextNode()
+        while node:
+            if node.nodeName != 'kickstart':
+                self.order(node)
+                eval('self.handle_%s(node)' % (node.nodeName))
+            node = iter.nextNode()
+
+
+    # <kickstart>
+    
+    def handle_kickstart(self, node):
+        # pull out the attr to handle generic conditionals
+        # this replaces the old arch/os logic but still
+        # supports the old syntax
+
+        if node.attributes:
+            attrs = node.attributes.getNamedItem((None, 'attrs'))
+            if attrs:
+                dict = eval(attrs.value)
+                for (k,v) in list(dict.items()):
+                    self.attrs[k] = v
+        
+    # <main>
+    #    <clearpart>
+    # </main>
+    
+    def handle_main_clearpart(self, node):
+        attr = node.attributes
+        if attr.getNamedItem((None, 'partition')):
+            arg = attr.getNamedItem((None, 'partition')).value
+        else:
+            arg = ''
+
+        #
+        # the web form sets the environment variable 'partition'
+        # (although, we may find that it makes sense for other
+        # sources to set it too).
+        #
+        try:
+            os_arg = os.environ['partition']
+        except:
+            os_arg = ''
+
+        clearpart = self.getChildText(node)
+
+        if (arg == '') or (os_arg == '') or (arg == os_arg):
+            self.ks['main'].append('clearpart %s' % clearpart)
+
+    
+    # <main>
+    #    <lilo>
+    # </main>
+    
+    def handle_main_lilo(self, node):
+        self.ks['main'].append('bootloader %s' %
+            self.getChildText(node))
+        return
+
+
+    # <main>
+    #    <bootloader>
+    # </main>
+
+    def handle_main_bootloader(self, node):
+        self.ks['main'].append('bootloader %s' % 
+            self.getChildText(node))
+        return
+
+    # <main>
+    #    <lang>
+    # </main>
+
+    def handle_main_lang(self, node):
+        self.ks['main'].append('lang %s' % 
+            self.getChildText(node))
+        return
+
+    # <main>
+    #    <langsupport>
+    # </main>
+
+    def handle_main_langsupport(self, node):
+        self.ks['main'].append('langsupport --default=%s' %
+            self.getChildText(node).strip())
+
+        return
+
+
+    # <main>
+    #    <sshpw>
+    # </main>
+
+    def handle_main_sshpw(self, node):
+        self.ks['main'].append('sshpw %s' %
+            self.getChildText(node).strip())
+        return
+
+    # <main>
+    #    <volgroup>
+    # </main>
+
+    def handle_main_volgroup(self, node):
+        self.ks['main'].append('volgroup %s' % 
+            self.getChildText(node))
+        return
+
+    # <main>
+    #    <logvol>
+    # </main>
+
+    def handle_main_logvol(self, node):
+        self.ks['main'].append('logvol %s' % 
+            self.getChildText(node))
+        return
+
+    # <debug>
+    
+    def handle_debug(self, node):
+        self.ks['debug'].append(self.getChildText(node))
+    
+    # <description>
+    
+    def handle_description(self, node):
+         dummy=self.getChildText(node)
+
+    
+    # <package>
+        
+    def handle_package(self, node):
+        rpm = self.getChildText(node).strip()
+
+        if self.isDisabled(node):
+            key = 'rpms-off'
+        else:
+            key = 'rpms-on'
+
+        if self.isMeta(node):
+            rpm = '@' + rpm    
+
+
+        # if the RPM is to be turned off, only add if it is not 
+        # in the on list.
+
+        if key == 'rpms-off':
+            if rpm not in self.ks['rpms-on']:
+                self.ks[key].append(rpm)
+
+        # if RPM is turned on, make sure it is not in the off list
+
+        if key == 'rpms-on':
+            self.ks[key].append(rpm)
+
+            if rpm in self.ks['rpms-off']:
+                self.ks['rpms-off'].remove(rpm)
+                        
+
+    # <pre>
+    
+    def handle_pre(self, node):
+        attr = node.attributes
+        # Parse the interpreter attribute
+        if attr.getNamedItem((None, 'interpreter')):
+            interpreter = '--interpreter ' + \
+                attr.getNamedItem((None, 'interpreter')).value
+        else:
+            interpreter = ''
+        # Parse any additional arguments to the interpreter
+        # or to the post section
+        if attr.getNamedItem((None, 'arg')):
+            arg = attr.getNamedItem((None, 'arg')).value
+        else:
+            arg = ''
+        list = []
+        list.append(string.strip(string.join([interpreter, arg])))
+        list.append(self.getChildText(node))
+        self.ks['pre'].append(list)
+
+    # <post>
+    
+    def handle_post(self, node):
+        attr = node.attributes
+        # Parse the interpreter attribute
+        if attr.getNamedItem((None, 'interpreter')):
+            interpreter = \
+                attr.getNamedItem((None, 'interpreter')).value
+        else:
+            interpreter = '/bin/bash'
+        # Parse any additional arguments to the interpreter
+        # or to the post section
+        if attr.getNamedItem((None, 'arg')):
+            arg = attr.getNamedItem((None, 'arg')).value
+        else:
+            arg = ''
+        list = []
+        # Add the args to the %post line
+        list.append(string.strip(arg))
+        # Add the interpreter to use for this post section
+        list.append(string.strip('#!%s' % interpreter))
+        list.append(self.getChildText(node))
+        if not self.ansblOnly:
+            self.ks['post'].append(list)
+
+
+    # <ansible>
+    def parse_ansible(self,node):
+        attr = node.attributes
+        # Parse playbook attribute
+        try:
+            book = attr.getNamedItem((None,'playbook')).value
+        except:
+            book = None            
+
+        # Parse ansible_cmd attribute
+        try:
+            cmd = attr.getNamedItem((None,'ansible_cmd')).value
+        except:
+            cmd = '/usr/bin/ansible-playbook'            
+        # Parse args attribute
+        try:
+            args = attr.getNamedItem((None,'args')).value
+        except:
+            args = ''            
+        return (book, cmd, args)
+
+    def write_playbook(self,ymlfile,lines):
+        """ Write out lines into the named ymlfile as a HERE document in the shell """
+
+        # create a HERE document to write out playbook contents
+        # This is wrapped inside of standard post section
+        # only write out if there is "something"
+        doclist = []
+        if len(lines) > 1:
+            doclist.append('')
+            doclist.append("#!/bin/bash")
+            p = os.path.dirname(ymlfile)
+            doclist.append("#### WRITE PLAYBOOK '%s' in '%s' ####" % (os.path.basename(ymlfile),p))
+            doclist.append("if [ ! -d %s ]; then mkdir -p %s; fi" % (p,p))
+            doclist.append("cat > %s << 'ROCKS-KS-YML'" % ymlfile)
+            doclist.append("".join(lines))
+            doclist.append('\nROCKS-KS-YML')
+        return doclist
+
+    def handle_ansible(self, node):
+
+            # get the arguments to ansible
+            # <ansible playbook=  ansible_cmd=   args= >
+            (book,cmd, args) = self.parse_ansible(node)
+
+            # Attempt to read the playbook content from a file
+            playbook = None
+            lines = []
+            try:
+                bookpath = os.path.join(self.ansblDistroPath, book)
+                playbook = open(bookpath,'r')
+            except:
+                try:
+                    playbook = open(book,'r')
+                except:
+                    pass
+            if book is not None:
+                lines = playbook.readlines()    
+                book=os.path.basename(book)
+            else:
+                try:
+                    nodename = node.attributes.getNamedItem((None,'file')).value
+                except:
+                    nodename = self.randomString(len=8,basename='rocks-ansible-')
+
+                book = nodename + ".yml"
+            
+
+            # read any lines that are "inline"
+            lines.append(self.getChildText(node))
+
+            # create a HERE document to write out playbook contents
+            # This is wrapped inside of standard post section
+            # only write out if there is "something"
+            if len(lines) > 1:
+                ymlfile = os.path.join(self.ansblBookpath,book)
+                doclist = self.write_playbook(ymlfile,lines) 
+
+                # execute ansible as standalone playbook if this is a post section
+                # otherwise, the closing stanza will write out a Meta-playbook that
+                # invokes all others 
+                if not self.ansblOnly:
+                    doclist.append("##### RUN the Playbook #####")
+                    doclist.append("%s %s %s" % (cmd,args,ymlfile))
+                self.ks['post'].append(doclist)
+                self.ks['playbooks'].append(ymlfile)
+
+            # Extract any package information and place into the self.ks['rpms-on']
+            (iPkgs,dPkgs) = self.extractPkgsFromAnsible(lines)
+            for pkgList in iPkgs:
+                for pkg in pkgList.split(','):
+                    pkg = pkg.strip()
+                    self.ks['rpms-on'].append(pkg)
+                    if pkg in self.ks['rpms-off']:
+                        self.ks['rpms-off'].remove(pkg)
+
+            for pkgList in dPkgs:
+                for pkg in pkgList.split():
+                    pkg = pkg.strip()
+                    if pkg not in self.ks['rpms-on']:
+                        self.ks['rpms-off'].append(pkg)
+
+    def extractPkgsFromAnsible(self,lines):
+        yString = "".join(lines)
+
+        ydata =  yaml.load(yString)
+        ye = []
+        try:
+            tasks = [x['tasks'] for x in [x for x in ydata if 'tasks' in x]]
+        except:
+            return ([],[])
+
+        for entry in tasks:
+            for task in entry:
+                try:
+                    ye.append(task['yum'])    
+                except:
+                    pass
+        yumentries = [x for x in ye if 'state' in x and 'name' in x]
+    
+        installStates = ('present','latest','installed')
+        removeStates = ('absent','removed')
+        iPkgs = [x['name'] for x in [x for x in yumentries if any(ext in x['state'] for ext in installStates)]]
+        dPkgs = [x['name'] for x in [x for x in yumentries if any(ext in x['state'] for ext in removeStates)]]
+        return(iPkgs,dPkgs)
+
+    def write_metaplaybook(self, playbooks):
+        """ playbooks have been defined (in order) by various <ansible> sections, this writes a
+            a metaplaybook and then executes it """
+        if len(playbooks) < 1: 
+            return
+        book = self.randomString(len=8,basename='rocks-ansible-')
+        ymlfile = os.path.join(self.ansblBookpath,book)
+        lines = ["---\n"]
+        for playbook in playbooks:
+            lines.append("- import_playbook: %s\n" % playbook)
+        doclist = self.write_playbook(ymlfile,lines) 
+        doclist.append("##### RUN the Meta Playbook #####")
+        doclist.append("%s %s %s" % ('ansible-playbook','',ymlfile))
+        doclist.append("##### Remove the Meta Playbook #####")
+        doclist.append("/bin/rm %s" % (ymlfile))
+        self.ks['post'].append(doclist)   
+
+    def generate_boot(self):
+
+                 
+        # Add the args to the %post line
+        list.append(string.strip(arg))
+        # Add the interpreter to use for this post section
+        list.append(string.strip('#!%s' % interpreter))
+        list.append(self.getChildText(node))
+        self.ks['post'].append(list)
+
+
+    # <config>
+
+    def handle_configure(self, node):
+        """ for now we put everything in post"""
+        self.handle_post(node)
+
+        
+    # <boot>
+    
+    def handle_boot(self, node):
+        attr = node.attributes
+        if attr.getNamedItem((None, 'order')):
+            order = attr.getNamedItem((None, 'order')).value
+        else:
+            order = 'pre'
+
+        self.ks['boot-%s' % order].append(self.getChildText(node))
+
+
+    def generate_main(self):
+        list = []
+        list.append('')
+        list += self.ks['main']
+        return list
+
+    def generate_packages(self):
+        list = []
+        list.append('%packages --ignoremissing')
+        self.ks['rpms-on'].sort()
+        for e in self.ks['rpms-on']:
+            list.append(e)
+        self.ks['rpms-off'].sort()
+        for e in self.ks['rpms-off']:
+            list.append('-' + e)
+        list.append('%end')
+        return list
+
+    def generate_pre(self):
+        pre_list = []
+        pre_list.append('')
+
+        for list in self.ks['pre']:
+            pre_list.append('%%pre --log=/tmp/ks-pre.log %s' %
+                list[0])
+            pre_list.append(string.join(list[1:], '\n'))
+            pre_list.append('%end\n')
+            
+        return pre_list
+
+    def generate_post(self):
+        """ for backward compatibility"""
+        return self.generate_config_kickstart()
+
+
+    def generate_config_kickstart(self):
+        """ generate a kickstart configure script """
+        post_list = []
+        post_list.append('')
+
+        # we are only doing ansible, then write the metaplaybook
+        if self.ansblOnly:
+            self.write_metaplaybook(self.ks['playbooks'])    
+
+        for list in self.ks['post']:
+            post_list.append('%%post --log=%s %s\n' % \
+                (self.log, list[0]))
+            post_list += self._generate_config_script(list)
+            post_list.append('%end\n')
+
+        return post_list
+
+
+    def generate_config_script(self):
+        """ generate a generic configure scritp """
+
+        post_list = []
+        post_list.append('')
+
+        for list in self.ks['post']:
+            if list[0] == "--nochroot":
+                # there is not such a thing
+                continue
+            post_list += self._generate_config_script(list)
+
+        return post_list
+
+
+    def _generate_config_script(self, list):
+        """ generate a generic script which can be enbeded in kickstart of
+        run roll """
+        temp_list = []
+        tmpfile=tempfile.mktemp()
+        # Create a 'HERE' document that is executed
+        temp_list.append("cat > %s << 'ROCKS-KS-POST'\n" % tmpfile)
+        # Shell interpreter (python, bash, etc)
+        temp_list.append('%s\n' % list[1])
+        temp_list.append(string.join(list[2:], '\n'))
+        temp_list.append('\nROCKS-KS-POST\n')
+        # Chmod and execute the shell script just created
+        temp_list.append('/bin/chmod +x %s\n' % tmpfile)
+        temp_list.append('%s \n' % tmpfile)
+        # clean up
+        temp_list.append('/bin/rm %s \n' % tmpfile)
+        return temp_list
+
+    def generate_boot(self):
+        list = []
+        list.append('')
+        list.append('%%post --log=%s' % self.log)
+        
+        # Boot PRE
+        #    - check in/out all modified files
+        #    - write the <boot order="pre"> text
+        
+        list.append('')
+        list.append('cat >> /etc/sysconfig/rocks-pre << EOF')
+
+        for (file, (owner, perms)) in list(self.rcsFiles.items()):
+            s = self.rcsEnd(file, owner, perms)
+            list.append(s)
+
+        for l in self.ks['boot-pre']:
+            list.append(l)
+
+        list.append('EOF')
+
+        # Boot POST
+        #    - write the <boot order="post"> text
+        
+        list.append('')
+        list.append('cat >> /etc/sysconfig/rocks-post << EOF')
+
+        for l in self.ks['boot-post']:
+            list.append(l)
+
+        list.append('EOF')
+        list.append('')
+        list.append('%end\n')
+        
+        return list
+
+        
 class MainNodeFilter_sunos(NodeFilter):
-	"""
-	This class either accepts or reject tags
-	from the node XML files. All tags are under
-	the <main>*</main> tags.
-	Each and every one of these tags needs to
-	have a handler for them in the Generator
-	class.
-	"""
-	def acceptNode(self, node):
-		if node.nodeName == 'jumpstart':
-			return self.FILTER_ACCEPT
+    """
+    This class either accepts or reject tags
+    from the node XML files. All tags are under
+    the <main>*</main> tags.
+    Each and every one of these tags needs to
+    have a handler for them in the Generator
+    class.
+    """
+    def acceptNode(self, node):
+        if node.nodeName == 'jumpstart':
+            return self.FILTER_ACCEPT
 
-		if node.nodeName not in [
-			'main', 	# <main><*></main>
-			'clearpart', 	# Clears the disk partitions
-			'url', 		# URL to download all the packages from
-			'part', 	# Partition information
-			'size',
-			'filesys',
-			'slice',
-			'locale',
-			'timezone',
-			'timeserver',
-			'terminal',
-			'name_service',
-			'domain_name',
-			'name_server',
-			'nfs4_domain',
-			'search',
-			'rootpw', 	# root password
-			'network',	# specify network configuration
-			'interface',	# network interface
-			'hostname',	# hostname
-			'ip_address',	# IP Address
-			'netmask',	# Netmask information
-			'default_route',# Default Gateway
-			'dhcp',		# to DHCP or not to DHCP
-			'protocol_ipv6',# to IPv6 or not to IPv6
-			'display',	# Display config
-			'monitor',	# Monitor config
-			'keyboard',	# Keyboard Config
-			'pointer',	# Mouse config
-			'security_policy', # Security config
-			'auto_reg',	# Auto Registration
-			'type',	# Auto Registration
-			]:
-			return self.FILTER_SKIP
-			
-		if not self.isCorrectCond(node):
-			return self.FILTER_SKIP
-	
-		return self.FILTER_ACCEPT
+        if node.nodeName not in [
+            'main',     # <main><*></main>
+            'clearpart',     # Clears the disk partitions
+            'url',         # URL to download all the packages from
+            'part',     # Partition information
+            'size',
+            'filesys',
+            'slice',
+            'locale',
+            'timezone',
+            'timeserver',
+            'terminal',
+            'name_service',
+            'domain_name',
+            'name_server',
+            'nfs4_domain',
+            'search',
+            'rootpw',     # root password
+            'network',    # specify network configuration
+            'interface',    # network interface
+            'hostname',    # hostname
+            'ip_address',    # IP Address
+            'netmask',    # Netmask information
+            'default_route',# Default Gateway
+            'dhcp',        # to DHCP or not to DHCP
+            'protocol_ipv6',# to IPv6 or not to IPv6
+            'display',    # Display config
+            'monitor',    # Monitor config
+            'keyboard',    # Keyboard Config
+            'pointer',    # Mouse config
+            'security_policy', # Security config
+            'auto_reg',    # Auto Registration
+            'type',    # Auto Registration
+            ]:
+            return self.FILTER_SKIP
+            
+        if not self.isCorrectCond(node):
+            return self.FILTER_SKIP
+    
+        return self.FILTER_ACCEPT
 
 
 
 class OtherNodeFilter_sunos(NodeFilter):
-	"""
-	This class accepts tags that define the
-	pre section, post section and the packages
-	section in the node XML files. The handlers
-	for these are present in the Generator class.
-	"""
-	def acceptNode(self, node):
-		if node.nodeName == 'jumpstart':
-			return self.FILTER_ACCEPT
+    """
+    This class accepts tags that define the
+    pre section, post section and the packages
+    section in the node XML files. The handlers
+    for these are present in the Generator class.
+    """
+    def acceptNode(self, node):
+        if node.nodeName == 'jumpstart':
+            return self.FILTER_ACCEPT
 
-		if node.nodeName not in [
-			'cluster',
-			'package',
-			'patch',
-			'pre',
-			'post',
-			]:
-			return self.FILTER_SKIP
+        if node.nodeName not in [
+            'cluster',
+            'package',
+            'patch',
+            'pre',
+            'post',
+            ]:
+            return self.FILTER_SKIP
 
-		if not self.isCorrectCond(node):
-			return self.FILTER_SKIP
-			
-		return self.FILTER_ACCEPT
-		
-		
+        if not self.isCorrectCond(node):
+            return self.FILTER_SKIP
+            
+        return self.FILTER_ACCEPT
+        
+        
 class Generator_sunos(Generator):
-	"""
-	Handles all the XML tags that are acceptable
-	and generates a jumpstart compatible output
-	"""
-	def __init__(self):
-		Generator.__init__(self)
-		self.ks = {}
-		self.ks['main']		= []
-		self.ks['url']		= ''
-		self.ks['order']	= [] # Order of traversal
-		self.ks['sysidcfg']	= [] # The Main section
-		self.ks['part']		= [] # Partitioning
-		self.ks['profile']	= [] # Misc. Profile Information
-		self.ks['pkg_on']	= [] # Selected Packages
-		self.ks['pkg_off']	= [] # Deselected Packages
-		self.ks['pkgcl_on']	= [] # Selected Package Clusters
-		self.ks['pkgcl_off']	= [] # Deselected Package Clusters
-		self.ks['patch']	= [] # List of patches
-		self.ks['begin']	= [] # Begin Section
-		self.ks['finish']	= [] # Finish Section
-		self.ks['service_on']	= [] # Enabled Services section
-		self.ks['service_off']	= [] # Disabled Services section
-		self.finish_section	= 0  # Iterator. This counts up for
-					     # every post section that's
-					     # encountered
-					     
-		self.service_instances	= {}
-						
+    """
+    Handles all the XML tags that are acceptable
+    and generates a jumpstart compatible output
+    """
+    def __init__(self):
+        Generator.__init__(self)
+        self.ks = {}
+        self.ks['main']        = []
+        self.ks['url']        = ''
+        self.ks['order']    = [] # Order of traversal
+        self.ks['sysidcfg']    = [] # The Main section
+        self.ks['part']        = [] # Partitioning
+        self.ks['profile']    = [] # Misc. Profile Information
+        self.ks['pkg_on']    = [] # Selected Packages
+        self.ks['pkg_off']    = [] # Deselected Packages
+        self.ks['pkgcl_on']    = [] # Selected Package Clusters
+        self.ks['pkgcl_off']    = [] # Deselected Package Clusters
+        self.ks['patch']    = [] # List of patches
+        self.ks['begin']    = [] # Begin Section
+        self.ks['finish']    = [] # Finish Section
+        self.ks['service_on']    = [] # Enabled Services section
+        self.ks['service_off']    = [] # Disabled Services section
+        self.finish_section    = 0  # Iterator. This counts up for
+                         # every post section that's
+                         # encountered
+                         
+        self.service_instances    = {}
+                        
 
-	def parse(self, xml_string):
-		"""
-		Creates an XML tree representation of the XML string,
-		decompiles it, and parses the string.
-		"""
-		import io
-		xml_buf = io.StringIO(xml_string)
-		doc = xml.dom.ext.reader.Sax2.FromXmlStream(xml_buf)
-		filter = MainNodeFilter_sunos(self.attrs)
-		iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
-			filter, 0)
-		node = iter.nextNode()
-		
-		while node:
-			if node.nodeName == 'jumpstart':
-				self.handle_jumpstart(node)
-			elif node.nodeName == 'main':
-				child = iter.firstChild()
-				while child:
-					self.handle_mainChild(child)
-					child = iter.nextSibling()
-					
-			elif node.nodeName in [
-				'name_service',
-				'network',
-				'auto_reg',
-				]:
-				f = getattr(self, "handle_%s" % node.nodeName)
-				f(node, iter)
+    def parse(self, xml_string):
+        """
+        Creates an XML tree representation of the XML string,
+        decompiles it, and parses the string.
+        """
+        import io
+        xml_buf = io.StringIO(xml_string)
+        doc = xml.dom.ext.reader.Sax2.FromXmlStream(xml_buf)
+        filter = MainNodeFilter_sunos(self.attrs)
+        iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
+            filter, 0)
+        node = iter.nextNode()
+        
+        while node:
+            if node.nodeName == 'jumpstart':
+                self.handle_jumpstart(node)
+            elif node.nodeName == 'main':
+                child = iter.firstChild()
+                while child:
+                    self.handle_mainChild(child)
+                    child = iter.nextSibling()
+                    
+            elif node.nodeName in [
+                'name_service',
+                'network',
+                'auto_reg',
+                ]:
+                f = getattr(self, "handle_%s" % node.nodeName)
+                f(node, iter)
 
-			node = iter.nextNode()
+            node = iter.nextNode()
 
-		filter = OtherNodeFilter_sunos(self.attrs)
-		iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
-			filter, 0)
-		node = iter.nextNode()
-		while node:
-			if node.nodeName != 'jumpstart':
-				self.order(node)
-				eval('self.handle_%s(node)' % (node.nodeName))
-			node = iter.nextNode()
+        filter = OtherNodeFilter_sunos(self.attrs)
+        iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
+            filter, 0)
+        node = iter.nextNode()
+        while node:
+            if node.nodeName != 'jumpstart':
+                self.order(node)
+                eval('self.handle_%s(node)' % (node.nodeName))
+            node = iter.nextNode()
 
-	# <jumpstart>
-	
-	def handle_jumpstart(self, node):
-		# pull out the attr to handle generic conditionals
-		# this replaces the old arch/os logic but still
-		# supports the old syntax
+    # <jumpstart>
+    
+    def handle_jumpstart(self, node):
+        # pull out the attr to handle generic conditionals
+        # this replaces the old arch/os logic but still
+        # supports the old syntax
 
-		if node.attributes:
-			attrs = node.attributes.getNamedItem((None, 'attrs'))
-			if attrs:
-				dict = eval(attrs.value)
-				for (k,v) in list(dict.items()):
-					self.attrs[k] = v
+        if node.attributes:
+            attrs = node.attributes.getNamedItem((None, 'attrs'))
+            if attrs:
+                dict = eval(attrs.value)
+                for (k,v) in list(dict.items()):
+                    self.attrs[k] = v
 
-	# <main>
-	#	<clearpart>
-	# </main>
-	
-	def handle_main_clearpart(self, node):
-		self.ks['part'][0:0] = ['fdisk\trootdisk\tsolaris\tall']
+    # <main>
+    #    <clearpart>
+    # </main>
+    
+    def handle_main_clearpart(self, node):
+        self.ks['part'][0:0] = ['fdisk\trootdisk\tsolaris\tall']
 
-	# <main>
-	#	<url>
-	# </main>
-	
-	def handle_main_url(self, node):
-		self.ks['url'] = self.getChildText(node).strip()
-	
-	# <main>
-	#	<rootpw>
-	# </main>
-	
-	def handle_main_rootpw(self, node):
-		self.ks['sysidcfg'].append("root_password=%s" %
-			self.getChildText(node).strip())
+    # <main>
+    #    <url>
+    # </main>
+    
+    def handle_main_url(self, node):
+        self.ks['url'] = self.getChildText(node).strip()
+    
+    # <main>
+    #    <rootpw>
+    # </main>
+    
+    def handle_main_rootpw(self, node):
+        self.ks['sysidcfg'].append("root_password=%s" %
+            self.getChildText(node).strip())
 
-	# <main>
-	#	<locale>
-	# </main>
-	
-	def handle_main_locale(self, node):
-		self.ks['sysidcfg'].append("system_locale=%s" %
-			self.getChildText(node).strip())
+    # <main>
+    #    <locale>
+    # </main>
+    
+    def handle_main_locale(self, node):
+        self.ks['sysidcfg'].append("system_locale=%s" %
+            self.getChildText(node).strip())
 
-	# <main>
-	#	<timezone>
-	# </main>
+    # <main>
+    #    <timezone>
+    # </main>
 
-	def handle_main_timezone(self, node):
-		self.ks['sysidcfg'].append("timezone=%s" %
-			self.getChildText(node).strip())
+    def handle_main_timezone(self, node):
+        self.ks['sysidcfg'].append("timezone=%s" %
+            self.getChildText(node).strip())
 
-	# <main>
-	#	<timeserver>
-	# </main>
+    # <main>
+    #    <timeserver>
+    # </main>
 
-	def handle_main_timeserver(self, node):
-		self.ks['sysidcfg'].append("timeserver=%s" %
-			self.getChildText(node).strip())
+    def handle_main_timeserver(self, node):
+        self.ks['sysidcfg'].append("timeserver=%s" %
+            self.getChildText(node).strip())
 
-	# <main>
-	#	<nfs4_domain>
-	# </main>
+    # <main>
+    #    <nfs4_domain>
+    # </main>
 
-	def handle_main_nfs4_domain(self, node):
-		self.ks['sysidcfg'].append("nfs4_domain=%s" %
-			self.getChildText(node).strip())
-
-
-	# <name_service>
-	
-	def handle_name_service(self, node, iter):
-		dns = {}
-		child = iter.firstChild()
-		while child:
-			dns[child.nodeName] = self.getChildText(child).strip()
-			child = iter.nextSibling()
-		self.ks['sysidcfg'].append("name_service=DNS {")
-		for i in dns:
-			self.ks['sysidcfg'].append('\t%s=%s' % (i, dns[i]))
-		self.ks['sysidcfg'].append('}')
-			
-	
-	# <auto_registration>
-	def handle_auto_reg(self, node, iter):
-		auto_reg = {}
-		child = iter.firstChild()
-		while child:
-			auto_reg[child.nodeName] = self.getChildText(child).strip()
-			child = iter.nextSibling()
-		if 'type' not in auto_reg:
-			self.ks['sysidcfg'].append('auto_reg=disable')
-			return
-		auto_reg_type = auto_reg.pop('type')
-		if auto_reg_type in ['disable', 'none']:
-			self.ks['sysidcfg'].append("auto_reg=%s" % auto_reg_type)
-			return
-		self.ks['sysidcfg'].append('auto_reg=%s {')
-		for i in auto_reg:
-			self.ks['sysidcfg'].append('\t%s=%s' % (i,auto_reg[i]))
-		self.ks['sysidcfg'].append('}')
-		
-	# <main>
-	#	<security_policy>
-	# </main>
-	
-	def handle_main_security_policy(self, node):
-		self.ks['sysidcfg'].append("security_policy=%s" %
-			self.getChildText(node).strip())
-	
-	# <main>
-	#	<display>
-	# </main>
-	
-	def handle_main_display(self, node):
-		self.ks['sysidcfg'].append("display=%s" %
-			self.getChildText(node).strip())
-
-	# <main>
-	#	<monitor>
-	# </main>
-	
-	def handle_main_monitor(self, node):
-		self.ks['sysidcfg'].append("monitor=%s" %
-			self.getChildText(node).strip())
-
-	# <main>
-	#	<keyboard>
-	# </main>
-	
-	def handle_main_keyboard(self, node):
-		self.ks['sysidcfg'].append("keyboard=%s" %
-			self.getChildText(node).strip())
-
-	# <main>
-	#	<pointer>
-	# </main>
-	
-	def handle_main_pointer(self, node):
-		self.ks['sysidcfg'].append("pointer=%s" %
-			self.getChildText(node).strip())
-		
-
-	# <*>
-	#	<service>
-	# </*>
-	
-	def handle_child_service(self, node):
-		# Handle the <service> tags that enable
-		# or disable services in Solaris
-		
-		# Get name and enabled flags
-		attr = node.attributes
-		name = None
-		enabled = 'true'
-		instance = 'default'
-		if attr.getNamedItem((None, 'name')):
-			name = attr.getNamedItem((None, 'name')).value
-		# If there's no name return
-		if not name:
-			return ''
-
-		if attr.getNamedItem((None, 'instance')):
-			instance = attr.getNamedItem((None, 'instance')).value
-
-		# populate the correct list, depending on
-		# whether the service is enabled or disabled.
-		if attr.getNamedItem((None, 'enabled')):
-			enabled = attr.getNamedItem((None, 'enabled')).value
-		if enabled == 'no' or enabled == 'false':
-			enabled = 'false'
-		else:
-			enabled='true'
-
-		if name not in self.service_instances:
-			self.service_instances[name] = []
-		self.service_instances[name].append((instance,enabled))
-		# This is only to placate the getChildText
-		# function. There's no need to return anything, as
-		# a separate list is being populated to be used
-		# later.
-		return ''
-
-	# <network>
-	
-	def handle_network(self, node, iter):
-		net = {}
-		dhcp = 0
-		child = iter.firstChild()
-		while child :
-			if child.nodeName =='dhcp':
-				dhcp = 1
-			else:
-				net[child.nodeName] = self.getChildText(child).strip()
-			child = iter.nextSibling()
-		if 'interface' not in net:
-			net['interface'] = 'PRIMARY'
-		self.ks['sysidcfg'].append("network_interface=%s{" %
-			net.pop('interface'))
-		if dhcp == 1:
-			self.ks['sysidcfg'].append("\t\tdhcp")
-		for i in net:
-			self.ks['sysidcfg'].append("\t\t%s=%s" % (i, net[i]))
-		self.ks['sysidcfg'].append("}")
+    def handle_main_nfs4_domain(self, node):
+        self.ks['sysidcfg'].append("nfs4_domain=%s" %
+            self.getChildText(node).strip())
 
 
-	# <package>
-	
-	def handle_package(self, node):
-		attr = node.attributes
-		if self.isMeta(node):
-			key = "pkgcl"
-		else:
-			key = "pkg"
+    # <name_service>
+    
+    def handle_name_service(self, node, iter):
+        dns = {}
+        child = iter.firstChild()
+        while child:
+            dns[child.nodeName] = self.getChildText(child).strip()
+            child = iter.nextSibling()
+        self.ks['sysidcfg'].append("name_service=DNS {")
+        for i in dns:
+            self.ks['sysidcfg'].append('\t%s=%s' % (i, dns[i]))
+        self.ks['sysidcfg'].append('}')
+            
+    
+    # <auto_registration>
+    def handle_auto_reg(self, node, iter):
+        auto_reg = {}
+        child = iter.firstChild()
+        while child:
+            auto_reg[child.nodeName] = self.getChildText(child).strip()
+            child = iter.nextSibling()
+        if 'type' not in auto_reg:
+            self.ks['sysidcfg'].append('auto_reg=disable')
+            return
+        auto_reg_type = auto_reg.pop('type')
+        if auto_reg_type in ['disable', 'none']:
+            self.ks['sysidcfg'].append("auto_reg=%s" % auto_reg_type)
+            return
+        self.ks['sysidcfg'].append('auto_reg=%s {')
+        for i in auto_reg:
+            self.ks['sysidcfg'].append('\t%s=%s' % (i,auto_reg[i]))
+        self.ks['sysidcfg'].append('}')
+        
+    # <main>
+    #    <security_policy>
+    # </main>
+    
+    def handle_main_security_policy(self, node):
+        self.ks['sysidcfg'].append("security_policy=%s" %
+            self.getChildText(node).strip())
+    
+    # <main>
+    #    <display>
+    # </main>
+    
+    def handle_main_display(self, node):
+        self.ks['sysidcfg'].append("display=%s" %
+            self.getChildText(node).strip())
 
-		if self.isDisabled(node):
-			key = key + "_off"
-		else:
-			key = key + "_on"
+    # <main>
+    #    <monitor>
+    # </main>
+    
+    def handle_main_monitor(self, node):
+        self.ks['sysidcfg'].append("monitor=%s" %
+            self.getChildText(node).strip())
 
-		self.ks[key].append(self.getChildText(node).strip())
-		
-	# patch
-	def handle_patch(self, node):
-		attr = node.attributes
-		self.ks['patch'].append(self.getChildText(node))
-	# <pre>
-		
-	def handle_pre(self, node):
-		self.ks['begin'].append(self.getChildText(node))
+    # <main>
+    #    <keyboard>
+    # </main>
+    
+    def handle_main_keyboard(self, node):
+        self.ks['sysidcfg'].append("keyboard=%s" %
+            self.getChildText(node).strip())
 
-	# <post>
-	
-	def handle_post(self, node):
-		"""Function works in an interesting way. On solaris the post
-		sections are executed in the installer environment rather than
-		in the installed environment. So the way we do it is to write
-		a script for every post section, with the correct interpreter
-		and execute it with a chroot command.
-		"""
-		attr = node.attributes
-		# By default we always want to chroot, unless
-		# otherwise specified
-		if attr.getNamedItem((None, 'chroot')):
-			chroot = attr.getNamedItem((None, 'chroot')).value
-		else:
-			chroot = 'yes'
+    # <main>
+    #    <pointer>
+    # </main>
+    
+    def handle_main_pointer(self, node):
+        self.ks['sysidcfg'].append("pointer=%s" %
+            self.getChildText(node).strip())
+        
 
-		# By default, the interpreter is always /bin/sh, unless
-		# otherwise specified.
-		if attr.getNamedItem((None, 'interpreter')):
-			interpreter = attr.getNamedItem((None,
-				'interpreter')).value
-		else:
-			interpreter = '/bin/sh'
+    # <*>
+    #    <service>
+    # </*>
+    
+    def handle_child_service(self, node):
+        # Handle the <service> tags that enable
+        # or disable services in Solaris
+        
+        # Get name and enabled flags
+        attr = node.attributes
+        name = None
+        enabled = 'true'
+        instance = 'default'
+        if attr.getNamedItem((None, 'name')):
+            name = attr.getNamedItem((None, 'name')).value
+        # If there's no name return
+        if not name:
+            return ''
 
-		# The args that are supplied are for the command that
-		# you want to run, and not to the installer section.
-		if attr.getNamedItem((None, 'arg')):
-			arg = attr.getNamedItem((None, 'arg')).value
-		else:
-			arg = ''
+        if attr.getNamedItem((None, 'instance')):
+            instance = attr.getNamedItem((None, 'instance')).value
 
-		list = []
-		if chroot == 'yes':
-			list.append("cat > /a/tmp/post_section_%d << '__eof__'"
-					% self.finish_section)
-			list.append("#!%s" % interpreter)
-			list.append(self.getChildText(node))
-			list.append("__eof__")
-			list.append("chmod a+rx /a/tmp/post_section_%d"
-					% self.finish_section)
-			list.append("chroot /a /tmp/post_section_%d %s"
-					% (self.finish_section, arg))
-		else:
-			if interpreter is not '/bin/sh':
-				list.append("cat > /tmp/post_section_%d "
-					"<< '__eof__'"
-					% self.finish_section)
-				list.append("#!%s" % interpreter)
-				list.append(self.getChildText(node))
-				list.append("__eof__")
-				list.append("chmod a+rx /tmp/post_section_%d"
-					% self.finish_section)
-				list.append("%s /tmp/post_section_%d"
-					% (interpreter, self.finish_section))
-			
-			else:
-				list.append(self.getChildText(node))
+        # populate the correct list, depending on
+        # whether the service is enabled or disabled.
+        if attr.getNamedItem((None, 'enabled')):
+            enabled = attr.getNamedItem((None, 'enabled')).value
+        if enabled == 'no' or enabled == 'false':
+            enabled = 'false'
+        else:
+            enabled='true'
 
-		self.finish_section = self.finish_section+1
-		self.ks['finish'] += list
+        if name not in self.service_instances:
+            self.service_instances[name] = []
+        self.service_instances[name].append((instance,enabled))
+        # This is only to placate the getChildText
+        # function. There's no need to return anything, as
+        # a separate list is being populated to be used
+        # later.
+        return ''
 
-	def generate(self, section):
-		"""Function generates the requested section
-		of the jumpstart file"""
-		
-		list = []
-		
-		f = getattr(self, 'generate_%s' % section )
-		list += f()
+    # <network>
+    
+    def handle_network(self, node, iter):
+        net = {}
+        dhcp = 0
+        child = iter.firstChild()
+        while child :
+            if child.nodeName =='dhcp':
+                dhcp = 1
+            else:
+                net[child.nodeName] = self.getChildText(child).strip()
+            child = iter.nextSibling()
+        if 'interface' not in net:
+            net['interface'] = 'PRIMARY'
+        self.ks['sysidcfg'].append("network_interface=%s{" %
+            net.pop('interface'))
+        if dhcp == 1:
+            self.ks['sysidcfg'].append("\t\tdhcp")
+        for i in net:
+            self.ks['sysidcfg'].append("\t\t%s=%s" % (i, net[i]))
+        self.ks['sysidcfg'].append("}")
 
-		return list
 
-	def generate_begin(self):
-		""" Generates the pre installation scripts"""
-		list = []
-		list += self.ks['begin']
-		return list
+    # <package>
+    
+    def handle_package(self, node):
+        attr = node.attributes
+        if self.isMeta(node):
+            key = "pkgcl"
+        else:
+            key = "pkg"
 
-	def generate_finish(self):
-		list = []
-		list += self.generate_order()
-		list += self.ks['finish']
+        if self.isDisabled(node):
+            key = key + "_off"
+        else:
+            key = key + "_on"
 
-		# Generate and add the services section to the finish
-		# script. 
-		list += self.generate_services()
-		# And we're done
-		
-		return list
+        self.ks[key].append(self.getChildText(node).strip())
+        
+    # patch
+    def handle_patch(self, node):
+        attr = node.attributes
+        self.ks['patch'].append(self.getChildText(node))
+    # <pre>
+        
+    def handle_pre(self, node):
+        self.ks['begin'].append(self.getChildText(node))
 
-	def generate_profile(self):
-		if self.ks['url'] != '':
-			location = self.ks['url']
-		else:
-			location = "local_file\t/cdrom"
-		list = []
-		list.append("# Installation Type")
-		list.append("install_type\tinitial_install")
-		list.append("\n")
-		list.append("# System Type")
-		list.append("system_type\tstandalone")
-		list.append("\n")
-		list.append("# Profile Information")
-		list.append("\n")
-		list += self.ks['profile']
-		list.append("# Partition Information")
-		list += self.ks['part']
-		list.append("\n")
-		list.append("# Packages Section")
-		for i in self.ks['pkgcl_on']:
-			list.append('cluster\t%s' % i)
-		for i in self.ks['pkgcl_off']:
-			list.append('cluster\t%s\tdelete' % i)
-		for i in self.ks['pkg_on']:
-			list.append('package\t%s\tadd' % i)
-		for i in self.ks['pkg_off']:
-			list.append('package\t%s\tdelete' % i)
-		if len(self.ks['patch']) > 0:
-			patch_list = string.join(self.ks['patch'],',')
-			list.append('patch %s local_file /cdrom/Solaris_10/Patches' % patch_list)
+    # <post>
+    
+    def handle_post(self, node):
+        """Function works in an interesting way. On solaris the post
+        sections are executed in the installer environment rather than
+        in the installed environment. So the way we do it is to write
+        a script for every post section, with the correct interpreter
+        and execute it with a chroot command.
+        """
+        attr = node.attributes
+        # By default we always want to chroot, unless
+        # otherwise specified
+        if attr.getNamedItem((None, 'chroot')):
+            chroot = attr.getNamedItem((None, 'chroot')).value
+        else:
+            chroot = 'yes'
 
-		return list
-		
-	def generate_sysidcfg(self):
-		list = []
-		list += self.ks['sysidcfg']
-		return list
+        # By default, the interpreter is always /bin/sh, unless
+        # otherwise specified.
+        if attr.getNamedItem((None, 'interpreter')):
+            interpreter = attr.getNamedItem((None,
+                'interpreter')).value
+        else:
+            interpreter = '/bin/sh'
 
-	def generate_rules(self):
-		list = []
-		list.append("any\t-\tbegin\tprofile\tfinish")
-		return list
+        # The args that are supplied are for the command that
+        # you want to run, and not to the installer section.
+        if attr.getNamedItem((None, 'arg')):
+            arg = attr.getNamedItem((None, 'arg')).value
+        else:
+            arg = ''
 
-	def generate_services(self):
+        list = []
+        if chroot == 'yes':
+            list.append("cat > /a/tmp/post_section_%d << '__eof__'"
+                    % self.finish_section)
+            list.append("#!%s" % interpreter)
+            list.append(self.getChildText(node))
+            list.append("__eof__")
+            list.append("chmod a+rx /a/tmp/post_section_%d"
+                    % self.finish_section)
+            list.append("chroot /a /tmp/post_section_%d %s"
+                    % (self.finish_section, arg))
+        else:
+            if interpreter is not '/bin/sh':
+                list.append("cat > /tmp/post_section_%d "
+                    "<< '__eof__'"
+                    % self.finish_section)
+                list.append("#!%s" % interpreter)
+                list.append(self.getChildText(node))
+                list.append("__eof__")
+                list.append("chmod a+rx /tmp/post_section_%d"
+                    % self.finish_section)
+                list.append("%s /tmp/post_section_%d"
+                    % (interpreter, self.finish_section))
+            
+            else:
+                list.append(self.getChildText(node))
 
-		# Generates an XML file with a list of 
-		# all enabled and disabled services. This
-		# is going to be used when assembling services
-		# on compute nodes.
-		# The way to do this is to copy the service manifest
-		# xml file to /var/svc/manifest/ which should be done by
-		# an explicit cp command in the post section. Then enable
-		# these services by adding them to the site.xml command
-		# on the target machine.
+        self.finish_section = self.finish_section+1
+        self.ks['finish'] += list
 
-		if len(self.service_instances) == 0:
-			return []
-		list= []
+    def generate(self, section):
+        """Function generates the requested section
+        of the jumpstart file"""
+        
+        list = []
+        
+        f = getattr(self, 'generate_%s' % section )
+        list += f()
 
-		list.append("cat > /a/var/svc/profile/site.xml << '_xml_eof_'")
-		# XML Headers, and doctype
-		list.append("<?xml version='1.0'?>")
-		list.append("<!DOCTYPE service_bundle SYSTEM "
-			"'/usr/share/lib/xml/dtd/service_bundle.dtd.1'>")
+        return list
 
-		# Start service bundle
-		list.append("<service_bundle type='profile' name='site'"
-			"\n\txmlns:xi='http://www.w3.org/2001/XInclude' >")
+    def generate_begin(self):
+        """ Generates the pre installation scripts"""
+        list = []
+        list += self.ks['begin']
+        return list
 
-		for i in list(self.service_instances.keys()):
-			list.append("\t<service name='%s' version='1' type='service'>" % i)
-			for j in self.service_instances[i]:
-				list.append("\t\t<instance name='%s' enabled='%s'/>" \
-						% (j[0], j[1]))
-			list.append("\t</service>")
+    def generate_finish(self):
+        list = []
+        list += self.generate_order()
+        list += self.ks['finish']
 
-		# End Service bundle
-		list.append("</service_bundle>")
-		list.append('_xml_eof_')
+        # Generate and add the services section to the finish
+        # script. 
+        list += self.generate_services()
+        # And we're done
+        
+        return list
 
-		return list
+    def generate_profile(self):
+        if self.ks['url'] != '':
+            location = self.ks['url']
+        else:
+            location = "local_file\t/cdrom"
+        list = []
+        list.append("# Installation Type")
+        list.append("install_type\tinitial_install")
+        list.append("\n")
+        list.append("# System Type")
+        list.append("system_type\tstandalone")
+        list.append("\n")
+        list.append("# Profile Information")
+        list.append("\n")
+        list += self.ks['profile']
+        list.append("# Partition Information")
+        list += self.ks['part']
+        list.append("\n")
+        list.append("# Packages Section")
+        for i in self.ks['pkgcl_on']:
+            list.append('cluster\t%s' % i)
+        for i in self.ks['pkgcl_off']:
+            list.append('cluster\t%s\tdelete' % i)
+        for i in self.ks['pkg_on']:
+            list.append('package\t%s\tadd' % i)
+        for i in self.ks['pkg_off']:
+            list.append('package\t%s\tdelete' % i)
+        if len(self.ks['patch']) > 0:
+            patch_list = string.join(self.ks['patch'],',')
+            list.append('patch %s local_file /cdrom/Solaris_10/Patches' % patch_list)
+
+        return list
+        
+    def generate_sysidcfg(self):
+        list = []
+        list += self.ks['sysidcfg']
+        return list
+
+    def generate_rules(self):
+        list = []
+        list.append("any\t-\tbegin\tprofile\tfinish")
+        return list
+
+    def generate_services(self):
+
+        # Generates an XML file with a list of 
+        # all enabled and disabled services. This
+        # is going to be used when assembling services
+        # on compute nodes.
+        # The way to do this is to copy the service manifest
+        # xml file to /var/svc/manifest/ which should be done by
+        # an explicit cp command in the post section. Then enable
+        # these services by adding them to the site.xml command
+        # on the target machine.
+
+        if len(self.service_instances) == 0:
+            return []
+        list= []
+
+        list.append("cat > /a/var/svc/profile/site.xml << '_xml_eof_'")
+        # XML Headers, and doctype
+        list.append("<?xml version='1.0'?>")
+        list.append("<!DOCTYPE service_bundle SYSTEM "
+            "'/usr/share/lib/xml/dtd/service_bundle.dtd.1'>")
+
+        # Start service bundle
+        list.append("<service_bundle type='profile' name='site'"
+            "\n\txmlns:xi='http://www.w3.org/2001/XInclude' >")
+
+        for i in list(self.service_instances.keys()):
+            list.append("\t<service name='%s' version='1' type='service'>" % i)
+            for j in self.service_instances[i]:
+                list.append("\t\t<instance name='%s' enabled='%s'/>" \
+                        % (j[0], j[1]))
+            list.append("\t</service>")
+
+        # End Service bundle
+        list.append("</service_bundle>")
+        list.append('_xml_eof_')
+
+        return list

@@ -2,13 +2,13 @@
 # 
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -280,35 +280,35 @@ class Application:
         if not argv:
             argv = sys.argv
             
-        self.args		= []
-	self.caller_args	= argv[1:]
-        self.usage_command	= os.path.basename(argv[0])
-        self.usage_name		= 'Application'
-        self.usage_version	= 0
-        self.rcfileHandler      = RCFileHandler
-        self.rcfileList		= []
-	self.rcForce		= []
+        self.args        = []
+    self.caller_args    = argv[1:]
+    self.usage_command    = os.path.basename(argv[0])
+    self.usage_name        = 'Application'
+    self.usage_version    = 0
+    self.rcfileHandler      = RCFileHandler
+    self.rcfileList        = []
+    self.rcForce        = []
 
-        self.projectName	 = 'rocks'
-        self.projectVersionName  = 'base'
-        self.projectVersionMajor = rocks.version_major
-        self.projectVersionMinor = rocks.version_minor
-        self.projectVersionMicro = rocks.version_micro
+    self.projectName     = 'rocks'
+    self.projectVersionName  = 'base'
+    self.projectVersionMajor = rocks.version_major
+    self.projectVersionMinor = rocks.version_minor
+    self.projectVersionMicro = rocks.version_micro
         
 
-        self.getopt		= rocks.util.Struct()
-        self.getopt.s		= [ 'h' ]
-        self.getopt.l		= [ 'help',
-                                    'list-rcfiles',
-                                    'list-project-info',
-				    'rcfile='
-				    ]
+    self.getopt        = rocks.util.Struct()
+    self.getopt.s        = [ 'h' ]
+    self.getopt.l        = [ 'help',
+                                'list-rcfiles',
+                                'list-project-info',
+                                'rcfile='
+                           ]
 
-        # Unset our locale
-	try:
-        	del os.environ['LANG']
-	except KeyError:
-		pass
+    # Unset our locale
+    try:
+            del os.environ['LANG']
+    except KeyError:
+        pass
 
         
     def run(self):
@@ -334,22 +334,22 @@ class Application:
         (generally argv[0]) will determine which the name of our rcfile,
         unless overrided with the rcbase argument."""
 
-	# Save any existing options
-	args = self.getArgs()
+        # Save any existing options
+        args = self.getArgs()
 
-	# First pass to get rcfiles specified on the cmd line
-	self.setArgs(self.caller_args)
+        # First pass to get rcfiles specified on the cmd line
+        self.setArgs(self.caller_args)
         self.parseCommandLine(rcfile=1)
 
-	# Parse Resource Control files
-	self.setArgs([])
+        # Parse Resource Control files
+        self.setArgs([])
         if not rcbase:
             rcbase = self.usage_command
         self.parseRC(rcbase)
-	for rc in self.rcForce:
-		self.parseRCFile(rc, rcbase)
+        for rc in self.rcForce:
+            self.parseRCFile(rc, rcbase)
 
-	# Command line options always win
+        # Command line options always win
         self.setArgs(args + self.args + self.caller_args)
         self.parseCommandLine()
 
@@ -394,8 +394,8 @@ class Application:
             
 
     def parseCommandLine(self, rcfile=0):
-    	"""Calls getopt to parse the command line flags. In
-	rcfile mode we just get --rcfile options."""
+        """Calls getopt to parse the command line flags. In
+    rcfile mode we just get --rcfile options."""
 
         short = ''
         for e in self.getopt.s:
@@ -412,18 +412,18 @@ class Application:
         try:
             opts, args = getopt.getopt(self.args, short, int)
         except getopt.GetoptError as msg:
-	    sys.stderr.write("error - %s\n" % msg)
+            sys.stderr.write("error - %s\n" % msg)
             self.usage()
             sys.exit(1)
 
-	for c in opts:
-		if rcfile:
-			if c[0] != "--rcfile":
-				continue
-		self.parseArg(c)
+    for c in opts:
+        if rcfile:
+            if c[0] != "--rcfile":
+                continue
+        self.parseArg(c)
 
-	if not rcfile:
-        	self.args = args
+    if not rcfile:
+            self.args = args
 
 
     def parseArg(self, c):
@@ -436,8 +436,8 @@ class Application:
         elif c[0] == '--list-project-info':
             print(self.projectInfo())
             sys.exit(0)
-	elif c[0] == '--rcfile':
-		self.rcForce.append(c[1])
+        elif c[0] == '--rcfile':
+            self.rcForce.append(c[1])
         else:
             return 0
         return 1
@@ -519,7 +519,7 @@ class Application:
 
 
     def getArch(self):
-	return rocks.util.getNativeArch()
+        return rocks.util.getNativeArch()
 
 
 
@@ -528,7 +528,7 @@ class RCFileHandler(rocks.util.ParseXML):
     def __init__(self, application):
         rocks.util.ParseXML.__init__(self, application)
         self.foundSection = 0
-        self.section	  = self.app.usage_command
+        self.section      = self.app.usage_command
 
     def setSection(self, section):
         self.section = section

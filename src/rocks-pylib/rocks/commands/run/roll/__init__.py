@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -115,99 +115,99 @@ from xml.dom.ext.reader import Sax2
 rpm_force_template = """[ $? -ne 0 ] && \\
 echo "# YUM failed - trying with RPM" && \\
 rpm -Uvh --force --nodeps %s\n\n"""
-	
+    
 class Command(rocks.commands.run.command):
-	"""
-	It generates the code necessary to install a Roll on the fly
+    """
+    It generates the code necessary to install a Roll on the fly
 
-	<arg optional='1' type='string' name='roll' repeat='1'>
-	List of rolls. This should be the roll base name (e.g., base, hpc,
-	kernel).
-	</arg>
+    <arg optional='1' type='string' name='roll' repeat='1'>
+    List of rolls. This should be the roll base name (e.g., base, hpc,
+    kernel).
+    </arg>
 
-	<param type='string' name='host'>
-	The name of the host that you want to generate the code to install the Roll.
-	It is always better to reinstall the node instead of using this method.
-	</param>
+    <param type='string' name='host'>
+    The name of the host that you want to generate the code to install the Roll.
+    It is always better to reinstall the node instead of using this method.
+    </param>
 
-	<param type='string' name='dryrun'>
-	It runs the command on the current node. It doesn't work with host flag
-	Default: true
-	</param>
+    <param type='string' name='dryrun'>
+    It runs the command on the current node. It doesn't work with host flag
+    Default: true
+    </param>
 
-	<example cmd='run roll viz'>
-	It generates the bash code necessary to install the Viz Roll onto the current system.
-	</example>
+    <example cmd='run roll viz'>
+    It generates the bash code necessary to install the Viz Roll onto the current system.
+    </example>
 
-	<example cmd='run roll viz host=compute-0-0'>
-	It generates the bash code necessary to install the Viz Roll on compute-0-0.
-	</example>
-	"""
+    <example cmd='run roll viz host=compute-0-0'>
+    It generates the bash code necessary to install the Viz Roll on compute-0-0.
+    </example>
+    """
 
-	def run(self, params, args):
+    def run(self, params, args):
 
-		(dryrun, host ) = self.fillParams([('dryrun', None),
-						   ('host', None)])
-		
-		if dryrun:
-			dryrun = self.str2bool(dryrun)
-			if not dryrun and host:
-				self.abort("If you select a host you can't disable dryrun.")
-		else:
-			dryrun = True
+        (dryrun, host ) = self.fillParams([('dryrun', None),
+                           ('host', None)])
+        
+        if dryrun:
+            dryrun = self.str2bool(dryrun)
+            if not dryrun and host:
+                self.abort("If you select a host you can't disable dryrun.")
+        else:
+            dryrun = True
 
-		if not host:
-			host = 'localhost'
+        if not host:
+            host = 'localhost'
 
-		script = []
-		script.append('#!/bin/sh\n')
-		script.append('yum clean all\n')
-			
-		rolls = []
-		for roll in args:
-			rolls.append(roll)
-		xml = self.command('list.host.xml', [ host,
-			'roll=%s' % string.join(rolls, ',') ])
+        script = []
+        script.append('#!/bin/sh\n')
+        script.append('yum clean all\n')
+            
+        rolls = []
+        for roll in args:
+            rolls.append(roll)
+        xml = self.command('list.host.xml', [ host,
+            'roll=%s' % string.join(rolls, ',') ])
 
 
-		reader = Sax2.Reader()
-		gen = getattr(rocks.gen,'Generator_%s' % self.os)()
-		gen.setArch(self.arch)
-		gen.setOS(self.os)
-		gen.parse(xml)
+        reader = Sax2.Reader()
+        gen = getattr(rocks.gen,'Generator_%s' % self.os)()
+        gen.setArch(self.arch)
+        gen.setOS(self.os)
+        gen.parse(xml)
 
-		distPath = os.path.join(self.command('report.distro')[:-1], 'rocks-dist')
-                tree = rocks.file.Tree(distPath)
-		rpm_list = {}
-		len_base_path = len('/export/rocks')
-                base_url = "http://" + self.db.getHostAttr('localhost', 'Kickstart_PublicHostname')
-		# Build a list of all the files in rocks-managed distribution
-		for file in tree.getFiles(os.path.join(self.arch, 'RedHat', 'RPMS')):
-			if isinstance(file, rocks.file.RPMFile):
-				rpm_url = base_url + file.getFullName()[len_base_path:]
-				rpm_list[file.getBaseName()] = rpm_url
-				rpm_list["%s.%s" % (file.getBaseName(), \
-					file.getPackageArch())] = rpm_url
-			
-		rpms = []
-		for line in gen.generate('packages'):
-			if line.find('%package') == -1 and line.find('%end') == -1:
-				rpms.append(line)
-		# Use yum to add RPMS
-		yumlist = []
-		for rpm in rpms:
-			yumlist.append(rpm)
-		if len(yumlist) > 0:
-			script.append('yum --nogpgcheck -y install %s\n' % 
-				" ".join(yumlist))
-			#rpmlist= [ x[1] for x in rpm_list.items() ]
-			#script.append(rpm_force_template % " ".join(rpmlist))
+        distPath = os.path.join(self.command('report.distro')[:-1], 'rocks-dist')
+        tree = rocks.file.Tree(distPath)
+        rpm_list = {}
+        len_base_path = len('/export/rocks')
+        base_url = "http://" + self.db.getHostAttr('localhost', 'Kickstart_PublicHostname')
+        # Build a list of all the files in rocks-managed distribution
+        for file in tree.getFiles(os.path.join(self.arch, 'RedHat', 'RPMS')):
+            if isinstance(file, rocks.file.RPMFile):
+                rpm_url = base_url + file.getFullName()[len_base_path:]
+                rpm_list[file.getBaseName()] = rpm_url
+                rpm_list["%s.%s" % (file.getBaseName(), \
+                    file.getPackageArch())] = rpm_url
+            
+        rpms = []
+        for line in gen.generate('packages'):
+            if line.find('%package') == -1 and line.find('%end') == -1:
+                rpms.append(line)
+        # Use yum to add RPMS
+        yumlist = []
+        for rpm in rpms:
+            yumlist.append(rpm)
+        if len(yumlist) > 0:
+            script.append('yum --nogpgcheck -y install %s\n' % 
+                " ".join(yumlist))
+            #rpmlist= [ x[1] for x in rpm_list.items() ]
+            #script.append(rpm_force_template % " ".join(rpmlist))
 
-		script += gen.generate_config_script()
-		
-		if dryrun:
-			self.addText(string.join(script, ''))
-		else:
-			os.system(string.join(script, ''))
+        script += gen.generate_config_script()
+        
+        if dryrun:
+            self.addText(string.join(script, ''))
+        else:
+            os.system(string.join(script, ''))
 
 

@@ -2,13 +2,13 @@
 #
 # @Copyright@
 # 
-# 				Rocks(r)
-# 		         www.rocksclusters.org
-# 		         version 6.2 (SideWinder)
-# 		         version 7.0 (Manzanita)
+#                 Rocks(r)
+#                  www.rocksclusters.org
+#                  version 6.2 (SideWinder)
+#                  version 7.0 (Manzanita)
 # 
 # Copyright (c) 2000 - 2017 The Regents of the University of California.
-# All rights reserved.	
+# All rights reserved.    
 # 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -25,9 +25,9 @@
 # 3. All advertising and press materials, printed or electronic, mentioning
 # features or use of this software must display the following acknowledgement: 
 # 
-# 	"This product includes software developed by the Rocks(r)
-# 	Cluster Group at the San Diego Supercomputer Center at the
-# 	University of California, San Diego and its contributors."
+#     "This product includes software developed by the Rocks(r)
+#     Cluster Group at the San Diego Supercomputer Center at the
+#     University of California, San Diego and its contributors."
 # 
 # 4. Except as permitted for the purposes of acknowledgment in paragraph 3,
 # neither the name or logo of this software nor the names of its
@@ -124,44 +124,44 @@ import rocks.commands
 
 
 class Command(rocks.commands.NetworkArgumentProcessor,
-	rocks.commands.set.command):
-	"""
-	Sets the MTU for one or more named networks.
+    rocks.commands.set.command):
+    """
+    Sets the MTU for one or more named networks.
 
-	<arg type='string' name='network' repeat='1'> 
-	One or more named networks that should have the defined MTU.
-	</arg>
-	
-	<arg type='string' name='mtu'>
-	MTU that named networks should have.
-	</arg>
-	
-	<param type='string' name='mtu'>
-	Can be used in place of 'mtu' argument.
-	</param>
+    <arg type='string' name='network' repeat='1'> 
+    One or more named networks that should have the defined MTU.
+    </arg>
+    
+    <arg type='string' name='mtu'>
+    MTU that named networks should have.
+    </arg>
+    
+    <param type='string' name='mtu'>
+    Can be used in place of 'mtu' argument.
+    </param>
 
-	<example cmd='set network mtu optiputer 9000'>
-	Sets the "optiputer" MTU address to 9000.
-	</example>
-	
-	<example cmd='set network mtu optiputer mtu=9000'>
-	Same as above.
-	</example>
-	
-	<related>add network</related>
-	<related>set network netmask</related>
-	"""
+    <example cmd='set network mtu optiputer 9000'>
+    Sets the "optiputer" MTU address to 9000.
+    </example>
+    
+    <example cmd='set network mtu optiputer mtu=9000'>
+    Same as above.
+    </example>
+    
+    <related>add network</related>
+    <related>set network netmask</related>
+    """
                 
-        def run(self, flags, args):
-        	(args, mtu) = self.fillPositionalArgs(('mtu',))
-        	
-        	if not len(args):
-        		self.abort('must supply network')
-		if not mtu:
-			self.abort('must supply mtu')
-			        	
-        	for network in self.getNetworkNames(args):
-			self.db.execute("""update subnets set mtu=%s where
-				subnets.name='%s'""" % (mtu, network))
+    def run(self, flags, args):
+        (args, mtu) = self.fillPositionalArgs(('mtu',))
+        
+        if not len(args):
+            self.abort('must supply network')
+    if not mtu:
+        self.abort('must supply mtu')
+                    
+        for network in self.getNetworkNames(args):
+            self.db.execute("""update subnets set mtu=%s where
+            subnets.name='%s'""" % (mtu, network))
 
 
