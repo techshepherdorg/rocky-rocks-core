@@ -1,4 +1,4 @@
-#!/opt/rocks/bin/python
+#!/opt/rocks/bin/python3
 #
 # $Id: pre-10-src-install,v 1.18 2012/11/27 00:48:32 phil Exp $
 #
@@ -197,7 +197,7 @@ try:
 			continue
 
 		srpm = s.getFullName()
-		print 'Building package: ', srpm
+		print('Building package: ', srpm)
 
 		cmd = 'rpmbuild --rebuild %s 2>&1 | tee /tmp/build.debug' % (srpm)
 		p = subprocess.Popen(cmd, shell=True,stdin=subprocess.PIPE, 
@@ -222,7 +222,7 @@ except OSError:
 # install each built package
 #
 for pkg in pkglist:
-	print 'Installing package: ', pkg
+	print('Installing package: ', pkg)
 	os.system('rpm -i --force %s' % (pkg))
 
 #
