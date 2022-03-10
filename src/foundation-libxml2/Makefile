@@ -160,7 +160,7 @@ build:
 	( 					\
 		cd libxml2-$(VERSION);		\
 		./configure --prefix=$(PKGROOT) \
-		--with-python=/opt/rocks	\
+		--with-python=/opt/rocks/bin/python3	\
 		PERL=$(PERL);\
 		$(MAKE);			\
 	)
