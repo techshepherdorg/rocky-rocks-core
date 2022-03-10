@@ -280,7 +280,7 @@ def list2str(list):
 
 
 def listcmp(l1, l2):
-    return map(lambda a,b: a==b, l1, l2)
+    return list(map(lambda a,b: a==b, l1, l2))
 
 def listdup(e, n):
     l = []
@@ -402,7 +402,7 @@ def startSpinner(cmd):
 			pad = pad + ' '
 		spin  = spinChars[spinIndex % len(spinChars)]
 		spinIndex = spinIndex + 1
-		print spin + data + pad + '\r',
+		print(spin + data + pad + '\r', end=' ')
 		prevLength = currLength
 		sys.stdout.flush()
 	r.close()
@@ -414,6 +414,6 @@ def startSpinner(cmd):
 	pad = ''
 	for i in range(0,78):
 		pad = pad + ' '
-	print '\r%s\r' % pad,
+	print('\r%s\r' % pad, end=' ')
 	
 

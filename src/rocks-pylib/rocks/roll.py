@@ -225,7 +225,7 @@ class Distribution:
 			cmd += " --disablerepo=%s" % (','.join(ignoreRepos))
 		cmd += " %s" % options
 		cmd += " %s" % ' '.join(pkgList) 
-		print 'cmd', cmd
+		print('cmd', cmd)
 		return os.system(cmd)
 		
 		

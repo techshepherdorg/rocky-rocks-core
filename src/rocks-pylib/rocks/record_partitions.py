@@ -2,8 +2,8 @@
 
 import sys
 sys.path.append('/tmp/product')
-import rocks_partition
-import httplib
+from . import rocks_partition
+import http.client
 import random
 import time
 import string
@@ -20,7 +20,7 @@ except:
 def sendit(server, req, nodepartinfo):
 	status = 0
 
-	h = httplib.HTTPSConnection(server, key_file = None, cert_file = None)
+	h = http.client.HTTPSConnection(server, key_file = None, cert_file = None)
 	h.putrequest('GET', '/install/sbin/public/setDbPartitions.cgi')
 
 	h.putheader('X-Rocks-PartitionInfo', repr(nodepartinfo))
@@ -76,6 +76,6 @@ if 'build' not in args:
 # mark each disk as a 'rocks' disk -- this let's us know that we have
 # 'seen' and configured this disk
 #
-for disk in nodepartinfo.keys():
+for disk in list(nodepartinfo.keys()):
 	p.isRocksDisk(nodepartinfo[disk], touchit = 1)
 

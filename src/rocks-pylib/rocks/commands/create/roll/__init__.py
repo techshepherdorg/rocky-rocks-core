@@ -243,7 +243,7 @@ class Builder:
 		pass
 				
 	def mkisofs(self, isoName, rollName, diskName, rollDir, volname=None):
-		print 'Building ISO image for %s ...' % diskName
+		print('Building ISO image for %s ...' % diskName)
 
 		if self.config.isBootable():
 			extraflags = self.config.getISOFlags()
@@ -265,20 +265,20 @@ class Builder:
 
 
 		os.chdir(rollDir)
-		print "mkisofs: %s" % cmd
+		print("mkisofs: %s" % cmd)
 		rocks.util.system(cmd, 'spinner')
 		os.chdir(cwd)
 
 	def implantMD5(self,isoname):
 		cwd = os.getcwd()
 		cmd = 'implantisomd5 --supported-iso %s' % (os.path.join(cwd, isoname))
-		print "implantMD5: %s" % cmd
+		print("implantMD5: %s" % cmd)
 		rocks.util.system(cmd)
 
 	def makeHybrid(self,isoname):
 		cwd = os.getcwd()
 		cmd = 'isohybrid -v --uefi %s' % (os.path.join(cwd, isoname))
-		print "makeHybrid: %s" % cmd
+		print("makeHybrid: %s" % cmd)
 		rocks.util.system(cmd)
 
 		
@@ -379,13 +379,13 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 				# Resolve package versions
 				
 				name = file.getUniqueName()
-				if not dict.has_key(name) or file >= dict[name]:
+				if name not in dict or file >= dict[name]:
 					dict[name] = file
 					
 		# convert the dictionary to a list and return all the RPMFiles
 		
 		list = []
-		for e in dict.keys():
+		for e in list(dict.keys()):
 			list.append(dict[e])
 		return list
 
@@ -439,7 +439,7 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		# the everything appliance.  This gives us a list of RPMs that
 		# we know we need from the source os/updates CDs.
 
-		print 'making rocks-dist-all'
+		print('making rocks-dist-all')
 
 		cwd = os.getcwd()
 
@@ -485,7 +485,7 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		# code.  We need this since anaconda and comps are missing
 		# from the foreign rolls (os/update CDs).
 
-		print 'making rocks-dist-os'
+		print('making rocks-dist-os')
 		del os.environ['RPMHOME']
 
 		distOS = rocks.roll.Distribution(self.getDistArch(), 
@@ -498,8 +498,8 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		comps = os.path.join(distOS.getPath(), 'RedHat', 'base',
 			'comps.xml')
 		if not os.path.exists(comps):
-			print '\n\tCould not find a comps.xml file.'
-			print '\tCopy a comps.xml file into the CentOS roll\n'
+			print('\n\tCould not find a comps.xml file.')
+			print('\tCopy a comps.xml file into the CentOS roll\n')
 			sys.exit(-1)
 
 		#
@@ -534,9 +534,9 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 					rpm[1:].encode('utf-8'))
 
 				try:
-					for r in group.mandatory_packages.keys() + \
-							group.optional_packages.keys() + \
-							group.default_packages.keys():
+					for r in list(group.mandatory_packages.keys()) + \
+							list(group.optional_packages.keys()) + \
+							list(group.default_packages.keys()):
 						if r not in selected:
 							selected.append(r)
 				except:
@@ -555,8 +555,8 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		while not done:
 			done = 1
 			results = a.findDeps(pkgs)
-			for pkg in results.keys():
-				for req in results[pkg].keys():
+			for pkg in list(results.keys()):
+				for req in list(results[pkg].keys()):
 					reqlist = results[pkg][req]
 					for r in reqlist:
 						if r.name not in selected:
@@ -582,7 +582,7 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 	def makeBootable(self, name):
 		import rocks.roll
 
-		print 'Configuring Roll to be bootable ...', name
+		print('Configuring Roll to be bootable ...', name)
 		os.environ['RPMHOME'] = os.getcwd()
 		dist = rocks.roll.Distribution(self.getArch(), 
 			'rocks-dist-bootable')
@@ -654,8 +654,8 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 			(required, optional) = self.getExternalRPMS()
 			for file in list:
 				required.append(file)
-			print 'Required Packages', len(required)
-			print 'Optional Packages', len(optional)
+			print('Required Packages', len(required))
+			print('Optional Packages', len(optional))
 			for file in required: # make a copy of the list
 				list.append(file)
 			list.extend(optional)
@@ -663,11 +663,11 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 
 		optional = 0
 		for (name, id, size, files) in self.spanDisks(list):
-			print 'Creating %s (%.2fMB)...' % (name, size),
+			print('Creating %s (%.2fMB)...' % (name, size), end=' ')
 			if optional:
-				print ' This disk is optional (extra rpms)'
+				print(' This disk is optional (extra rpms)')
 			else:
-				print 
+				print() 
 				
 			root = os.path.join(name,
 				self.config.getRollName(),
@@ -743,7 +743,7 @@ class MetaRollBuilder(Builder):
 			try:
 				self.rolls.append(rocks.file.RollFile(file))
 			except OSError:
-				print 'error - %s, no such roll' % file
+				print('error - %s, no such roll' % file)
 				sys.exit(-1)
 
 	def run(self):
@@ -766,11 +766,11 @@ class MetaRollBuilder(Builder):
 
     		# Create the meta roll
 					
-		print 'Building %s ...' % name
+		print('Building %s ...' % name)
 		tmp = self.mktemp()
 		os.makedirs(tmp)
 		for roll in self.rolls:
-			print '\tcopying %s' % roll.getRollName()
+			print('\tcopying %s' % roll.getRollName())
 			self.copyRoll(roll, tmp)
 		isoname = '%s.disk1.iso' % (name)
 
@@ -803,12 +803,12 @@ class MetaRollBuilder(Builder):
 		
 		tree = rocks.file.Tree(tmp)
 		size = tree.getSize()
-		print 'Roll is %.1fMB' % size
+		print('Roll is %.1fMB' % size)
 
 		if isosize < size:
-			print 'WARNING: Roll %.1fMB is ' % (tree.getSize()) + \
+			print('WARNING: Roll %.1fMB is ' % (tree.getSize()) + \
 				'larger than computed max ' + \
-				'size %.1fMB' % (isosize)
+				'size %.1fMB' % (isosize))
 			
 		self.stampDisk(tmp, rollName, arch)
 		self.mkisofs(isoname, rollName, 'disk1', tmp)
@@ -834,10 +834,10 @@ class ReArchBuilder(Builder, rocks.dist.Arch):
 			self.getArch(),
 			roll.getRollDiskID())
 
-		print 'Re-Arching %s ...' % roll.getRollName()
+		print('Re-Arching %s ...' % roll.getRollName())
 		tmp = self.mktemp()
 		os.makedirs(tmp)
-		print '\tcopying %s' % roll.getRollName()
+		print('\tcopying %s' % roll.getRollName())
 		self.copyRoll(roll, tmp)
 		
 		# Fix the directory structure for the new Roll architecture

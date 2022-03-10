@@ -295,7 +295,7 @@ class AttributeHandler:
 		list = []
 		list.append('<?xml version="1.0" standalone="no"?>\n')
 		list.append('<!DOCTYPE rocks-graph [\n')
-		for (k, v) in attrs.items():
+		for (k, v) in list(attrs.items()):
 			list.append('\t<!ENTITY %s "%s">\n' % (k, v))
 		list.append(']>\n')
 		self.header = string.join(list, '')
@@ -375,8 +375,7 @@ class GraphHandler(handler.ContentHandler,
 					xml[2] = file
 
 		if not (xml[0] or xml[2]):
-			raise rocks.util.KickstartNodeError, \
-			      'cannot find node "%s"' % node.name
+			raise rocks.util.KickstartNodeError('cannot find node "%s"' % node.name)
 
 		xmlFiles = [ xml[0] ]
 		if xml[1]:
@@ -415,15 +414,15 @@ class GraphHandler(handler.ContentHandler,
 				# Send the XML to stderr for debugging before
 				# we parse it.
 				
-				if os.environ.has_key('ROCKSDEBUG'):
+				if 'ROCKSDEBUG' in os.environ:
 					sys.stderr.write('[parse1]%s' % line)
 
 				try:
 					parser.feed(line)
 				except:
-					print 'XML parse error in ' + \
+					print('XML parse error in ' + \
 						'file %s ' % xmlFile + \
-						'on line %d\n' % linenumber
+						'on line %d\n' % linenumber)
 					raise
 				
 			fin.close()
@@ -441,7 +440,7 @@ class GraphHandler(handler.ContentHandler,
 			xml = handler.getXML()
 			handler = Pass2NodeHandler(node, self.attributes)
 			parser.setContentHandler(handler)
-			if os.environ.has_key('ROCKSDEBUG'):
+			if 'ROCKSDEBUG' in os.environ:
 				sys.stderr.write('[parse2]%s' % xml)
 			parser.feed(xml)
 
@@ -501,7 +500,7 @@ class GraphHandler(handler.ContentHandler,
 		self.text		= ''
 		self.attrs.order.gen	= self.attrs.order.default.gen
 		
-		if attrs.has_key('gen'):
+		if 'gen' in attrs:
 			self.attrs.order.gen = attrs['gen']
 
 
@@ -517,7 +516,7 @@ class GraphHandler(handler.ContentHandler,
 		self.text		= ''
 		self.attrs.order.gen	= self.attrs.order.default.gen
 
-		if attrs.has_key('gen'):
+		if 'gen' in attrs:
 			self.attrs.order.gen = attrs['gen']
 
 	def endElement_tail(self, name):
@@ -536,13 +535,13 @@ class GraphHandler(handler.ContentHandler,
 		release	= None
 		cond = self.attrs.main.default.cond
 
-		if attrs.has_key('arch'):
+		if 'arch' in attrs:
 			arch = attrs['arch']
-		if attrs.has_key('os'):
+		if 'os' in attrs:
 			osname = attrs['os']
-		if attrs.has_key('release'):
+		if 'release' in attrs:
 			release = attrs['release']
-		if attrs.has_key('cond'):
+		if 'cond' in attrs:
 			cond = "( %s and %s )" % (cond, attrs['cond'])
 			
 		self.attrs.main.cond = \
@@ -565,13 +564,13 @@ class GraphHandler(handler.ContentHandler,
 		release	= None
 		cond = self.attrs.main.default.cond
 
-		if attrs.has_key('arch'):
+		if 'arch' in attrs:
 			arch = attrs['arch']
-		if attrs.has_key('os'):
+		if 'os' in attrs:
 			osname = attrs['os']
-		if attrs.has_key('release'):
+		if 'release' in attrs:
 			release = attrs['release']
-		if attrs.has_key('cond'):
+		if 'cond' in attrs:
 			cond = "( %s and %s )" % (cond, attrs['cond'])
 			
 		self.attrs.main.cond = \
@@ -588,15 +587,15 @@ class GraphHandler(handler.ContentHandler,
 	# <order>
 
 	def startElement_order(self, name, attrs):
-		if attrs.has_key('head'):
+		if 'head' in attrs:
 			self.attrs.order.head = attrs['head']
 		else:
 			self.attrs.order.head = None
-		if attrs.has_key('tail'):
+		if 'tail' in attrs:
 			self.attrs.order.tail = attrs['tail']
 		else:
 			self.attrs.order.tail = None
-		if attrs.has_key('gen'):
+		if 'gen' in attrs:
 			self.attrs.order.default.gen = attrs['gen']
 		else:
 			self.attrs.order.default.gen = None
@@ -611,19 +610,19 @@ class GraphHandler(handler.ContentHandler,
 	# <edge>
 	
 	def startElement_edge(self, name, attrs):
-		if attrs.has_key('arch'):
+		if 'arch' in attrs:
 			arch = attrs['arch']
 		else:
 			arch = None
-		if attrs.has_key('os'):
+		if 'os' in attrs:
 			osname = attrs['os']
 		else:
 			osname = None
-		if attrs.has_key('release'):
+		if 'release' in attrs:
 			release = attrs['release']
 		else:
 			release	= None
-		if attrs.has_key('cond'):
+		if 'cond' in attrs:
 			cond = attrs['cond']
 		else:
 			cond = None
@@ -631,11 +630,11 @@ class GraphHandler(handler.ContentHandler,
 		self.attrs.main.default.cond = \
 			rocks.cond.CreateCondExpr(arch, osname, release, cond)
 		
-		if attrs.has_key('to'):
+		if 'to' in attrs:
 			self.attrs.main.parent = attrs['to']
 		else:
 			self.attrs.main.parent = None
-		if attrs.has_key('from'):
+		if 'from' in attrs:
 			self.attrs.main.child = attrs['from']
 		else:
 			self.attrs.main.child = None
@@ -769,12 +768,12 @@ class Pass1NodeHandler(handler.ContentHandler,
 		file = open(os.path.join('include', filename), 'r')
 		for line in file.readlines():
 			if mode == 'quote':
-				if os.environ.has_key('ROCKSDEBUG'):
+				if 'ROCKSDEBUG' in os.environ:
 					sys.stderr.write('[include]%s' %
 						saxutils.escape(line))
 				self.xml.append(saxutils.escape(line))
 			else:
-				if os.environ.has_key('ROCKSDEBUG'):
+				if 'ROCKSDEBUG' in os.environ:
 					sys.stderr.write('[include]%s' % line)
 				self.xml.append(line)
 		file.close()
@@ -803,7 +802,7 @@ class Pass1NodeHandler(handler.ContentHandler,
 		if varVal:
 			self.entities[varName] = varVal
 		elif varRef:
-			if self.entities.has_key(varRef):
+			if varRef in self.entities:
 				self.entities[varName] = self.entities[varRef]
 			else:
 				self.entities[varName] = ''
@@ -902,14 +901,14 @@ class Pass1NodeHandler(handler.ContentHandler,
 	def endElement_eval(self, name):
 		if not self.doEval:
 			return
-		for key in self.entities.keys():
+		for key in list(self.entities.keys()):
 			os.environ[key] = self.entities[key]
 		p = subprocess.Popen(self.evalShell, shell=True,
 				stdin=subprocess.PIPE, stdout=subprocess.PIPE, 
 				close_fds=True)
 		w, r = (p.stdin, p.stdout)
 
-		if os.environ.has_key('ROCKSDEBUG'):
+		if 'ROCKSDEBUG' in os.environ:
 			for line in string.join(self.evalText, '').split('\n'):
 				sys.stderr.write('[eval]%s\n' % line)
 		
@@ -1060,7 +1059,7 @@ class Pass2NodeHandler(handler.ContentHandler,
 		
 	def getKSText(self):
 		text = ''
-		for key, val in self.kstags.items():
+		for key, val in list(self.kstags.items()):
 			text += '%s %s\n' % (key, val)
 		return text
 		
@@ -1128,7 +1127,7 @@ class Node(rocks.graph.Node):
 		return '%s"%s" [%s];' % (prefix, name, attrs)
 		
 	def drawDot(self, prefix=''):
-		print self.getDot(prefix)
+		print(self.getDot(prefix))
 		
 
 class Edge(rocks.graph.Edge):
@@ -1191,7 +1190,7 @@ class FrameworkEdge(Edge):
 					
 	
 	def drawDot(self, prefix=''):
-		print self.getDot(prefix)
+		print(self.getDot(prefix))
 		
 
 
@@ -1217,7 +1216,7 @@ class OrderEdge(Edge):
 		return '%s"%s" -> "%s" [%s];' % (prefix, parent, child, attrs)
 
 	def drawDot(self, prefix=''):
-		print self.getDot(prefix)
+		print(self.getDot(prefix))
 		
 
 
@@ -1228,7 +1227,7 @@ class FrameworkIterator(rocks.graph.GraphIterator):
 
 	def run(self, node):
 		rocks.graph.GraphIterator.run(self, node)
-		keys = self.nodes.keys()
+		keys = list(self.nodes.keys())
 		keys.sort()
 		list = []
 		for key in keys:

@@ -126,7 +126,7 @@
 #
 #
 
-import cStringIO
+import io
 import os
 import re
 import struct
@@ -288,7 +288,7 @@ class VMControl:
 				# Get list of public keys, and find our key.
 				self.agent_socket.sendall('\0\0\0\1\v') # SSH2_AGENTC_REQUEST_IDENTITIES
 				response = RecvStr(self.agent_socket)
-				resf = cStringIO.StringIO(response)
+				resf = io.StringIO(response)
 				assert RecvAll(resf, 1) == chr(SSH2_AGENT_IDENTITIES_ANSWER)
 				num_keys = RecvU32(resf)
 				assert num_keys < 2000  # A quick sanity check.
@@ -300,7 +300,7 @@ class VMControl:
 
 					list_keys = []
 					list_comment = []
-					for i in xrange(num_keys):
+					for i in range(num_keys):
 						list_keys.append(RecvStr(resf))
 						list_comment.append(RecvStr(resf))
 					if key in list_comment:
@@ -315,20 +315,20 @@ class VMControl:
 							'dsa is supported' % comment)
 
 					# these are useless but I need to read all the data from the agent
-					keyf = cStringIO.StringIO(self.agent_key[11:])
+					keyf = io.StringIO(self.agent_key[11:])
 					public_exponent = int(RecvStr(keyf).encode('hex'), 16)
 					modulus_str = RecvStr(keyf)
 					modulus = int(modulus_str.encode('hex'), 16)
 					assert '' == keyf.read(1), 'EOF expected in keyf'
 
 					# we have a matching key in our ssh-agent
-					print "Using key: ", comment #, "agent key is: ", self.agent_key
+					print("Using key: ", comment) #, "agent key is: ", self.agent_key
 					return True
 
-			except socket.error, e:
+			except socket.error as e:
 				# probably a dead ssh-agent or similar problem
 				# do not crash, just report the problem
-				print "Error connecting to ssh-agent: ", e
+				print("Error connecting to ssh-agent: ", e)
 
 		if not key:
 			#
@@ -539,7 +539,7 @@ class VMControl:
 			#
 			# parse response
 			response = RecvStr(self.agent_socket)
-			resf = cStringIO.StringIO(response)
+			resf = io.StringIO(response)
 			if RecvAll(resf, 1) != chr(SSH2_AGENT_SIGN_RESPONSE):
 				raise RuntimeError("Comunication problem with ssh-agent"
 						" (SSH2_AGENT_SIGN_RESPONSE)")
@@ -550,7 +550,7 @@ class VMControl:
 			if not signature.startswith('\0\0\0\7ssh-rsa\0\0'):
 				raise RuntimeError("Comunication problem with ssh-agent"
 						"(singing algorithm is no ssh-rsa)")
-			sigf = cStringIO.StringIO(signature[11:])
+			sigf = io.StringIO(signature[11:])
 			signature = RecvStr(sigf)
 
 
@@ -653,10 +653,10 @@ class VMControl:
 			while msg == 'retry':
 				(status, msg) = self.connect_send_command(op, dst_mac, True)
 				if msg == 'retry':
-					print ''
-					print 'Attempting to reestablish ' + \
+					print('')
+					print('Attempting to reestablish ' + \
 						'the console connection. ' + \
-						'Standby...'
+						'Standby...')
 		else:
 			(status, msg) = self.connect_send_command(op, dst_mac)
 

@@ -123,12 +123,12 @@ class Parallel(threading.Thread):
 			self.vncflags)
 
 		if not vm.setKey(self.rsakey):
-			print "Unable to find a valid key(%s)" % self.rsakey
+			print("Unable to find a valid key(%s)" % self.rsakey)
 
 		(status, reason) = vm.cmd('console', self.host)
 
 		if status != 0:
-			print 'command failed\n%s' % reason
+			print('command failed\n%s' % reason)
 
 
 class command(rocks.commands.HostArgumentProcessor,

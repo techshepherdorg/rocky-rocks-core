@@ -83,7 +83,7 @@ class Appliance(RocksBase, Base):
 	name = Column('Name', String(32), nullable=False, default='')
 	graph = Column('Graph', String(64), nullable=False, default='default')
 	node = Column('Node', String(64), nullable=False, default='')
-	os = Column('OS', Enum(u'linux', u'sunos'), nullable=False, default=u'linux')
+	os = Column('OS', Enum('linux', 'sunos'), nullable=False, default='linux')
 
 	#relation definitions
 	memberships = sqlalchemy.orm.relationship("Membership", backref="appliance")
@@ -129,7 +129,7 @@ class Boot(RocksBase, Base):
 	#column definitions
 	ID = Column('ID', Integer, primary_key=True, nullable=False)
 	node_ID = Column('Node', Integer, ForeignKey('nodes.ID'), nullable=False, default=0)
-	action = Column('Action', Enum(u'install', u'os', u'run'))
+	action = Column('Action', Enum('install', 'os', 'run'))
 
 	#relation definitions
 	node = sqlalchemy.orm.relationship("Node", 
@@ -215,7 +215,7 @@ class Firewall(RocksBase, Base):
 	#column definitions
 	ID = Column('ID', Integer, primary_key=True, nullable=False)
 	rulename = Column('Rulename', String(128), nullable=False)
-	rulesrc = Column('Rulesrc', Enum(u'system', u'custom'), nullable=False, default=u'custom')
+	rulesrc = Column('Rulesrc', Enum('system', 'custom'), nullable=False, default='custom')
 	inSubnet = Column('InSubnet', Integer)
 	outSubnet = Column('OutSubnet', Integer)
 	service = Column('Service', String(256))
@@ -255,7 +255,7 @@ class Membership(RocksBase, Base):
 	name = Column('Name', String(64), nullable=False)
 	appliance_ID = Column('Appliance', Integer, ForeignKey('appliances.ID'), default=0)
 	distribution_ID = Column('Distribution', Integer, ForeignKey('distributions.ID'), default=1)
-	public = Column('Public', Enum(u'yes', u'no'), nullable=False, default=u'no')
+	public = Column('Public', Enum('yes', 'no'), nullable=False, default='no')
 
 	#relation definitions
 	nodes = sqlalchemy.orm.relationship("Node", backref="membership")
@@ -299,7 +299,7 @@ class Node(RocksBase, Base):
 	rack = Column('Rack', Integer)
 	rank = Column('Rank', Integer)
 	arch = Column('Arch', String(32))
-	os = Column('OS', Enum(u'linux', u'sunos'), nullable=False, default=u'linux')
+	os = Column('OS', Enum('linux', 'sunos'), nullable=False, default='linux')
 	runaction = Column('RunAction', String(64), default='os')
 	installaction = Column('InstallAction', String(64), default='install')
 
@@ -354,7 +354,7 @@ class OsRoute(RocksBase, Base):
 	gateway = Column('Gateway', String(32), nullable=False)
 	netmask = Column('Netmask', String(32), primary_key=True, nullable=False)
 	network = Column('Network', String(32), primary_key=True, nullable=False)
-	os = Column('OS', Enum(u'sunos', u'linux'), primary_key=True, nullable=False, default=u'linux')
+	os = Column('OS', Enum('sunos', 'linux'), primary_key=True, nullable=False, default='linux')
 	subnet = Column('Subnet', Integer, ForeignKey('subnets.ID'))
 
 	#relation definitions
@@ -420,8 +420,8 @@ class Roll(RocksBase, Base):
 	name = Column('Name', String(128), nullable=False)
 	version = Column('Version', String(32), nullable=False)
 	arch = Column('Arch', String(32), nullable=False)
-	os = Column('OS', Enum(u'linux', u'sunos'), nullable=False, default=u'linux')
-	enabled = Column('Enabled', Enum(u'yes', u'no'), nullable=False, default=u'yes')
+	os = Column('OS', Enum('linux', 'sunos'), nullable=False, default='linux')
+	enabled = Column('Enabled', Enum('yes', 'no'), nullable=False, default='yes')
 
 	#relation definitions
 

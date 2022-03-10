@@ -105,7 +105,7 @@ class js:
 		self.cpio_list = []
 
 	def check_cd(self):
-		print "Checking CDROM......\n"
+		print("Checking CDROM......\n")
 		sys.stdout.flush()
 			
 		# Make sure it's a Solaris CDROM.
@@ -119,7 +119,7 @@ class js:
 		if solaris_cdrom_flag == 0:
 			raise IOError
 
-		print "Valid Solaris CDROM Found"	
+		print("Valid Solaris CDROM Found")	
 		sys.stdout.flush()
 	
 	def spinner(self, p):
@@ -135,7 +135,7 @@ class js:
 				time.sleep(0.5)
 			else:
 				find_done = 1
-		print "Done"	
+		print("Done")	
 		sys.stdout.flush()
 		
 	def cpio(self):
@@ -255,5 +255,5 @@ class clustertoc_parse:
 		#	print self.pkg_hier[i]
 
 		self.traverse(start_point)
-		print "LIST OF ITEMS IN CLUSTER : %s" % (start_point)
-		print '\n'.join(self.pkg_list)
+		print("LIST OF ITEMS IN CLUSTER : %s" % (start_point))
+		print('\n'.join(self.pkg_list))

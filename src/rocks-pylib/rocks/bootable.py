@@ -220,7 +220,7 @@ class Bootable:
 		if len(r) == 1:
 			rpm = r[0]
 		elif len(r) > 1:
-			print 'found more than one RPM for %s' % (name)
+			print('found more than one RPM for %s' % (name))
 
 			for c in self.cpus:
 				for i in r:
@@ -229,8 +229,8 @@ class Bootable:
 						break
 
 				if rpm:
-					print '\tusing %s' % \
-							rpm.getUniqueName()
+					print('\tusing %s' % \
+							rpm.getUniqueName())
 					break
 			
 		return rpm
@@ -259,13 +259,13 @@ class Bootable:
 			cmd = cmd + '--badreloc --relocate /=%s %s %s' \
 					% (root, flags, rpm.getFullName())
 
-		print "bootable.applyRPM cmd: %s" % cmd
+		print("bootable.applyRPM cmd: %s" % cmd)
 		retval = os.system(cmd + ' > /dev/null 2>&1')
 		shutil.rmtree(os.path.join(root, dbdir))
 
 		if retval == 256:
-			raise ValueError, "could not apply RPM %s" % \
-				(rpm.getFullName())
+			raise ValueError("could not apply RPM %s" % \
+				(rpm.getFullName()))
 
 		return retval
 
@@ -320,7 +320,7 @@ class Bootable:
 		# - umount the file
 		# - compress, and copy, the image back into the distribution
 
-		print '    building CRAM filesystem ...'
+		print('    building CRAM filesystem ...')
 		os.system('mkcramfs %s %s > /dev/null' % \
 			(stagesrc, image_name))
 
@@ -336,7 +336,7 @@ class Bootable:
 			name = 'rocks-boot-cdrom'
 		RPM = self.getBestRPM(name)
 		if not RPM:
-			raise ValueError, "could not find %s" % name
+			raise ValueError("could not find %s" % name)
 
 		self.applyRPM(RPM, destination)
 		return
@@ -348,7 +348,7 @@ class Bootable:
 		name = 'rocks-anaconda-updates' 
 		RPM = self.getBestRPM(name)
 		if not RPM:
-			raise ValueError, "could not find %s" % name
+			raise ValueError("could not find %s" % name)
 		self.applyRPM(RPM, destination)
 
 		# now have the comps file
@@ -381,14 +381,14 @@ class Bootable:
 			name = 'rocks-boot-netstage'
 		RPM = self.getBestRPM(name)
 		if not RPM:
-			raise ValueError, "could not find %s" % name
+			raise ValueError("could not find %s" % name)
 
 		self.applyRPM(RPM, destination)
 
 		name = 'rocks-anaconda-updates'
 		RPM = self.getBestRPM(name)
 		if not RPM:
-			raise ValueError, "could not find %s" % name
+			raise ValueError("could not find %s" % name)
 
 		self.applyRPM(RPM, destination)
 

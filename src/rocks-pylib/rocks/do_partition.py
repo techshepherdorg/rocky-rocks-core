@@ -2,7 +2,7 @@
 
 import sys
 import string
-import rocks_partition
+from . import rocks_partition
 import os
 
 isManual = 0
@@ -79,7 +79,7 @@ args = string.split(file.readline())
 file.close()
 
 if 'build' not in args:
-	for disk in nodedisks.keys():
+	for disk in list(nodedisks.keys()):
 		if p.isRocksDisk(nodedisks[disk]):
 			parts += p.addPartitions(nodedisks[disk], format = 0)
 
@@ -95,8 +95,8 @@ if 'build' not in args:
 #
 # reconnect all disks that match in the database
 #
-for disk in nodedisks.keys():
-	if dbpartinfo.has_key(disk) and \
+for disk in list(nodedisks.keys()):
+	if disk in dbpartinfo and \
 		p.compareDiskInfo(dbpartinfo[disk], nodedisks[disk]):
 
 		parts += p.addPartitions(nodedisks[disk], format = 0)
@@ -139,8 +139,8 @@ else:
 		installdisks = disks
 
 	if len(installdisks) > 0:
-		print 'clearpart --all --initlabel --drives=%s' % \
-			(string.join(installdisks, ','))
+		print('clearpart --all --initlabel --drives=%s' % \
+			(string.join(installdisks, ',')))
 
 	for disk in installdisks:
 		if '/' not in p.mountpoints:
@@ -154,7 +154,7 @@ for line in parts:
 	if line[0:4] == 'raid':
 		raid.append(line)
 	else:
-		print line
+		print(line)
 	
 if douserpartitioning == 0:
 	for line in raid:
@@ -190,8 +190,8 @@ except:
 	pass
 
 for line in raidparts:
-	print line 
+	print(line) 
 
 for line in raid:
-	print line
+	print(line)
 

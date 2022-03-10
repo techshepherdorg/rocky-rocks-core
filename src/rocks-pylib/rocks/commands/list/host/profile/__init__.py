@@ -276,14 +276,14 @@ class Command(rocks.commands.list.host.command):
 		# By default, print all sections of kickstart/jumpstart file
 		self.section = 'all'
 
-		if params.has_key('section'):
+		if 'section' in params:
 			self.section = params['section']
 
 		self.beginOutput()
 		# If we're reading from stdin assume os=linux unless
 		# otherwise specified
 		if not sys.stdin.isatty():
-			if params.has_key('os'):
+			if 'os' in params:
 				self.os = params['os']
 			else:
 				self.os = 'linux'

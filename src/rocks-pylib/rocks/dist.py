@@ -587,10 +587,10 @@ class Base(Arch):
 		return None
 
 	def getTreeNames(self):
-		return self.trees.keys()
+		return list(self.trees.keys())
 
 	def getTree(self, name):
-		if name in self.trees.keys():
+		if name in list(self.trees.keys()):
 			return self.trees[name]
 		else:
 			return None
@@ -604,7 +604,7 @@ class Base(Arch):
 		except KeyError:
 			return []
 		list = [] 
-		if type(value) == types.ListType:
+		if type(value) == list:
 			for tree in value:
 				list.extend(tree.getFiles(path))
 			return list
@@ -649,18 +649,18 @@ class Base(Arch):
 		return self.getTree('release')
 
 	def dumpDirNames(self):
-		for key in self.trees.keys():
+		for key in list(self.trees.keys()):
 			value = self.trees[key]
-			if type(value) == types.ListType:
+			if type(value) == list:
 				for e in value:
 					e.dumpDirNames()
 			else:
 				value.dumpDirNames()
         
 	def dump(self):
-		for key in self.trees.keys():
+		for key in list(self.trees.keys()):
 			value = self.trees[key]
-			if type(value) == types.ListType:
+			if type(value) == list:
 				for e in value:
 					e.dump()
 			else:
@@ -815,7 +815,7 @@ class Distribution(Base):
 		if self.local:
 			for cpu in self.cpus:
 				l.append(os.path.join(self.local, 'RPMS', cpu))
-		if os.environ.has_key('RPMHOME'):
+		if 'RPMHOME' in os.environ:
 			for cpu in self.cpus:
 				l.append(os.path.join(os.environ['RPMHOME'],
 						      'RPMS', cpu))
@@ -825,7 +825,7 @@ class Distribution(Base):
 		l = []
 		if self.local:
 			l.append(os.path.join(self.local, 'SRPMS'))
-		if os.environ.has_key('RPMHOME'):
+		if 'RPMHOME' in os.environ:
 			l.append(os.path.join(os.environ['RPMHOME'], 'SRPMS'))
 		return l
 

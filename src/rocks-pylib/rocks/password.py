@@ -155,7 +155,7 @@ class Password:
 		m = md5.new(salt)
 		m.update(passwd)
 		tmp_hash = m.digest()
-		for i in xrange(count):
+		for i in range(count):
 			m = md5.new(tmp_hash)
 			m.update(passwd)
 			tmp_hash = m.digest()

@@ -136,10 +136,10 @@ class Command(command):
 		# Gouichi Iisaka (HP Japan).
 
 		if os.path.isfile(hostsFile):
-			print '# import from %s' % hostsFile
+			print('# import from %s' % hostsFile)
 			file = open(hostsFile, 'r')
 			for line in file.readlines():
-				print line[:-1]
+				print(line[:-1])
 			file.close()
 
 
@@ -158,8 +158,8 @@ class Command(command):
 
 		for node in nodes:
 			if node.name[0] is not None:
-				print '%s\t%s' % (node.address,
-					' '.join(node.name))
+				print('%s\t%s' % (node.address,
+					' '.join(node.name)))
 
 
 	def hostlines(self, subnet, netmask):
@@ -231,7 +231,7 @@ class Command(command):
 				' '.join(node.name))
 			if node.warning:
 				entry = entry + ' # ' + node.warning
-			print entry
+			print(entry)
 
       
 	def run(self, param, args):

@@ -1,5 +1,5 @@
-PYPKGNAME = distribute
+PYPKGNAME = setuptools
 NAME	= foundation-python-setuptools
-VERSION = 0.6.10
+VERSION = 60.9.3
 RELEASE = 0
-RPM.FILES = "/opt/rocks/bin/*\\n/opt/rocks/lib/python2*/site-packages/*"
+RPM.FILES = "/opt/rocks/lib/python3*/site-packages/*"

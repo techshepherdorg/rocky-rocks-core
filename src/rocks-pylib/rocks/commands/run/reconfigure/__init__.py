@@ -260,10 +260,10 @@ def get_additional_attr(changed_attrs, current_attrs):
 	return_dict = {}
 
 	# for each changed attribute we call the fix functions
-	for name, value in changed_attrs.iteritems():
+	for name, value in changed_attrs.items():
 		for function in fix_functions:
 			new_values = function(name, value, current_attrs, changed_attrs)
-			for new_name, new_value in new_values.iteritems():
+			for new_name, new_value in new_values.items():
 				_check_new_value(return_dict, new_name, new_value)
 				if _check_new_value(changed_attrs, new_name, new_value):
 					return_dict[new_name] = new_values[new_name]

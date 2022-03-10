@@ -943,7 +943,7 @@ class MirrorBuilder(Builder):
 		sock = None
 
                 if self.verbose or self.debug:
-                	print cmd
+                	print(cmd)
 		if not self.debug:
 			subprocess.call(cmd, shell=True)
 
@@ -1043,7 +1043,7 @@ class DistributionBuilder(Builder):
     def clean(self):
         # Nuke the previous distribution.  The cleaner() method will
         # preserve any build/ directory.
-        print 'Cleaning distribution'
+        print('Cleaning distribution')
         self.dist.getTree('release').apply(self.cleaner)
 
 
@@ -1053,7 +1053,7 @@ class DistributionBuilder(Builder):
 	if arch == self.dist.arch:
 		if self.allRolls:
 			return 1
-		if self.useRolls.has_key(key):
+		if key in self.useRolls:
 			version, enabled = self.useRolls[key]
 			if enabled and version == ver:
 				return 1
@@ -1063,11 +1063,11 @@ class DistributionBuilder(Builder):
     def getRollBaseFiles(self):
 	    files = []
 	    for m in self.dist.getMirrors():
-		    for key, value in m.getRolls().items():
+		    for key, value in list(m.getRolls().items()):
 			    for arch, ver in value:
 				    if self.useRoll(key, ver, arch):
-					    print '    including "%s" (%s,%s) roll...' % \
-						    (key, ver, arch)
+					    print('    including "%s" (%s,%s) roll...' % \
+						    (key, ver, arch))
 					    files.extend(m.getRollBaseFiles(key,
 								    ver,
 								    arch))
@@ -1077,11 +1077,11 @@ class DistributionBuilder(Builder):
     def getRollRPMS(self):
 	    rpms = []
 	    for m in self.dist.getMirrors():
-		    for key, value in m.getRolls().items():
+		    for key, value in list(m.getRolls().items()):
 			    for arch, ver in value:
 				    if self.useRoll(key, ver, arch):
-					    print '    including "%s" (%s,%s) roll...' % \
-						    (key, ver, arch)
+					    print('    including "%s" (%s,%s) roll...' % \
+						    (key, ver, arch))
 					    rpms.extend(m.getRollRPMS(key,
 								    ver,
 								    arch))
@@ -1091,11 +1091,11 @@ class DistributionBuilder(Builder):
     def getRollSRPMS(self):
 	    rpms = []
 	    for m in self.dist.getMirrors():
-		    for key, value in m.getRolls().items():
+		    for key, value in list(m.getRolls().items()):
 			   for arch, ver in value:
 				if self.useRoll(key,ver,arch):
-					    print '    including "%s" (%s,%s) roll...' % \
-						  (key, ver, arch)
+					    print('    including "%s" (%s,%s) roll...' % \
+						  (key, ver, arch))
 					    rpms.extend(m.getRollSRPMS(key,
 								       ver,
 								       arch))
@@ -1135,7 +1135,7 @@ class DistributionBuilder(Builder):
     def buildRollLinks(self):
 	"""Links all rolls from our mirrors into rocks-dist/rolls/"""
 	
-	print "Building Roll Links"
+	print("Building Roll Links")
 	rollLocation = self.dist.getRollsPath()
 	subprocess.call('mkdir -p %s' % rollLocation, shell=True)
 
@@ -1159,7 +1159,7 @@ class DistributionBuilder(Builder):
     def buildWANLinks(self, lanbase):
     	"""Links in the stage2.img from lan/"""
     	
-    	print "Linking boot stages from lan"
+    	print("Linking boot stages from lan")
     	wanbase = self.dist.getBasePath()
     	subprocess.call('rm -rf %s' % wanbase, shell=True)
     	subprocess.call('mkdir -p %s' % wanbase, shell=True)
@@ -1167,7 +1167,7 @@ class DistributionBuilder(Builder):
     	
 
     def buildBase(self):
-        print 'Resolving versions (base files)'
+        print('Resolving versions (base files)')
         self.dist.setBaseFiles(self.resolveVersions(self.getRollBaseFiles()))
 
 
@@ -1184,7 +1184,7 @@ class DistributionBuilder(Builder):
 
 
     def includeCriticalRPMS(self):
-        print 'Including critical RPMS'
+        print('Including critical RPMS')
 
 	#
 	# there are some standard RPMs that we build in order for our
@@ -1194,7 +1194,7 @@ class DistributionBuilder(Builder):
 	#
 
 	for m in self.dist.getMirrors():
-		for key, value in m.getRolls().items():
+		for key, value in list(m.getRolls().items()):
 			if key != 'base':
 				continue
 
@@ -1204,17 +1204,17 @@ class DistributionBuilder(Builder):
 					
 
     def buildRPMS(self):
-        print 'Resolving versions (RPMs)'
+        print('Resolving versions (RPMs)')
         self.dist.setRPMS(self.resolveVersions(self.buildRPMSList()))
 
 
     def buildSRPMS(self):
-        print 'Resolving versions (SRPMs)'
+        print('Resolving versions (SRPMs)')
         self.dist.setSRPMS(self.resolveVersions(self.buildSRPMSList()))
 
 
     def insertNetstage(self):
-	print 'Applying netstage (aka stage2)'
+	print('Applying netstage (aka stage2)')
 	
 	cmd = 'rm -f %s/RedHat/base/stage2.img' % (self.dist.getReleasePath())
 	subprocess.call(cmd, shell=True)
@@ -1228,12 +1228,12 @@ class DistributionBuilder(Builder):
 			rpm = 'rocks-boot-netstage'
 		self.applyRPM(rpm, self.dist.getReleasePath())
 	except:
-		print "Couldn't find the package %s" % rpm
-		print "\tIf you are building the OS roll, this is not a problem"
+		print("Couldn't find the package %s" % rpm)
+		print("\tIf you are building the OS roll, this is not a problem")
 		pass
 
 
-	print 'Applying rocks-anaconda-updates'
+	print('Applying rocks-anaconda-updates')
 	if self.versionMajor < 7:
 		cmd = 'rm -f %s/RedHat/base/updates.img' % (self.dist.getReleasePath())
 		subprocess.call(cmd, shell=True)
@@ -1243,8 +1243,8 @@ class DistributionBuilder(Builder):
 		self.applyRPM('rocks-anaconda-updates',
 			self.dist.getReleasePath())
 	except:
-		print "Couldn't find the package rocks-anaconda-updates"
-		print "\tIf you are building the OS roll, this is not a problem"
+		print("Couldn't find the package rocks-anaconda-updates")
+		print("\tIf you are building the OS roll, this is not a problem")
 		pass
 
 	return
@@ -1258,28 +1258,28 @@ class DistributionBuilder(Builder):
 		self.buildRPMS()
 		self.buildSRPMS()
 
-		print 'Creating files',
+		print('Creating files', end=' ')
 		if self.useLinks:
-			print '(symbolic links - fast)'
+			print('(symbolic links - fast)')
 		else:
-			print '(deep copy - slow)'
+			print('(deep copy - slow)')
 		self.dist.getReleaseTree().apply(self.builder)
 		self.dist.getReleaseTree().apply(self.normalizer)
 
 		self.insertNetstage()
 		self.buildKickstart()
-		print '     Calling Yum genpkgmetadata.py'
+		print('     Calling Yum genpkgmetadata.py')
 		self.createrepo()
-		print '     Rebuilding Product Image including md5 sums'
+		print('     Rebuilding Product Image including md5 sums')
 		self.buildProductImg()
-		print '     Creating Directory Listing'
+		print('     Creating Directory Listing')
 		self.makeDirListing()
 	
 		return
 
 
     def buildKickstart(self):
-	print 'Installing XML Kickstart profiles'
+	print('Installing XML Kickstart profiles')
 
 	build   = self.dist.getBuildPath()
 
@@ -1293,12 +1293,12 @@ class DistributionBuilder(Builder):
 		except ValueError:
 			continue
 			
-		print '    installing "%s" profiles...' % rollname
+		print('    installing "%s" profiles...' % rollname)
 		self.applyRPM(rpm.getBaseName(), build)
 
 	# Copy local profiles into the distribution.
 	if self.withSiteProfiles:
-		print '    installing "site" profiles...'
+		print('    installing "site" profiles...')
 		tree = self.dist.getSiteProfilesTree()
 		for dir in tree.getDirs():
 			for file in tree.getFiles(dir):
@@ -1308,7 +1308,7 @@ class DistributionBuilder(Builder):
 				shutil.copy(file.getFullName(),
 					os.path.join(path, file.getName()))
 				# make sure apache can read site XML
-				file.chmod(0664)
+				file.chmod(0o664)
 
 
     def applyRPM(self, name, root, flags=''):
@@ -1322,14 +1322,14 @@ class DistributionBuilder(Builder):
 	rpm = None
 	try:
         	rpm = self.dist.getRPM(name)
-	except rocks.dist.DistRPMList, e:
+	except rocks.dist.DistRPMList as e:
 		for r in e.list:
 			if r.getPackageArch() == self.dist.getArch():
 				rpm = r
 				break
 
         if not rpm:
-            raise ValueError, "could not find %s" % name
+            raise ValueError("could not find %s" % name)
 
         dbdir = os.path.join(root, 'var', 'lib', 'rpm')
         if not os.path.isdir(dbdir):
@@ -1355,7 +1355,7 @@ class DistributionBuilder(Builder):
         shutil.rmtree(os.path.join(root, 'var'))
 		
         if retval == 256:
-            raise BuildError, "could not apply RPM %s" % (name)
+            raise BuildError("could not apply RPM %s" % (name))
 
         return retval
 
@@ -1420,14 +1420,14 @@ class DistributionBuilder(Builder):
 		# off the CD, so it will not be needed for the remainder of
 		# the server installation.
 		#
-		os.chmod(product, 0664)
+		os.chmod(product, 0o664)
 
 	os.chdir(cwd)
 	return
 
 
     def createrepo(self):
-	print 'Creating repository'
+	print('Creating repository')
 
 	cwd = os.getcwd()
 	releasedir = self.dist.getReleasePath()
@@ -1446,8 +1446,8 @@ class DistributionBuilder(Builder):
 	if os.path.exists(groupfile):
 		gf = "--groupfile %s/RedHat/base/comps.xml " % (releasedir)
 	else:
-		print "Couldn't find the groupfile %s" % groupfile
-		print "\tIf you are bootstrapping, this is not a problem"
+		print("Couldn't find the groupfile %s" % groupfile)
+		print("\tIf you are bootstrapping, this is not a problem")
 		gf = " "
 
 	tmpdir = os.getenv("TMPDIR")
@@ -1551,14 +1551,14 @@ class DistributionBuilder(Builder):
         dict = {}
         for e in files:
             name = e.getUniqueName() # name w/ arch string appended
-            if not dict.has_key(name) or e >= dict[name]:
+            if name not in dict or e >= dict[name]:
                 dict[name] = e
 
         # Extract the File objects from the dictionary and return
         # them as a list.
         
         list = []
-        for e in dict.keys():
+        for e in list(dict.keys()):
             list.append(dict[e])
         return list
 
@@ -1576,7 +1576,7 @@ class USBBuilder(DistributionBuilder):
 		exception if missing. Size is number of blocks (1block = 1KB)
 		in the filesystem."""
 		
-		print 'Creating Bootable USB filesystem ...'
+		print('Creating Bootable USB filesystem ...')
 
 		if dn:
 			self.dn = dn
@@ -1597,20 +1597,20 @@ class USBBuilder(DistributionBuilder):
 		subprocess.call('touch key-img/rocks-usbkey', shell=True)
 		try:
 			self.writeKeys('key-img')
-		except Exception, msg:
-			print 'warning - could not find key: %s' % msg
+		except Exception as msg:
+			print('warning - could not find key: %s' % msg)
 		subprocess.call('umount key-img', shell=True)
 		subprocess.call('/usr/bin/syslinux usb.img', shell=True)
 		imgname = 'rocks-usb-%s.%s.img' %  \
 				(self.version, self.dist.getArch())
 		imgpath = os.path.join(cd,imgname)
 		os.rename('usb.img', imgpath)
-		os.chmod(imgpath,0444)
+		os.chmod(imgpath,0o444)
 		subprocess.call('rm -rf %s' % thisdir, shell=True)
 			
-		print "Wrote:", imgpath
-		print "Copy this image directly onto a usb key: "
-		print " # dd < %s > /dev/sda" % imgname
+		print("Wrote:", imgpath)
+		print("Copy this image directly onto a usb key: ")
+		print(" # dd < %s > /dev/sda" % imgname)
 		
 		
 	def writeKeys(self, root):
@@ -1657,7 +1657,7 @@ class USBBuilder(DistributionBuilder):
 		
 		ca = '/etc/security/ca'
 		
-		print ' Making new certificate keypair'
+		print(' Making new certificate keypair')
 		
 		cwd = os.getcwd()
 		os.chdir(root)
@@ -1666,16 +1666,16 @@ class USBBuilder(DistributionBuilder):
 			+ '-config %s/ca.cfg -batch -subj "%s" ' % (ca, self.dn)
 			+ '-keyout cluster-cert.key > cert.csr 2> /dev/null')
 		subprocess.call(cmd, shell=True)
-		os.chmod('cluster-cert.key',0400)
+		os.chmod('cluster-cert.key',0o400)
 		
-		print ' Signing the certificate with our CA'
+		print(' Signing the certificate with our CA')
 		
 		cmd = ('/usr/bin/openssl x509 -req -days 1000 '
 			+ '-CA %s/ca.crt -CAkey %s/ca.key -CAserial %s/ca.serial ' 
 				% (ca, ca, ca)
 			+ ' < cert.csr > cluster-cert.crt 2> /dev/null')
 		subprocess.call(cmd, shell=True)
-		os.chmod('cluster-cert.crt', 0444)
+		os.chmod('cluster-cert.crt', 0o444)
 		os.unlink('cert.csr')
 		
 		os.chdir(cwd)

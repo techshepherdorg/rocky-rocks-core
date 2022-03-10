@@ -176,7 +176,7 @@ class Parallel(threading.Thread):
 			if self.collate:
 				self.cmdclass.addOutput(self.host, line[:-1])
 			else:
-				print line[:-1]
+				print(line[:-1])
 
 		if self.stats:
 			msg = 'command on host %s took %f seconds' % \
@@ -185,7 +185,7 @@ class Parallel(threading.Thread):
 			if self.collate:
 				self.cmdclass.addOutput(self.host, msg)
 			else:
-				print msg
+				print(msg)
 
 	def kill(self):
 		os.kill(self.p.pid, 9)
@@ -390,7 +390,7 @@ class Command(command):
 					if collate:
 						self.addOutput(host, 'down')
 					else:
-						print '%s: down' % host
+						print('%s: down' % host)
 
 					numthreads += 1
 					work -= 1

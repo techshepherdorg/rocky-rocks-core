@@ -122,7 +122,7 @@ class Command(command):
 
 	def run(self, params, args):
 		self.beginOutput()
-		if params.has_key('@ROCKSPARAM0'):
+		if '@ROCKSPARAM0' in params:
 			if not params['@ROCKSPARAM0'].startswith('maxwidth'):
 				args.append(params['@ROCKSPARAM0'])
 		(maxwidth,) = self.fillParams([('maxwidth',24),])

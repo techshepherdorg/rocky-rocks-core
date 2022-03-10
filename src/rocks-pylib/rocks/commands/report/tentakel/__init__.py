@@ -136,28 +136,28 @@ class Command(rocks.commands.report.command):
 
 		osname = 'linux'
 		for (node, rack, appliance) in self.db.fetchall():
-			if not groups.has_key(osname):
+			if osname not in groups:
 				groups[osname] = []
 			if '@' + osname not in groups['default']:
 				groups['default'].append('@' + osname)
 
 			app_metagroup = appliance.replace('-','_')
 			app_group = app_metagroup + '_' + osname
-			if not groups.has_key(app_metagroup):
+			if app_metagroup not in groups:
 				groups[app_metagroup] = []
 			if '@' + app_group not in groups[app_metagroup]:
 				groups[app_metagroup].append('@' + app_group)
-			if not groups.has_key(app_group):
+			if app_group not in groups:
 				groups[app_group] = []
 			groups[app_group].append(node)
 			
 			rack_metagroup = "rack%d" % int(rack)
 			rack_group = rack_metagroup + '_' + osname
-			if not groups.has_key(rack_metagroup):
+			if rack_metagroup not in groups:
 				groups[rack_metagroup] = []
 			if '@' + rack_group not in groups[rack_metagroup]:
 				groups[rack_metagroup].append('@' + rack_group)
-			if not groups.has_key(rack_group):
+			if rack_group not in groups:
 				groups[rack_group] = []
 			groups[rack_group].append(node)
 

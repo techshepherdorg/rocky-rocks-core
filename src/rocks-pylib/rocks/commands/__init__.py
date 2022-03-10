@@ -669,7 +669,7 @@ class RollArgumentProcessor:
 		something.
 		"""
 
-		if params.has_key('version'):
+		if 'version' in params:
 			version = params['version']
 		else:
 			version = '%' # SQL wildcard
@@ -786,12 +786,12 @@ class HostArgumentProcessor:
 					name like '%s'""" % name)
 				for h, in self.db.fetchall():
 					dict[h] = 1
-			elif groups.has_key(name):	# group name
+			elif name in groups:	# group name
 				for host in groups[name]:
 					dict[host] = 1
 			else:				# host name
 				dict[self.db.getHostname(name)] = 1
-		list = dict.keys()
+		list = list(dict.keys())
 		list.sort()
 		return list
 
@@ -845,9 +845,9 @@ class CategoryArgumentProcessor(HostArgumentProcessor):
 		#   
 		if category == 'host':
 			hostlist=index.split()
-			print "host list:" ,hostlist
+			print("host list:" ,hostlist)
 			for index in self.getHostnames(hostlist):
-				print "checking for host" ,index
+				print("checking for host" ,index)
 
 				rows = self.db.execute("""SELECT ID FROM vcatindex 
 				WHERE catindex='%s' and category='%s'""" % (index,category))
@@ -1144,7 +1144,7 @@ class DocStringHandler(handler.ContentHandler,
 		elif name in [ 'arg', 'param', 'example' ]:
 			self.section[name].append((self.key, self.text))
 		else:
-			if self.section.has_key(name):
+			if name in self.section:
 				self.section[name].append(self.text)
 		
 	def characters(self, s):
@@ -1387,7 +1387,7 @@ class Command:
 
 		self._args = None
 		self._params = None
-		if os.environ.has_key('ROCKSDEBUG'):
+		if 'ROCKSDEBUG' in os.environ:
 			self._debug = True
 		else:
 			self._debug = False
@@ -1433,7 +1433,7 @@ class Command:
 		#           hostlist,iface,mac=self.fillPositionalArgs( \
 	        #			('iface','mac'),params,args)
 	
-		if not type(names) in [ types.ListType, types.TupleType ]:
+		if not type(names) in [ list, tuple ]:
 			names = [ names ]
 			 
 		if not params:
@@ -1443,7 +1443,7 @@ class Command:
 			
 		list = []
 		for name in names:
-			if params.has_key(name):
+			if name in params:
 				list.append(params[name])
 			else:
 				list.append(None)
@@ -1497,7 +1497,7 @@ class Command:
 
 		# make sure names is a list or tuple
 		
-		if not type(names) in [ types.ListType, types.TupleType ]:
+		if not type(names) in [ list, tuple ]:
 			names = [ names ]
 
 		# for each element in the names list make sure it is also
@@ -1507,7 +1507,7 @@ class Command:
 		
 		pdlist = []
 		for e in names:
-			if type(e) in [ types.ListType, types.TupleType] \
+			if type(e) in [ list, tuple] \
 				and len(e) == 2:
 				tuple = ( e[0], e[1] )
 			else:
@@ -1519,7 +1519,7 @@ class Command:
 
 		list = []
 		for (key, default) in pdlist:
-			if params.has_key(key):
+			if key in params:
 				list.append(params[key])
 			else:
 				list.append(default)
@@ -1599,7 +1599,7 @@ class Command:
 			
 		list = []
 		for node in PluginOrderIterator(graph).run():
-			if dict.has_key(node):
+			if node in dict:
 				list.append(dict[node])
 		return list
 
@@ -1646,7 +1646,7 @@ class Command:
 
 	
 	def strWordWrap(self, line, indent=''):
-		if os.environ.has_key('COLUMNS'):
+		if 'COLUMNS' in os.environ:
 			cols = os.environ['COLUMNS']
 		else:
 			cols = 80
@@ -1685,9 +1685,9 @@ class Command:
 		# VALS can be a list, tuple, or primitive type.
 		list = [ '%s:' % owner ]
 
-		if isinstance(vals, types.ListType):
+		if isinstance(vals, list):
 			list.extend(vals)
-		elif isinstance(vals, types.TupleType) or \
+		elif isinstance(vals, tuple) or \
 			isinstance(vals, sqlalchemy.engine.result.RowProxy):
 			for e in vals:
 				list.append(e)
@@ -1794,7 +1794,7 @@ class Command:
 			for i in range(0, len(line)):
 				if len(colwidth) <= i:
 					colwidth.append(0)
-				if type(line[i]) != types.StringType:
+				if type(line[i]) != bytes:
 					if line[i] == None:
 						itemlen = 0
 					else:
@@ -1861,7 +1861,7 @@ class Command:
 		else:
 			users = []
 			
-		if flags.has_key('format'):
+		if 'format' in flags:
 			format = flags['format'].lower()
 		else:
 			format = 'plain'
@@ -1925,7 +1925,7 @@ class Command:
 			else:
 				list.append(arg)
 
-		if  "json" in dict.keys():
+		if  "json" in list(dict.keys()):
 			if self.str2bool(dict['json']):
 				self.json=True
 

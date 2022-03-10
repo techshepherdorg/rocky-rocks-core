@@ -142,7 +142,7 @@ class Command(rocks.commands.HostArgumentProcessor,
 		for host in self.getHostnames(args):
 			self.addOutput(host, '<file name="/etc/sysconfig/static-routes">')
 			routes = self.db.getHostRoutes(host)
-			for (key, val) in routes.items():
+			for (key, val) in list(routes.items()):
 				s = self.getRoute(key, val[0], val[1])
 				if s:
 					self.addOutput(host, s)

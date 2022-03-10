@@ -136,7 +136,7 @@ class Command(rocks.commands.sync.host.command):
 				# check if there is a plugin that
 				# acts on the attribute
 				plugin = None
-				if plugin_dict.has_key(a):
+				if a in plugin_dict:
 					plugin_f = open(os.path.join(
 						plugin_path, plugin_dict[a]), 'r')
 					plugin = base64.b64encode(plugin_f.read())

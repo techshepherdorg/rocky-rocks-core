@@ -121,7 +121,7 @@ class Plugin(rocks.commands.Plugin):
 			vm = rocks.vm.VMControl(self.db, vm_controller)
 
 			if not vm.setKey(key):
-				print "you need to provide a valid ssh key (%s)" % key
+				print("you need to provide a valid ssh key (%s)" % key)
 				sys.exit(1)
 
 			if state == 'on':
@@ -134,7 +134,7 @@ class Plugin(rocks.commands.Plugin):
 			(status, reason) = vm.cmd(op, host)
 
 			if status != 0:
-				print 'command failed\n%s' % reason
+				print('command failed\n%s' % reason)
 				sys.exit(1)
 
 

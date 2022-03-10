@@ -168,13 +168,13 @@ class Command(rocks.commands.RollArgumentProcessor,
 				o = getattr(module, 'RollName')
 			except AttributeError:
 				continue
-			if not dict.has_key(o):
+			if o not in dict:
 				dict[o] = []
 			dict[o].append(string.join(dir.split(os.sep), ' '))
 
 		try:
 			rolls = self.getRollNames(args, params)
-		except rocks.util.CommandError, e:
+		except rocks.util.CommandError as e:
 			if len(args) != 1:
 				raise e
 			rolls = [(args[0], '')]
@@ -186,7 +186,7 @@ class Command(rocks.commands.RollArgumentProcessor,
 				continue
 			seenrolls.append(roll)
 		
-			if dict.has_key(roll):
+			if roll in dict:
 				for command in dict[roll]:
 					self.addOutput(roll, command)
 			else:

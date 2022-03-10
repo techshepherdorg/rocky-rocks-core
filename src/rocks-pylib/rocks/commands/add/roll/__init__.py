@@ -393,7 +393,7 @@ class RollHandler:
 					(roll_name, roll_vers)
 				str += 'for %s from the Rolls directory' % \
 					(roll_arch)
-				print str
+				print(str)
 				self.clean_dir(specific_roll_dir)
 			os.makedirs(specific_roll_dir)
 
@@ -447,7 +447,7 @@ class RollHandler:
 					(roll_name, roll_vers)
 				str += 'for %s from the Rolls directory' % \
 					(roll_arch)
-				print str
+				print(str)
 				self.clean_dir(specific_roll_dir)
 			os.makedirs(specific_roll_dir)
 
@@ -458,7 +458,7 @@ class RollHandler:
 		# and just copy everything into the media directory
 		cwd = os.getcwd()
 		os.chdir(os.path.join(self.cdrom_mount, roll_name))
-		print 'Copying SunOS: %s to %s' % (roll_name, roll_dir) 
+		print('Copying SunOS: %s to %s' % (roll_name, roll_dir)) 
 		subprocess.call('find . ! -name TRANS.TBL'
 				' | cpio -mpud %s' % roll_dir, shell=True)
 
@@ -541,13 +541,13 @@ class RollHandler:
 			str = 'Cleaning %s version %s ' % \
 				(roll_name, roll_vers)
 			str += 'for %s from Rolls directory' % roll_arch
-			print str
+			print(str)
 
 			self.clean_dir(roll_dir)
 			os.makedirs(roll_dir)
 
-		print 'Copying "%s" (%s,%s) roll...' % (roll_name,
-			roll_vers, roll_arch)
+		print('Copying "%s" (%s,%s) roll...' % (roll_name,
+			roll_vers, roll_arch))
 		if not os.path.exists(destdir):
 			os.makedirs(destdir)
 
@@ -606,12 +606,12 @@ class RollHandler:
 			if i.startswith('PRODVERS'):
 				prod_vers = i.split('=')[1].strip()
 		if not prod_name.startswith('Solaris'):
-			print "Not Valid Solaris CD"
+			print("Not Valid Solaris CD")
 			return
 
 		# If we've got this far, that means that we can continue
 		# and copy the Solaris DVD.
-		print prod_name, prod_vers
+		print(prod_name, prod_vers)
 		roll_dir = os.path.join(js_dir, 'rolls', prod_name, prod_vers, arch)
 		
 		# Set the source and destination directories for cpio
@@ -626,7 +626,7 @@ class RollHandler:
 				str = 'Cleaning %s version %s ' % \
 					(prod_name, prod_vers)
 				str += 'for %s from Rolls directory' % arch
-				print str
+				print(str)
 				self.clean_dir(roll_dir)
 
 			os.makedirs(roll_dir)
@@ -723,8 +723,8 @@ class Command(rocks.commands.add.command):
 			if os.path.exists(i) and i.endswith('.iso'):
 				iso_list.append(i)
 			else:
-				print "Cannot find %s or %s "\
-					"is not and ISO image" % (i,i)
+				print("Cannot find %s or %s "\
+					"is not and ISO image" % (i,i))
 		
 		# Create a Rollhandler Instance. This handles rolls
 		# for both Solaris and Linux.

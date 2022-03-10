@@ -167,8 +167,8 @@ import warnings
 class IPAddr:
 
     def __init__(self, addr):
-        if type(addr) == types.StringType:
-            self.list = map(int, string.split(addr,'.'))
+        if type(addr) == bytes:
+            self.list = list(map(int, string.split(addr,'.')))
             self.list.reverse()
         else:
             self.list = []
@@ -238,7 +238,7 @@ class IPGenerator:
             elif self.network() & 0xe0 == 0xc0:
                 self.netmask = IPAddr('255.255.255.0')
             else:
-                print 'not a unicast address', self.network
+                print('not a unicast address', self.network)
                 sys.exit(-1)
         else:
             self.netmask = IPAddr(netmask)
@@ -250,16 +250,16 @@ class IPGenerator:
 
     def curr(self):
         if (self.addr & IPAddr(~self.netmask)) == ~self.netmask:
-            raise Error, 'At top of address range'
+            raise Error('At top of address range')
 
         if (self.addr & IPAddr(~self.netmask)) == 0x00:
-            raise Error, 'At bottom of address range'
+            raise Error('At bottom of address range')
 
         return self.addr
 
 
     def dec(self):
-        return self.next()
+        return next(self)
 
     def get_network(self):
     	return "%s" % IPAddr(self.addr & self.netmask)
@@ -268,10 +268,10 @@ class IPGenerator:
         addr = self.addr + n
 
         if (addr & IPAddr(~self.netmask)) == ~self.netmask:
-            raise Error, 'At top of address range'
+            raise Error('At top of address range')
 
         if (addr & IPAddr(~self.netmask)) == 0x00:
-            raise Error, 'At bottom of address range'
+            raise Error('At bottom of address range')
 
         self.addr = addr
         return self.addr
@@ -281,7 +281,7 @@ class IPGenerator:
 
 if __name__ == '__main__':
     a = IPGenerator('10.1.1.0', '255.255.255.128')
-    print a.curr()
+    print(a.curr())
     a.next(-126)
-    print a.curr()
+    print(a.curr())
 

@@ -81,7 +81,7 @@ class Command(rocks.commands.list.command):
 	def run(self, params, args):
 		self.beginOutput()
 		s_a = self.db.getSecAttrs()
-		for attr in s_a.keys():
+		for attr in list(s_a.keys()):
 			self.addOutput(attr, (s_a[attr][0], s_a[attr][1]))
 
 		self.endOutput(header=['attr', 'value', 'enc'],trimOwner=0)

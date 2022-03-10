@@ -360,7 +360,7 @@ class Command(rocks.commands.list.command):
 		#
 		# make sure all the attributes are XML escaped
 		#
-		for key in attrs.keys():
+		for key in list(attrs.keys()):
 			attrs[key] = rocks.util.escapeAttr(attrs[key])
 
 		if 'os' not in attrs:
@@ -424,7 +424,7 @@ class Command(rocks.commands.list.command):
 
 		graphDir = os.path.join('graphs', attrs['graph'])
 		if not os.path.exists(graphDir):
-			print 'error - no such graph', graphDir
+			print('error - no such graph', graphDir)
 			sys.exit(-1)
 
 		for file in os.listdir(graphDir):
@@ -440,7 +440,7 @@ class Command(rocks.commands.list.command):
 		if graph.hasNode(root):
 			root = graph.getNode(root)
 		else:
-			print 'error - node %s in not in graph' % root
+			print('error - node %s in not in graph' % root)
 			sys.exit(-1)
 				
 		nodes = rocks.profile.FrameworkIterator(graph).run(root)
@@ -476,7 +476,7 @@ class Command(rocks.commands.list.command):
 				depsHash[dep.name] = None
 
 		for node,cond in nodes:
-			if depsHash.has_key(node.name):
+			if node.name in depsHash:
 				nodesHash[node.name] = None
 
 		list = []
@@ -522,11 +522,11 @@ class Command(rocks.commands.list.command):
 
 		self.addText('<?xml version="1.0" standalone="no"?>\n')
 		self.addText('<!DOCTYPE rocks-graph [\n')
-		for (k, v) in attrs.items():
+		for (k, v) in list(attrs.items()):
 			self.addText('\t<!ENTITY %s "%s">\n' % (k, v))
 		self.addText(']>\n')
 		d = {}
-		for key in attrs.keys():
+		for key in list(attrs.keys()):
 			d[key] = '&%s;' % key
 		self.addText('<%s attrs="%s">\n' % (starter_tag, d))
 		if attrs['os'] == 'linux':
@@ -545,10 +545,9 @@ class Command(rocks.commands.list.command):
 				
 			try:
 				self.addText('%s\n' % node.getXML())
-			except Exception, msg:
-				raise rocks.util.KickstartNodeError, \
-				      "in %s node: %s" \
-				      % (node, msg)
+			except Exception as msg:
+				raise rocks.util.KickstartNodeError("in %s node: %s" \
+				      % (node, msg))
 		self.addText('</%s>\n' % starter_tag)
 		
 		

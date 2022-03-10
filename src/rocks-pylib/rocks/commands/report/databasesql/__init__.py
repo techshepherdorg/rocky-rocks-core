@@ -70,7 +70,7 @@ import rocks.db.mappings
 # dump mysql code
 #
 def dump(sql, *multiparams, **params):
-    print sql.compile(dialect=engine.dialect), ';'
+    print(sql.compile(dialect=engine.dialect), ';')
 
 engine = sqlalchemy.create_engine('mysql://', strategy='mock', executor=dump)
 
@@ -133,7 +133,7 @@ class Command(rocks.commands.report.command):
 					component + ".sql")
 		if os.path.exists(extra_sql_path):
 			f = open(extra_sql_path)
-			print f.read()
+			print(f.read())
 			f.close()
 
 	

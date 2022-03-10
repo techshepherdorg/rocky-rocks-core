@@ -185,7 +185,7 @@ class Command(rocks.commands.create.command):
 				for line in f.readlines():
 					file.write(line)
 			except:
-				print "Error: Could not open/read %s" % append_version_mk
+				print("Error: Could not open/read %s" % append_version_mk)
 		else:
 			files=[]
 			for root,subdir,fs in os.walk(dir):

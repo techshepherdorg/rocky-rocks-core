@@ -235,7 +235,7 @@ class command(rocks.commands.CategoryArgumentProcessor, rocks.commands.add.comma
 				protocol, action, chain, flags, 
 				comment))
 		except:
-			print "Rule '%s' already exists for %s=%s" % (rulename,category,index)
+			print("Rule '%s' already exists for %s=%s" % (rulename,category,index))
 
 
 class Command(command):
@@ -362,7 +362,7 @@ class Command(command):
 
 		# Get (category,index) pairs that this rule affects.
 		myargs = args[:]
-		if params.has_key('@ROCKSPARAM0'):
+		if '@ROCKSPARAM0' in params:
 			myargs.append(params['@ROCKSPARAM0'])
 
 		indices =  self.getCategoryIndices(myargs)

@@ -84,8 +84,8 @@
 
 import string
 import os
-import httplib
-import urlparse
+import http.client
+import urllib.parse
 import rocks.file
 import rocks.commands
 
@@ -109,9 +109,9 @@ class Command(command):
 	def httpExists(self, url):
 		"""tests wether the URL exist or not on the server"""
 		
-		host, path = urlparse.urlsplit(url)[1:3]
+		host, path = urllib.parse.urlsplit(url)[1:3]
 		try:
-			connection = httplib.HTTPConnection(host)  ## Make HTTPConnection Object
+			connection = http.client.HTTPConnection(host)  ## Make HTTPConnection Object
 			connection.request("HEAD", path)
 			responseOb = connection.getresponse()      ## Grab HTTPResponse Object
 
@@ -119,7 +119,7 @@ class Command(command):
 				return True
 			else:
 				return False
-		except Exception, e:
+		except Exception as e:
 			return False
 
 	
@@ -151,7 +151,7 @@ class Command(command):
 			os.system('mkdir -p %s' % path)
 		
 		if not self.httpExists(url) : 
-			print "No updates are available at the moment..."
+			print("No updates are available at the moment...")
 			return
 		os.chdir(path)
 		self.command('create.mirror', [ url, 'rollname=rocks-updates' ])
@@ -217,8 +217,8 @@ class Command(command):
 			if tokens[0] == 'roll' and tokens[2] == 'kickstart':
 				if tokens[2] in rolls:
 					continue
-				print '+ roll not enabled, removed %s' \
-					% file.getName()
+				print('+ roll not enabled, removed %s' \
+					% file.getName())
 				os.unlink(file.getFullName())
 
 
@@ -233,8 +233,8 @@ class Command(command):
 			tokens = file.split('-', 1)
 			if tokens[0] == 'update':
 				if not tokens[1] in rolls:
-					print '+ roll not enabled, ignored %s' \
-					      % file
+					print('+ roll not enabled, ignored %s' \
+					      % file)
 					continue
 			os.system('sh -x %s' % os.path.join(dir, file))
 

@@ -513,7 +513,7 @@ class Generator:
 	def randomString(self,len=12,basename=''):
 		return basename + \
 			''.join([random.choice(string.ascii_letters + string.digits) 
-				for n in xrange(len)])
+				for n in range(len)])
 
 	def rcsBegin(self, file, owner, perms):
 		"""
@@ -900,8 +900,8 @@ class Generator_linux(Generator):
 	##
 	
 	def parse(self, xml_string):
-		import cStringIO
-		xml_buf = cStringIO.StringIO(xml_string)
+		import io
+		xml_buf = io.StringIO(xml_string)
 		doc = xml.dom.ext.reader.Sax2.FromXmlStream(xml_buf)
 		filter = MainNodeFilter_linux(self.attrs)
 		iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
@@ -942,7 +942,7 @@ class Generator_linux(Generator):
 			attrs = node.attributes.getNamedItem((None, 'attrs'))
 			if attrs:
 				dict = eval(attrs.value)
-				for (k,v) in dict.items():
+				for (k,v) in list(dict.items()):
 					self.attrs[k] = v
 		
 	# <main>
@@ -1234,7 +1234,7 @@ class Generator_linux(Generator):
 		ydata =  yaml.load(yString)
 		ye = []
 		try:
-			tasks = map(lambda x: x['tasks'],filter(lambda x : x.has_key('tasks'),ydata))
+			tasks = [x['tasks'] for x in [x for x in ydata if 'tasks' in x]]
 		except:
 			return ([],[])
 
@@ -1244,14 +1244,12 @@ class Generator_linux(Generator):
 					ye.append(task['yum'])	
 				except:
 					pass
-		yumentries = filter(lambda x: x.has_key('state') and x.has_key('name'), ye)
+		yumentries = [x for x in ye if 'state' in x and 'name' in x]
 	
 		installStates = ('present','latest','installed')
 		removeStates = ('absent','removed')
-		iPkgs = map(lambda x: x['name'], 
-			filter(lambda x: any(ext in x['state'] for ext in installStates),yumentries))
-		dPkgs = map(lambda x: x['name'], 
-			filter(lambda x: any(ext in x['state'] for ext in removeStates),yumentries))
+		iPkgs = [x['name'] for x in [x for x in yumentries if any(ext in x['state'] for ext in installStates)]]
+		dPkgs = [x['name'] for x in [x for x in yumentries if any(ext in x['state'] for ext in removeStates)]]
 		return(iPkgs,dPkgs)
 
 	def write_metaplaybook(self, playbooks):
@@ -1399,7 +1397,7 @@ class Generator_linux(Generator):
 		list.append('')
 		list.append('cat >> /etc/sysconfig/rocks-pre << EOF')
 
-		for (file, (owner, perms)) in self.rcsFiles.items():
+		for (file, (owner, perms)) in list(self.rcsFiles.items()):
 			s = self.rcsEnd(file, owner, perms)
 			list.append(s)
 
@@ -1541,8 +1539,8 @@ class Generator_sunos(Generator):
 		Creates an XML tree representation of the XML string,
 		decompiles it, and parses the string.
 		"""
-		import cStringIO
-		xml_buf = cStringIO.StringIO(xml_string)
+		import io
+		xml_buf = io.StringIO(xml_string)
 		doc = xml.dom.ext.reader.Sax2.FromXmlStream(xml_buf)
 		filter = MainNodeFilter_sunos(self.attrs)
 		iter = doc.createTreeWalker(doc, filter.SHOW_ELEMENT,
@@ -1589,7 +1587,7 @@ class Generator_sunos(Generator):
 			attrs = node.attributes.getNamedItem((None, 'attrs'))
 			if attrs:
 				dict = eval(attrs.value)
-				for (k,v) in dict.items():
+				for (k,v) in list(dict.items()):
 					self.attrs[k] = v
 
 	# <main>
@@ -1668,7 +1666,7 @@ class Generator_sunos(Generator):
 		while child:
 			auto_reg[child.nodeName] = self.getChildText(child).strip()
 			child = iter.nextSibling()
-		if not auto_reg.has_key('type'):
+		if 'type' not in auto_reg:
 			self.ks['sysidcfg'].append('auto_reg=disable')
 			return
 		auto_reg_type = auto_reg.pop('type')
@@ -1752,7 +1750,7 @@ class Generator_sunos(Generator):
 		else:
 			enabled='true'
 
-		if not self.service_instances.has_key(name):
+		if name not in self.service_instances:
 			self.service_instances[name] = []
 		self.service_instances[name].append((instance,enabled))
 		# This is only to placate the getChildText
@@ -1773,7 +1771,7 @@ class Generator_sunos(Generator):
 			else:
 				net[child.nodeName] = self.getChildText(child).strip()
 			child = iter.nextSibling()
-		if not net.has_key('interface'):
+		if 'interface' not in net:
 			net['interface'] = 'PRIMARY'
 		self.ks['sysidcfg'].append("network_interface=%s{" %
 			net.pop('interface'))
@@ -1969,7 +1967,7 @@ class Generator_sunos(Generator):
 		list.append("<service_bundle type='profile' name='site'"
 			"\n\txmlns:xi='http://www.w3.org/2001/XInclude' >")
 
-		for i in self.service_instances.keys():
+		for i in list(self.service_instances.keys()):
 			list.append("\t<service name='%s' version='1' type='service'>" % i)
 			for j in self.service_instances[i]:
 				list.append("\t\t<instance name='%s' enabled='%s'/>" \

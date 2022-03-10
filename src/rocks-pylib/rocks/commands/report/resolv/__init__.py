@@ -107,7 +107,7 @@ class command(rocks.commands.HostArgumentProcessor,
 		for (zone, ) in self.db.fetchall():
 			s += ' %s' % zone
 
-		print s	
+		print(s)	
 
 	def nameservers(self, servers):
 		"""Prints a comma-separated list of name servers
@@ -115,7 +115,7 @@ class command(rocks.commands.HostArgumentProcessor,
 
 		if servers:
 			for server in servers.split(','):
-				print 'nameserver', server
+				print('nameserver', server)
 
 
 class Command(command):
@@ -131,7 +131,7 @@ class Command(command):
 		"""Defines the resolv.conf for public side nodes."""
 		
 		self.searchdomain()
-		print 'nameserver 127.0.0.1'
+		print('nameserver 127.0.0.1')
 		self.nameservers(self.db.getHostAttr('localhost',
 			'Kickstart_PublicDNSServers'))
 

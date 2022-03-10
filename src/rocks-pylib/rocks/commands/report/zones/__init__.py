@@ -330,7 +330,7 @@ class Command(rocks.commands.report.command):
 			sn = self.getSubnet(n.subnet, n.netmask)
 			sn.reverse()
 			r_sn = string.join(sn, '.')
-			if not subnet_list.has_key(r_sn):
+			if r_sn not in subnet_list:
 				subnet_list[r_sn] = []
 			subnet_list[r_sn].append(n)
 			

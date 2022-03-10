@@ -366,7 +366,7 @@ class Application:
         # precedence.
 
         dirList = [ os.path.join(os.sep,'opt', self.projectName, 'etc') ]
-        if os.environ.has_key('HOME'):
+        if 'HOME' in os.environ:
             dirList.append(os.environ['HOME'])
         dirList.append('.')
 
@@ -388,8 +388,8 @@ class Application:
             parser.setContentHandler(handler)
             try:
                 parser.parse(file)
-            except SAXParseException, msg:
-                print filename, "XML parse exception: ", msg
+            except SAXParseException as msg:
+                print(filename, "XML parse exception: ", msg)
             file.close()
             
 
@@ -399,19 +399,19 @@ class Application:
 
         short = ''
         for e in self.getopt.s:
-            if type(e) == types.TupleType:
+            if type(e) == tuple:
                 short = short + e[0]
             else:
                 short = short + e
         long = []
         for e in self.getopt.l:
-            if type(e) == types.TupleType:
-                long.append(e[0])
+            if type(e) == tuple:
+                int.append(e[0])
             else:
-                long.append(e)
+                int.append(e)
         try:
-            opts, args = getopt.getopt(self.args, short, long)
-        except getopt.GetoptError, msg:
+            opts, args = getopt.getopt(self.args, short, int)
+        except getopt.GetoptError as msg:
 	    sys.stderr.write("error - %s\n" % msg)
             self.usage()
             sys.exit(1)
@@ -431,10 +431,10 @@ class Application:
             self.help()
             sys.exit(0)
         elif c[0] == '--list-rcfiles':
-            print self.rcfileList
+            print(self.rcfileList)
             sys.exit(0)
         elif c[0] == '--list-project-info':
-            print self.projectInfo()
+            print(self.projectInfo())
             sys.exit(0)
 	elif c[0] == '--rcfile':
 		self.rcForce.append(c[1])
@@ -444,7 +444,7 @@ class Application:
     
     def usage(self):
 
-        if os.environ.has_key('COLUMNS'):
+        if 'COLUMNS' in os.environ:
             cols = os.environ['COLUMNS']
         else:
             cols = 80
@@ -463,7 +463,7 @@ class Application:
 
         # Add the argument short options to the above string
         for e in self.getopt.s:
-            if type(e) == types.TupleType:
+            if type(e) == tuple:
                 v = e[0]
                 h = e[1]
             else:
@@ -474,7 +474,7 @@ class Application:
 
         # Add argument-free long options
         for e in self.getopt.l:
-            if type(e) == types.TupleType:
+            if type(e) == tuple:
                 v = e[0]
             else:
                 v = e
@@ -483,7 +483,7 @@ class Application:
 
         # Add argument long options
         for e in self.getopt.l:
-            if type(e) == types.TupleType:
+            if type(e) == tuple:
                 v = e[0]
                 h = e[1]
             else:
@@ -495,7 +495,7 @@ class Application:
         list.append(self.usageTail())
 
         # Print the usage, word wrapped to the correct screen size.
-        print self.usage_name, '- version', self.usage_version
+        print(self.usage_name, '- version', self.usage_version)
         l = 0
         s = ''
         for e in list:
@@ -503,11 +503,11 @@ class Application:
                 s = s + e
                 l = l + len(e)
             else:
-                print s
+                print(s)
                 l = len(e)
                 s = e
         if s:
-            print s
+            print(s)
 
 
     def help(self):
@@ -541,7 +541,7 @@ class RCFileHandler(rocks.util.ParseXML):
         # those that append path names found in the attributes to the sys.path
         #
         newattrs = {}
-        for (aname, avalue) in attrs.items():
+        for (aname, avalue) in list(attrs.items()):
             newattrs[aname] = str(attrs[aname])
 
         if self.foundSection:

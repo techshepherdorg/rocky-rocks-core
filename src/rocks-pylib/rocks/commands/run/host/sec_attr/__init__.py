@@ -8,7 +8,7 @@ import tempfile
 import rocks.commands
 
 import traceback
-import cStringIO
+import io
 
 class Command(rocks.commands.Command):
 	"""
@@ -44,7 +44,7 @@ class Command(rocks.commands.Command):
 				# Evaluate the filter
 				try:
 					# Import the filter
-					exec filter
+					exec(filter)
 					p = plugin()
 					# Run the filter against the value
 					p.filter(value)
@@ -57,12 +57,12 @@ class Command(rocks.commands.Command):
 					# Get line information for the last traceback
 					line_no = tb[1]
 					# Print the error message
-					print "Error in filter: line %d" % line_no
-					print sys.exc_info()[0], ':', sys.exc_info()[1]
+					print("Error in filter: line %d" % line_no)
+					print(sys.exc_info()[0], ':', sys.exc_info()[1])
 					# Print line from the filter that caused
 					# the exception
-					c = cStringIO.StringIO(filter).readlines()
-					print c[line_no - 1]
+					c = io.StringIO(filter).readlines()
+					print(c[line_no - 1])
 
 		# Remove the pickled file
 		os.unlink(fname)

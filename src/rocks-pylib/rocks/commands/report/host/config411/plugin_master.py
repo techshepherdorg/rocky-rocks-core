@@ -88,7 +88,7 @@ class Plugin(rocks.commands.Plugin):
 		attrs = self.owner.s.attrs
 
 		port_string = ''
-		if attrs.has_key('port411'):
+		if 'port411' in attrs:
 			port_string = ':%s' % attrs['port411']
 
 		master = '<master url="http://%s%s/%s"/>' \

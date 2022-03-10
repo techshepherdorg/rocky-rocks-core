@@ -98,7 +98,7 @@ class Textsub(UserDict.UserDict):
 			if self.re == None:
 				self.regex = re.compile("(%s)" % \
 					'|'.join(map(re.escape,
-						self.data.keys())))
+						list(self.data.keys()))))
 
 	def __call__(self, match):
 		return self.data[match.string[match.start():match.end()]]
@@ -229,7 +229,7 @@ class Command(rocks.commands.create.new.command):
 			f.write (text)
 			f.close()
 		except IOError:
-			print "Error writing file %s" % name
+			print("Error writing file %s" % name)
 
 
 	def update(self, namein, nameout):

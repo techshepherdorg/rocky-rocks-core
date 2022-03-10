@@ -241,14 +241,14 @@ class Plugin(rocks.commands.Plugin):
 			nrows = self.db.execute("""select installaction from 
 				nodes where name = '%s' """ % node)
 		else:
-			print 'action "%s" for host "%s" is invalid' % \
-				(action, node)
+			print('action "%s" for host "%s" is invalid' % \
+				(action, node))
 			sys.exit(-1)
 
 		if nrows == 1:
 			bootaction, = self.db.fetchone()
 		else:
-			print 'failed to get bootaction'
+			print('failed to get bootaction')
 			sys.exit(-1)
 
 		nrows = self.db.execute("""select kernel, ramdisk, args from
@@ -257,8 +257,8 @@ class Plugin(rocks.commands.Plugin):
 		if nrows == 1:
 			kernel, ramdisk, args = self.db.fetchone()
 		else:
-			print 'bootaction "%s" for host "%s" is invalid' % \
-				(action, node)
+			print('bootaction "%s" for host "%s" is invalid' % \
+				(action, node))
 			sys.exit(-1)
 
 		# If the ksdevice= is set fill in the ip information
@@ -348,14 +348,14 @@ class Plugin(rocks.commands.Plugin):
 			nrows = self.db.execute("""select installaction from 
 				nodes where name = '%s' """ % node)
 		else:
-			print 'action "%s" for host "%s" is invalid' % \
-				(action, node)
+			print('action "%s" for host "%s" is invalid' % \
+				(action, node))
 			sys.exit(-1)
 
 		if nrows == 1:
 			bootaction, = self.db.fetchone()
 		else:
-			print 'failed to get bootaction'
+			print('failed to get bootaction')
 			sys.exit(-1)
 
 		nrows = self.db.execute("""select kernel, ramdisk, args from
@@ -364,8 +364,8 @@ class Plugin(rocks.commands.Plugin):
 		if nrows == 1:
 			kernel, ramdisk, args = self.db.fetchone()
 		else:
-			print 'bootaction "%s" for host "%s" is invalid' % \
-				(action, node)
+			print('bootaction "%s" for host "%s" is invalid' % \
+				(action, node))
 			sys.exit(-1)
 
 		# If the ksdevice= is set fill in the ip information
@@ -458,7 +458,7 @@ class Plugin(rocks.commands.Plugin):
 		if nrows > 0:
 			nodeid, = self.db.fetchone()
 		else:
-			print 'could not find host "%s" in the database' % host
+			print('could not find host "%s" in the database' % host)
 			sys.exit(-1)
 
 		#

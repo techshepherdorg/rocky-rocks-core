@@ -446,7 +446,7 @@ class File:
 			os.chmod(self.getFullName(), mode)
 
 	def dump(self):
-		print '%s(%s)' % (self.filename, self.pathname)
+		print('%s(%s)' % (self.filename, self.pathname))
 
 
 
@@ -577,7 +577,7 @@ class RPMFile(RPMBaseFile):
 		cmd += '--badreloc --relocate /=%s %s' \
 			% (root, self.getFullName())
 
-		print 'cmd', cmd
+		print('cmd', cmd)
 		retval = os.system(cmd)
 		
 		# Crawl up from the end of the dbdir path and prune off
@@ -588,7 +588,7 @@ class RPMFile(RPMBaseFile):
 			list = string.split(dbdir, os.sep)
 			dbdir = string.join(list[:-1], os.sep)
 
-		print 'retval', retval
+		print('retval', retval)
 
 		return retval
 
@@ -648,7 +648,7 @@ class RollInfoFile(File,
 		
 	def startElement(self, name, attrs):
 		self.attrs[str(name)] = {}
-		for (attrName, attrVal) in attrs.items():
+		for (attrName, attrVal) in list(attrs.items()):
 			self.attrs[str(name)][str(attrName)] = str(attrVal)
 	
 	def getXML(self):
@@ -659,11 +659,11 @@ class RollInfoFile(File,
 		
 		xml.append('<roll name="%s" interface="%s">' %
 			(self.getRollName(), self.getRollInterface()))
-		for tag in self.attrs.keys():
+		for tag in list(self.attrs.keys()):
 			if tag == 'roll':
 				continue
 			attrs = ''
-			for key,val in self.attrs[tag].items():
+			for key,val in list(self.attrs[tag].items()):
 				attrs += ' %s="%s"' % (key, val)
 			xml.append('\t<%s%s/>' % (tag, attrs))
 		xml.append('</roll>')
@@ -736,11 +736,11 @@ class Tree:
 		return self.root
 
 	def getDirs(self):
-		return self.tree.keys()
+		return list(self.tree.keys())
 
 	def clear(self, path=''):
 		l1 = string.split(path, os.sep)
-		for key in self.tree.keys():
+		for key in list(self.tree.keys()):
 			l2 = string.split(key, os.sep)
 			if rocks.util.list_isprefix(l1, l2):
 				del self.tree[key]
@@ -783,14 +783,14 @@ class Tree:
 		self.tree[dir] = v
 
 	def dumpDirNames(self):
-		for key in self.tree.keys():
-		    print key
+		for key in list(self.tree.keys()):
+		    print(key)
 	    
 	def dump(self):
 		self.apply(self.__dumpIter__)
 
 	def apply(self, func, root=None):
-		for key in self.tree.keys():
+		for key in list(self.tree.keys()):
 			for e in self.tree[key]:
 				func(key, e, root)
 
@@ -798,14 +798,14 @@ class Tree:
 		'Return the size the if Tree in Mbytes'
 
 		len = 0
-		for key in self.tree.keys():
+		for key in list(self.tree.keys()):
 			for file in self.tree[key]:
 				len = len + file.getSize()
 		return float(len)
     
 
 	def __dumpIter__(self, path, file, root):
-		print path,
+		print(path, end=' ')
 		file.dump()
 	
 	

@@ -196,7 +196,7 @@ def EvalCondExpr(cond, attrs):
 		return True
 
 	env = _CondEnv()
-	for (k,v) in attrs.items():
+	for (k,v) in list(attrs.items()):
 		env[k] = v
 		
 	return eval(cond, globals(), env)

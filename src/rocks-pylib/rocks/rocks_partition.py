@@ -34,20 +34,19 @@ class RocksPartition(object):
 
 	def getDisks(self):
 		""" names of the disks in the system - filter out ramdisks """
-		return map(lambda x: x.name,  \
-			filter(lambda x: x.name.find('ram') < 0, self.disks))
+		return [x.name for x in [x for x in self.disks if x.name.find('ram') < 0]]
 
 	def getRaids(self):
 		""" names of the md arrays in  the system """
-		return map(lambda x: os.path.basename(os.readlink("/dev/md/%s" %x.name)), self.raids)
+		return [os.path.basename(os.readlink("/dev/md/%s" %x.name)) for x in self.raids]
 
 	def getLVMs(self):
 		""" names of the lvm logical devices in  the system """
-		return map(lambda x: x.name, self.lvms)
+		return [x.name for x in self.lvms]
 
 	def gptDrive(self, devname):
 		""" return True if disk is formatted as gpt """
-		drive = filter(lambda x: x.name is devname, self.disks)	
+		drive = [x for x in self.disks if x.name is devname]	
 		if len(drive) == 0:
 			return False
 		# Weird, in the field. Some disk objects from Blivet
@@ -412,7 +411,7 @@ class RocksPartition(object):
 						break
 
 				if key != '':
-					if not nodedisks.has_key(key):
+					if key not in nodedisks:
 						nodedisks[key] = [n]
 					else:
 						nodedisks[key].append(n)

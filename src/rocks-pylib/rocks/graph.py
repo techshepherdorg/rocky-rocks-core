@@ -231,13 +231,13 @@ class Graph:
 
 	def getNodes(self):
 		list = []
-		for key,val in self.nodes.items():
+		for key,val in list(self.nodes.items()):
 			list.append(val)
 		return list
 
 	def getEdges(self):
 		list = []
-		for key,val in self.adjList.items():
+		for key,val in list(self.adjList.items()):
 			list.extend(val)
 		return list
 			
@@ -245,27 +245,27 @@ class Graph:
 	def reverse(self):
 		adjList      = self.adjList
 		self.adjList = {}
-		for key, node in self.nodes.items():
+		for key, node in list(self.nodes.items()):
 			node.reverse()
-		for key,val in adjList.items():
+		for key,val in list(adjList.items()):
 			for edge in val:
 				edge.reverse()
 				self.addEdge(edge)
 
 		
 	def addEdge(self, e):
-		if not self.nodes.has_key(e.getParent().name):
+		if e.getParent().name not in self.nodes:
 			self.nodes[e.getParent().name] = e.getParent()
-		if not self.nodes.has_key(e.getChild().name):
+		if e.getChild().name not in self.nodes:
 			self.nodes[e.getChild().name] = e.getChild()
 
-		if self.adjList.has_key(e.getParent()):
+		if e.getParent() in self.adjList:
 			self.adjList[e.getParent()].append(e)
 		else:
 			self.adjList[e.getParent()] = [ e ]
 
 	def hasNode(self, node):
-		if self.nodes.has_key(node):
+		if node in self.nodes:
 			return 1
 		return 0
 
@@ -275,14 +275,14 @@ class Graph:
 		return None
 
 	def __getitem__(self, node):
-		if self.adjList.has_key(node):
+		if node in self.adjList:
 			return self.adjList[node]
 		else:
 			return []
 		
 	def __repr__(self):
 		list = []
-		for key,val in self.adjList.items():
+		for key,val in list(self.adjList.items()):
 			for e in val:
 				list.append(e.__repr__())
 		return string.join(list, '\n')

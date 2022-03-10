@@ -132,7 +132,7 @@ class Command(command):
 	def run(self, params, args):
 
                 (args, rulename) = self.fillPositionalArgs(('rulename',))
-		if params.has_key('@ROCKSPARAM0'):
+		if '@ROCKSPARAM0' in params:
 			args.append(params['@ROCKSPARAM0'])
 
 		indices =  self.getCategoryIndices(args, wildcard=0)

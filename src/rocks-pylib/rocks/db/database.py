@@ -198,7 +198,7 @@ class Database(object):
 		data structure
 		"""
 
-		if os.environ.has_key('ROCKSDEBUG'):
+		if 'ROCKSDEBUG' in os.environ:
 			self.setVerbose(True)
 
 		mysql_socket = '/var/opt/rocks/mysql/mysql.sock'
@@ -216,7 +216,7 @@ class Database(object):
 
 		if self.verbose:
 			# TODO move this to the logger
-			print "Database connection URL: ", url
+			print("Database connection URL: ", url)
 
 		self.engine = create_engine(url, pool_recycle=3600)
 		# TODO: do not keep a connection active here it not needed

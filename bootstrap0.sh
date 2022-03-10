@@ -167,12 +167,13 @@ fi
 yum -y install gcc-toolset-10-gcc gcc-toolset-10-gcc-c++ gcc-toolset-10-binutils boost boost-devel libtirpc-devel
 yum --enablerepo powertools -y install rpcgen
 compile_and_install foundation-mysql
+yum -y install libffi-devel
 compile_and_install foundation-python
-# ROCKS 8 no longer needs setuptools as it is included with python3
-#compile_and_install foundation-python-setuptools
+compile_and_install foundation-python-setuptools
 compile_and_install foundation-libxml2
-compile_and_install foundation-python-xml
-compile_and_install foundation-python-extras
+# ROCKS 8 no longer needs python-xml as not supported in Python 3
+#compile_and_install foundation-python-xml
+#compile_and_install foundation-python-extras
 compile_and_install foundation-rcs
 
 # 3. Rocks  config, pylib, and kickstart, commands  

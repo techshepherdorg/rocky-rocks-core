@@ -238,7 +238,7 @@ class Application(rocks.app.Application):
 	def __init__(self, argv=None):
 		rocks.app.Application.__init__(self, argv)
 		self.rcfileHandler = RCFileHandler
-		if os.environ.has_key('MYSQL_HOST'):
+		if 'MYSQL_HOST' in os.environ:
 			self.host	= os.environ['MYSQL_HOST']
 		else:
 			self.host	= 'localhost'
@@ -279,13 +279,13 @@ class Application(rocks.app.Application):
 		
 		currentKeys=[]
 		for key in currentList:
-			if type(key) == types.TupleType:
+			if type(key) == tuple:
 				currentKeys.append(key[0])
 			else:
 				currentKeys.append(key)
 		
 		for value in newList:
-			if type(value) == types.TupleType:
+			if type(value) == tuple:
 				compareKey = value[0]
 			else:
 				compareKey = value
@@ -300,19 +300,19 @@ class Application(rocks.app.Application):
 	def formatOptions(self):
 		# Create the short options
 		options=[]
-		for key in self.shortFlagsAlias.keys():
+		for key in list(self.shortFlagsAlias.keys()):
 			options.append(key)
-		for key in self.shortParamsAlias.keys():
+		for key in list(self.shortParamsAlias.keys()):
 			options.append((key+":",self.params[self.shortParamsAlias[key]][1]))
 		
 		self.getopt.s = self.extendOrReplace(self.getopt.s,options)
 		
 		# Create the long options
 		options=[]
-		for key in self.params.keys():
+		for key in list(self.params.keys()):
 			option=( key+'=',"%s"%self.params[key][1])
 			options.append(option)
-		for key in self.flags.keys():
+		for key in list(self.flags.keys()):
 			option=( key,"%s"%self.flags[key][1])
 			options.append(option)
 		
@@ -325,15 +325,15 @@ class Application(rocks.app.Application):
 			return 1
 		opt,val = c
 		shortopt=opt[1:len(opt)]
-		if shortopt in self.shortFlagsAlias.keys():
+		if shortopt in list(self.shortFlagsAlias.keys()):
 			self.flags[self.shortFlagsAlias[shortopt]][0]= 1
-		if shortopt in self.shortParamsAlias.keys():
+		if shortopt in list(self.shortParamsAlias.keys()):
 			self.params[self.shortParamsAlias[shortopt]][0]= val
 
 		longopt=opt[2:len(opt)]
-		if longopt in self.flags.keys():
+		if longopt in list(self.flags.keys()):
 			self.flags[longopt][0]= 1
-		if longopt in self.params.keys():
+		if longopt in list(self.params.keys()):
 			self.params[longopt][0]= val
 
 		os.environ['MYSQL_HOST'] = self.params['host'][0]

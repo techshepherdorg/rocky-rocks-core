@@ -270,7 +270,7 @@ class Command(rocks.commands.add.host.command):
 				'%s')""" % (host, iface)) 
 
 		for key in ['ip', 'mac', 'module', 'name', 'subnet', 'vlan']:
-			if params.has_key(key):
+			if key in params:
 				self.command('set.host.interface.%s' % key,
 					(host, iface, params[key]))
 
