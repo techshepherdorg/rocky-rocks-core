@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/opt/rocks/bin/python3
 
 import os
 import sys
