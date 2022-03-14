@@ -3,7 +3,7 @@
 032301a87832d738149925ad2912baa554ae2270  src/foundation-git/git-manpages-1.7.11.4.tar.gz
 4725d88a13e071ee22e632de551d4a55ca08ee7d  src/foundation-graphviz/graphviz-2.28.0.tar.gz
 51f72997191e54f78b4e87f3c69f70b25cdd1bd6  src/foundation-graphviz/graphviz-2.6.tar.gz
-339fe5bb2a7d0c13f068c26d8f7cd194c13f9a2a  src/foundation-libxml2/libxml2-2.9.12.tar.z
+339fe5bb2a7d0c13f068c26d8f7cd194c13f9a2a  src/foundation-libxml2/libxml2-2.9.12.tar.gz
 85cd3271b16bc93807641fe530f8d5e02146b934  src/foundation-mysql/mysql-5.7.37.tar.gz
 002450621b33c5690060345b0aac25bc2426d675  src/foundation-python-extras/docutils-0.12.tar.gz
 0538e7cf0cb1258a03c3d5e9c4143daa7ec86258  src/foundation-python-extras/egenix-mx-base-2.0.6.tar.gz
@@ -42,3 +42,4 @@ ae4ef962c7bfef8e5756fb4372331aa6636fef66  src/foundation-python-extras/numpy-1.1
 92c258709f582b950aeaa9e3e778714fbcd64d76  src/foundation-git/git-manpages-2.9.2.tar.gz
 e8fe2dc94c5cb5d3ad19d646881f3fc351cba7d4  src/foundation-python/Python-3.10.2.tar.gz
 482e6f0f24731846e698bcc29abbb2cc5e852d5f  src/foundation-python-setuptools/setuptools-60.9.3.tar.gz
+0e85468d2af207c19530648cda271d27d03c6894  src/foundation-cython/Cython-0.29.28.tar.gz
