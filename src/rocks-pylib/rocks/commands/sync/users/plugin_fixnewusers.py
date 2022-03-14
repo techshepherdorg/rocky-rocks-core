@@ -133,7 +133,7 @@ class Plugin(rocks.commands.Plugin):
 		file = open('/etc/passwd', 'r')
 
 		for line in file.readlines():
-			l = string.split(line[:-1], ':')			
+			l = line[:-1].split(':')			
 
 			if len(l) < 6:
 				continue

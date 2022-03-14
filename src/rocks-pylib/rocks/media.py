@@ -293,7 +293,7 @@ class Media:
             (wget, url)
 
         for line in os.popen(cmd).readlines():
-            l = string.split(line, '"')
+            l = line.split('"')
 
             if l[0] == '<a href=':
                 #

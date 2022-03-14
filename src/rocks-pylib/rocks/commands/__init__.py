@@ -887,7 +887,7 @@ class DocStringHandler(handler.ContentHandler,
     def getDocbookText(self):
         s  = ''
         s += '<section id="rocks-%s" xreflabel="%s">\n' % \
-            (string.join(self.name.split(' '), '-'), self.name)
+            ('-'.join(self.name.split(' ')), self.name)
         s += '<title>%s</title>\n' % self.name
         s += '<cmdsynopsis>\n'
         s += '\t<command>rocks %s</command>\n' % self.name
@@ -981,7 +981,7 @@ class DocStringHandler(handler.ContentHandler,
                 s += '\t<varlistentry>\n'
                 s += '\t<term>'
                 s += '<xref linkend="rocks-%s">' % \
-                    string.join(related.split(' '), '-')
+                    '-'.join(related.split(' '))
                 s += '</term>\n'
                 s += '\t<listitem>\n'
                 s += '\t<para>\n'
@@ -1536,7 +1536,7 @@ class Command:
 
         try:
             o = getattr(mod, 'Command')(self.newdb)
-            name = string.join(string.split(command, '.'), ' ')
+            name = ' '.join(command.split('.'))
         except AttributeError:
             return ''
 
@@ -1831,9 +1831,9 @@ class Command:
             for i in range(0, len(list)):
                 if self.outputCols[i + self.startOfLine]:
                     l.append(list[i])
-            return string.join(l, ' ')
+            return ' '.join(l)
         else:
-            return string.join(list, ' ')
+            return ' '.join(list)
 
 
 
@@ -1893,7 +1893,7 @@ class Command:
 
         username = pwd.getpwuid(os.geteuid())[0]
         if args:
-            command = '%s %s' % (name, string.join(args,' '))
+            command = '%s %s' % (name, ' '.join(args))
         else:
             command = name
 

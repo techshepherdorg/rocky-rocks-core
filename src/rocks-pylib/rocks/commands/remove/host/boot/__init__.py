@@ -125,7 +125,7 @@ class Command(rocks.commands.remove.host.command):
 					return
 
 				filename = '/tftpboot/pxelinux/pxelinux.cfg/'
-				for i in string.split(ipaddr, '.'):
+				for i in ipaddr.split('.'):
 					hexstr = '%02x' % (int(i))
 					filename += '%s' % hexstr.upper()
 

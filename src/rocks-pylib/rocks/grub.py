@@ -193,11 +193,11 @@ class App:
 		orig_kernels = []
 
 		for line in file.readlines():
-			tokens = string.split(line)
+			tokens = line.split()
 
 			if tokens[0] == 'kernel':
 				kernelpath = os.path.dirname(tokens[1])
-				kernelflags = string.join(tokens[2:])
+				kernelflags = ' '.join(tokens[2:])
 			elif tokens[0] == 'root':
 				root = line
 			elif tokens[0] != 'title' and \

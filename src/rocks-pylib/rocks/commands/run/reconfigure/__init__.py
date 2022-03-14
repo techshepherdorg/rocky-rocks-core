@@ -210,7 +210,7 @@ class Command(rocks.commands.run.command):
 		for roll in args:
 			rolls.append(roll)
 		xml = self.command('list.host.xml', [ hostname,
-			'roll=%s' % string.join(rolls, ',') ])
+			'roll=%s' % ','.join(rolls) ])
 
 
 		if self.os != 'linux':
@@ -223,7 +223,7 @@ class Command(rocks.commands.run.command):
 		script = []
 		script.append('#!/bin/sh\n')
 		script += gen.generate_config_script()
-		self.addText(string.join(script, ''))
+		self.addText(''.join(script))
 
 
 	def get_modified_attr(self, hostname, current_attrs):

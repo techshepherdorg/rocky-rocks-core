@@ -22,7 +22,7 @@ else:
 if os.path.exists('/tmp/user_partition_info'):
     file = open('/tmp/user_partition_info', 'r')
     for line in file.readlines():
-        l = string.split(line)
+        l = line.split()
         if len(l) == 2 and l[0] == 'rocks':
             partscheme = l[1]
             break
@@ -75,7 +75,7 @@ parts = []
 # reconnect all rocks disks (only if this is a non-frontend machine)
 #
 file = open('/proc/cmdline', 'r')
-args = string.split(file.readline())
+args = file.readline().split()
 file.close()
 
 if 'build' not in args:
@@ -140,7 +140,7 @@ else:
 
     if len(installdisks) > 0:
         print('clearpart --all --initlabel --drives=%s' % \
-            (string.join(installdisks, ',')))
+            (','.join(installdisks)))
 
     for disk in installdisks:
         if '/' not in p.mountpoints:

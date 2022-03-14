@@ -56,7 +56,7 @@ nodepartinfo = p.getNodePartInfo(disks)
 # a frontend
 #
 file = open('/proc/cmdline', 'r')
-args = string.split(file.readline())
+args = file.readline().split()
 file.close()
 
 if 'build' not in args:

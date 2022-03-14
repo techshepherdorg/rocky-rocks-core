@@ -61,7 +61,7 @@ class RocksPartition(object):
 	def getDevice(self, str):
 		device = ''
 
-		a = string.split(str, '/dev/')
+		a = str.split('/dev/')
 		if len(a) > 1:
 			device = a[1]
 
@@ -71,7 +71,7 @@ class RocksPartition(object):
 	def getSectorStart(self, str):
 		sectorstart = ''
 
-		a = string.split(str, '=')
+		a = str.split('=')
 		if len(a) > 1 and string.strip(a[0]) == 'start':
 			sectorstart = a[1]
 		else:
@@ -83,7 +83,7 @@ class RocksPartition(object):
 	def getPartitionSize(self, str):
 		partitionsize = ''
 
-		a = string.split(str, '=')
+		a = str.split('=')
 		if len(a) > 1 and string.strip(a[0]) == 'size':
 			partitionsize = a[1]
 		else:
@@ -95,7 +95,7 @@ class RocksPartition(object):
 	def getPartId(self, str):
 		partid = ''
 
-		a = string.split(str, '=')
+		a = str.split('=')
 		if len(a) > 1 and string.strip(a[0]) == 'Id':
 			partid = a[1]
 		else:
@@ -135,7 +135,7 @@ class RocksPartition(object):
 				(self.e2label, devicename)
 			label = os.popen(cmd).readlines()
 
-			label = string.join(label)
+			label = ' '.join(label)
 			id = 'LABEL=%s' % (label[:-1])
 
 			mntpoint = self.findMntInFstab(id)
@@ -160,7 +160,7 @@ class RocksPartition(object):
 
 	def findMntInFstab(self, identifier):
 		for line in self.saved_fstab:
-			l = string.split(line)
+			l = line.split()
 			if len(l) > 0:
 				if l[0] == identifier:
 					return l[1]
@@ -170,7 +170,7 @@ class RocksPartition(object):
 
 	def findFsTypeInFstab(self, mntpoint):
 		for line in self.saved_fstab:
-			l = string.split(line)
+			l = line.split()
 			if len(l) > 2:
 				if l[1] == mntpoint:
 					return l[2]
@@ -186,7 +186,7 @@ class RocksPartition(object):
 		isDisk = 0
 		
 		for line in info:
-			l = string.split(line[:-1])
+			l = line[:-1].split()
 
 			if len(l) > 2 and re.match('[0-9]+', l[0]):
 				if devname[0:2] == 'md':
@@ -282,7 +282,7 @@ class RocksPartition(object):
 
 
 	def parsePartInfo(self, info):
-		n = string.split(info, ',')
+		n = info.split(',')
 
 		if len(n) != 8:
 			return ('', '', '', '', '', '', '', '')
@@ -429,7 +429,7 @@ class RocksPartition(object):
 			return [ (disk, 'dummy') ]
 
 		for part in self.getDiskInfo(disk):
-			l = string.split(part)
+			l = part.split()
 
 			#
 			# skip the 'parted' header
@@ -709,9 +709,9 @@ class RocksPartition(object):
 				args += [ "--onpart", nodedevice ]
 
 			if israid:
-				parts.append('raid %s' % (string.join(args)))
+				parts.append('raid %s' % (' '.join(args)))
 			else:
-				parts.append('part %s' % (string.join(args)))
+				parts.append('part %s' % (' '.join(args)))
 
 			self.mountpoints.append(nodemntpoint)
 

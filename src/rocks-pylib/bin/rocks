@@ -1,4 +1,4 @@
-#!/opt/rocks/bin/python
+#!/opt/rocks/bin/python3
 # 
 # @Copyright@
 # 
@@ -208,7 +208,9 @@ else:
 module = None
 cmd = args[0].split()
 if len(cmd) > 1:
-	s = 'rocks.commands.%s' % string.join(cmd, '.')
+	#s = 'rocks.commands.%s' % string.join(cmd, '.')
+	sp = ".".join(cmd)
+	s = "rocks.commands."+sp
 	try:
 		__import__(s)
 		module = eval(s)
@@ -222,7 +224,11 @@ if len(cmd) > 1:
 
 if not module:
 	for i in range(len(args), 0, -1):
-		s = 'rocks.commands.%s' % string.join(args[:i], '.')
+		#s = 'rocks.commands.%s' % string.join(args[:i], '.')
+		print (args[:i])
+		sp = ".".join(args[:i])
+		s="rocks.commands."+sp
+		print(("Trying command string: " + s))
 		try:
 			__import__(s)
 			module = eval(s)
@@ -232,11 +238,12 @@ if not module:
 			continue
 
 if not module:
-	print 'error - invalid rocks command "%s"' % args[0]
+	print(('error - invalid rocks command "%s"' % args[0]))
 	sys.exit(-1)
 
-name = string.join(string.split(s, '.')[2:], ' ')
-
+#name = string.join(string.split(s, '.')[2:], ' ')
+name = " ".join(s.split('.')[2:])
+print (name)
 
 # If we can load the command object then fall through and invoke the run()
 # method.  Otherwise the user did not give a complete command line and
@@ -248,24 +255,25 @@ except AttributeError:
 	import rocks.commands.list.help
 	help = rocks.commands.list.help.Command(database)
 	fullmodpath = s.split('.')
-	submodpath  = string.join(fullmodpath[2:], '/')
+	#submodpath  = string.join(fullmodpath[2:], '/')
+	submodpath='/'.join(fullmodpath[2:])
 	help.run({'subdir': submodpath}, [])
-	print help.getText()
+	print(help.getText())
 	sys.exit(-1)
 
 if command.MustBeRoot and not (command.isRootUser() or command.isApacheUser()):
-	os.system('sudo %s' % string.join(sys.argv,' '))
+	os.system('sudo ' + ' '.join(sys.argv))
 else:
 	try:
 		command.runWrapper(name, args[i:])
 		text = command.getText()
 		if len(text) > 0:
-			print text,
+			print(text, end=' ')
 			if text[len(text)-1] != '\n':
-				print
-	except rocks.util.CommandError, e:
-		print "Error:", e
-		print command.usage()
+				print()
+	except rocks.util.CommandError as e:
+		print("Error:", e)
+		print(command.usage())
 		exit(1)
 
 

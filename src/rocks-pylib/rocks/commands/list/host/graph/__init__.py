@@ -391,7 +391,7 @@ class Command(rocks.commands.list.host.command):
 				continue
 			name = tokens[0]
 			ext  = tokens[1]
-			tokens = string.split(name, '-')
+			tokens = name.split('-')
 			if len(tokens) < 2:
 				continue
 			prefix = tokens[0]

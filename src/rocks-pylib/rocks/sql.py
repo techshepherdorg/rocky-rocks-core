@@ -386,7 +386,7 @@ class Application(rocks.app.Application):
 
 
     def __repr__(self):
-        return string.join(self.report, '\n')
+        return '\n'.join(self.report)
 
     def getNodeId(self, host):
         """Lookup hostname in nodes table. Host may be a name

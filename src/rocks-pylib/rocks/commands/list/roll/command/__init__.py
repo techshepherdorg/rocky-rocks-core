@@ -157,7 +157,7 @@ class Command(rocks.commands.RollArgumentProcessor,
 			if not dir:
 				continue
 			modpath = 'rocks.commands.%s' % \
-				string.join(dir.split(os.sep),'.')
+				'.'.join(dir.split(os.sep))
 			__import__(modpath)
 			module = eval(modpath)
 			try:
@@ -170,7 +170,7 @@ class Command(rocks.commands.RollArgumentProcessor,
 				continue
 			if o not in dict:
 				dict[o] = []
-			dict[o].append(string.join(dir.split(os.sep), ' '))
+			dict[o].append(' '.join(dir.split(os.sep)))
 
 		try:
 			rolls = self.getRollNames(args, params)

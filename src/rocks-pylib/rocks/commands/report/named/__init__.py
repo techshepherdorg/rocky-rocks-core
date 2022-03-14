@@ -245,7 +245,7 @@ class Command(rocks.commands.report.command):
 		pcidr = self.db.getHostAttr('localhost','Kickstart_PrivateNetmaskCIDR')
 		# Get a list of all the Public DNS servers
 		fwds = self.db.getHostAttr('localhost','Kickstart_PublicDNSServers')
-		forwarders = string.join(fwds.split(','), ';')
+		forwarders = ';'.join(fwds.split(','))
 
 		#for rocks 5.7 we need to use named.local
 		global config_preamble	
@@ -264,7 +264,7 @@ class Command(rocks.commands.report.command):
 			# format that named understands
 			sn	= self.getSubnet(n.subnet, n.netmask)
 			sn.reverse()
-			r_sn	= string.join(sn, '.')
+			r_sn	= '.'.join(sn)
 			if r_sn not in subnet_list:
 				subnet_list[r_sn] = []
 			subnet_list[r_sn].append(n)

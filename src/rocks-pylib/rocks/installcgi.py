@@ -177,7 +177,7 @@ class InstallCGI:
 		# set the language
 		#
 		cmdline = open('/proc/cmdline', 'r')
-		args = string.split(cmdline.readline())
+		args = cmdline.readline().split()
 		cmdline.close()
 
 		#
@@ -188,10 +188,10 @@ class InstallCGI:
 
 		for arg in args:
 			if arg.count('lang='):
-				a = string.split(arg, '=')
+				a = arg.split('=')
 				if len(a) > 1 and a[1] == 'ko':
 					lang = 'ko_KR'
-					langsupport = string.join([
+					langsupport = ' '.join([
 						'ko_KR.UTF-8',
 						'ko_KR',
 						'ko',
@@ -234,7 +234,7 @@ class InstallCGI:
 		cmd = '%s -O - -nv %s 2> /dev/null' % (wget, url)
 
 		for line in os.popen(cmd).readlines():
-			a = string.split(line, '"')
+			a = line.split('"')
 
 			if a[0] == '<a href=':
 				#

@@ -585,8 +585,8 @@ class RPMFile(RPMBaseFile):
         while dbdir:
             if not os.listdir(dbdir):
                 shutil.rmtree(dbdir)
-            list = string.split(dbdir, os.sep)
-            dbdir = string.join(list[:-1], os.sep)
+            list = dbdir.split(os.sep)
+            dbdir = os.sep.join(list[:-1])
 
         print('retval', retval)
 
@@ -600,7 +600,7 @@ class RollFile(RPMBaseFile):
 
     def __init__(self, file, timestamp=None, size=None):
         RPMBaseFile.__init__(self, file, timestamp, size, 2)
-        self.diskID = int(string.split(file, '.')[-2][4:])
+        self.diskID = int(file.split('.')[-2][4:])
     
     def __cmp__(self, file):
         if self.getRollArch() != file.getRollArch():
@@ -668,7 +668,7 @@ class RollInfoFile(File,
             xml.append('\t<%s%s/>' % (tag, attrs))
         xml.append('</roll>')
         
-        return string.join(xml, '\n')
+        return '\n'.join(xml)
         
     def getRollName(self):
         return self.attrs['roll']['name']
@@ -739,9 +739,9 @@ class Tree:
         return list(self.tree.keys())
 
     def clear(self, path=''):
-        l1 = string.split(path, os.sep)
+        l1 = path.split(os.sep)
         for key in list(self.tree.keys()):
-            l2 = string.split(key, os.sep)
+            l2 = key.split(os.sep)
             if rocks.util.list_isprefix(l1, l2):
                 del self.tree[key]
     

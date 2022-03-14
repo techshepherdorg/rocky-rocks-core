@@ -167,7 +167,7 @@ class Command(rocks.commands.run.command):
         for roll in args:
             rolls.append(roll)
         xml = self.command('list.host.xml', [ host,
-            'roll=%s' % string.join(rolls, ',') ])
+            'roll=%s' % ','.join(rolls) ])
 
 
         reader = Sax2.Reader()
@@ -206,8 +206,8 @@ class Command(rocks.commands.run.command):
         script += gen.generate_config_script()
         
         if dryrun:
-            self.addText(string.join(script, ''))
+            self.addText(''.join(script))
         else:
-            os.system(string.join(script, ''))
+            os.system(''.join(script))
 
 

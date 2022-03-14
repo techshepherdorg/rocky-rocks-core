@@ -176,7 +176,7 @@ class Distribution:
 				continue
 			if not preamble:
 				if not re.search("repolist:",line):
-					repolist.append(string.split(line)[0])
+					repolist.append(line.split()[0])
 		return repolist
 
 	def createLocalYumConf(self):

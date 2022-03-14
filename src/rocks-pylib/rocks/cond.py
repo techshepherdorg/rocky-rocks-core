@@ -160,26 +160,26 @@ def CreateCondExpr(archs, oses, releases, cond):
     
 	if archs:
 		list = []		# OR of architectures
-		for arch in string.split(archs, ','):
+		for arch in archs.split(','):
 			list.append('arch=="%s"' % arch.strip())
-		exprs.append("( %s )" % string.join(list,' or '))
+		exprs.append("( %s )" % ' or '.join(list))
 
 	if oses:
 		list = []		# OR of OSes
-		for os in string.split(oses, ','):
+		for os in oses.split(','):
 			list.append('os=="%s"' % os.strip())
-		exprs.append("( %s )" % string.join(list,' or '))
+		exprs.append("( %s )" % ' or '.join(list))
 
 	if releases:
 		list = []		# OR of releases
-		for release in string.split(releases, ','):
+		for release in releases.split(','):
 			list.append('release=="%s"' % release.strip())
-		exprs.append("( %s )" % string.join(list,' or '))
+		exprs.append("( %s )" % ' or '.join(list))
 
 	if cond:
 		exprs.append(cond)	# AND of the above and the generic cond
 
-	return string.join(exprs, ' and ')
+	return ' and '.join(exprs)
 
 
     

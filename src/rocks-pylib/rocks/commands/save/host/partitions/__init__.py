@@ -115,8 +115,8 @@ class Command(rocks.commands.save.host.command):
         
         #print devices
         discoveredDisk = open('/tmp/discovered.disks', 'w')
-        discoveredDisk.write("disks: " + string.join(devices, ' ') + "\n")
-        discoveredDisk.write("raids: " + string.join(raids, ' ') + "\n")
+        discoveredDisk.write("disks: " + ' '.join(devices) + "\n")
+        discoveredDisk.write("raids: " + ' '.join(raids) + "\n")
         discoveredDisk.close()
         
     

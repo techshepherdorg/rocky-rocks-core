@@ -757,7 +757,7 @@ class MetaRollBuilder(Builder):
 				arch.append(roll.getRollArch())
 
 		name.sort()
-		rollName = string.join(name, '+')
+		rollName = '+'.join(name)
 		if len(arch) == 1:
 			arch = arch[0]
 		else:

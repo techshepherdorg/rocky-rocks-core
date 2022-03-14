@@ -559,7 +559,7 @@ class Generator:
 
         l.append('')
 
-        return string.join(l, '\n')
+        return '\n'.join(l)
 
     def rcsEnd(self, file, owner, perms):
         """
@@ -588,7 +588,7 @@ class Generator:
         if perms:
             l.append('chmod %s %s' % (perms, file))
 
-        return string.join(l, '\n')
+        return '\n'.join(l)
 
     
     def order(self, node):
@@ -774,7 +774,7 @@ class Generator:
         list.append('# Debugging Information')
         list.append('#')
         for text in self.ks['debug']:
-            for line in string.split(text, '\n'):
+            for line in text.split('\n'):
                 list.append('# %s' % line)
         list.append('#')
         return list
@@ -1096,7 +1096,7 @@ class Generator_linux(Generator):
         else:
             arg = ''
         list = []
-        list.append(string.strip(string.join([interpreter, arg])))
+        list.append(string.strip(' '.join([interpreter, arg])))
         list.append(self.getChildText(node))
         self.ks['pre'].append(list)
 
@@ -1324,7 +1324,7 @@ class Generator_linux(Generator):
         for list in self.ks['pre']:
             pre_list.append('%%pre --log=/tmp/ks-pre.log %s' %
                 list[0])
-            pre_list.append(string.join(list[1:], '\n'))
+            pre_list.append('\n'.join(list[1:]))
             pre_list.append('%end\n')
             
         return pre_list
@@ -1376,7 +1376,7 @@ class Generator_linux(Generator):
         temp_list.append("cat > %s << 'ROCKS-KS-POST'\n" % tmpfile)
         # Shell interpreter (python, bash, etc)
         temp_list.append('%s\n' % list[1])
-        temp_list.append(string.join(list[2:], '\n'))
+        temp_list.append('\n'.join(list[2:]))
         temp_list.append('\nROCKS-KS-POST\n')
         # Chmod and execute the shell script just created
         temp_list.append('/bin/chmod +x %s\n' % tmpfile)
@@ -1926,7 +1926,7 @@ class Generator_sunos(Generator):
         for i in self.ks['pkg_off']:
             list.append('package\t%s\tdelete' % i)
         if len(self.ks['patch']) > 0:
-            patch_list = string.join(self.ks['patch'],',')
+            patch_list = ','.join(self.ks['patch'])
             list.append('patch %s local_file /cdrom/Solaris_10/Patches' % patch_list)
 
         return list

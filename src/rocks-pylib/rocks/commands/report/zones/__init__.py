@@ -302,7 +302,7 @@ class Command(rocks.commands.report.command):
 			t_ip = ip.split('.')[subnet_len:]
 			t_ip.reverse()
 			
-			s += '%s PTR %s.%s.\n' % (string.join(t_ip, '.'), name, dnszone)
+			s += '%s PTR %s.%s.\n' % ('.'.join(t_ip), name, dnszone)
 
 		#
 		# handle reverse local additions
@@ -329,7 +329,7 @@ class Command(rocks.commands.report.command):
 		for n in networks:
 			sn = self.getSubnet(n.subnet, n.netmask)
 			sn.reverse()
-			r_sn = string.join(sn, '.')
+			r_sn = '.'.join(sn)
 			if r_sn not in subnet_list:
 				subnet_list[r_sn] = []
 			subnet_list[r_sn].append(n)

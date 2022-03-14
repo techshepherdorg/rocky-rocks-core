@@ -136,7 +136,7 @@ class Command(rocks.commands.sync.command):
 		"a CIDR value i, 0<=i<=32. Handles only IPv4 addresses."
 
 		mask = 32
-		Net = string.split(net, ".")
+		Net = net.split(".")
 		for i in Net:
 			for j in range(0,8):
 				if int(i) & 2**j:
@@ -152,7 +152,7 @@ class Command(rocks.commands.sync.command):
 		network = self.getNetwork()
 		netmask = self.getNetmask()
 
-		w = string.split(network, '.')
+		w = network.split('.')
 		work = []
 		for i in w:
 			work.append(int(i))

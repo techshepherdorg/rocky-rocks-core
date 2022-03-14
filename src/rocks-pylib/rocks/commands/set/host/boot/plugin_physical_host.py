@@ -162,7 +162,7 @@ class Plugin(rocks.commands.Plugin):
 		ipaddr, = self.db.fetchone()
 
 		rstr = ''
-		for i in string.split(ipaddr, '.'):
+		for i in ipaddr.split('.'):
 			hexstr = '%02x' % (int(i))
 			rstr += '%s' % hexstr.upper()
 		return rstr

@@ -384,7 +384,7 @@ class DatabaseHelper(rocks.db.database.Database):
             n = hostname.split('.')
             if len(n) > 1:
                 name = n[0]
-                domain = string.join(n[1:], '.')
+                domain = '.'.join(n[1:])
                 cmd = 'select n.name from nodes n, '    +\
                     'networks nt, subnets s where '    +\
                     'nt.subnet=s.id and '        +\

@@ -298,7 +298,7 @@ class AttributeHandler:
 		for (k, v) in list(attrs.items()):
 			list.append('\t<!ENTITY %s "%s">\n' % (k, v))
 		list.append(']>\n')
-		self.header = string.join(list, '')
+		self.header = ''.join(list)
 
 	def getXMLHeader(self):
 		return self.header
@@ -909,7 +909,7 @@ class Pass1NodeHandler(handler.ContentHandler,
 		w, r = (p.stdin, p.stdout)
 
 		if 'ROCKSDEBUG' in os.environ:
-			for line in string.join(self.evalText, '').split('\n'):
+			for line in ''.join(self.evalText).split('\n'):
 				sys.stderr.write('[eval]%s\n' % line)
 		
 		for line in self.evalText:
@@ -999,7 +999,7 @@ class Pass1NodeHandler(handler.ContentHandler,
 			self.xml.append(saxutils.escape(s))
 			
 	def getXML(self):
-		return self.getXMLHeader() + string.join(self.xml, '')
+		return self.getXMLHeader() + ''.join(self.xml)
 
 
 class Pass2NodeHandler(handler.ContentHandler,
@@ -1049,7 +1049,7 @@ class Pass2NodeHandler(handler.ContentHandler,
 			return
 
 		if self.kskey:
-			self.kstags[self.kskey] = string.join(self.kstext, '')
+			self.kstags[self.kskey] = ''.join(self.kstext)
 			
 		self.xml.append('</%s>' % name)
 
@@ -1064,7 +1064,7 @@ class Pass2NodeHandler(handler.ContentHandler,
 		return text
 		
 	def getXML(self):
-		return string.join(self.xml, '')
+		return ''.join(self.xml)
 
 	
 				
@@ -1109,10 +1109,10 @@ class Node(rocks.graph.Node):
 		return self.roll
 
 	def getXML(self):
-		return string.join(self.xml, '')
+		return ''.join(self.xml)
 
 	def getKSText(self):
-		return string.join(self.kstext, '')
+		return ''.join(self.kstext)
 
 	def getDot(self, prefix='', namespace=''):
 		attrs = 'style=filled '
@@ -1186,7 +1186,7 @@ class FrameworkEdge(Edge):
 			(prefix,
 			self.parent.name, self.child.name, label,
 			self.child.name, attrs))
-		return string.join(list, '\n')
+		return '\n'.join(list)
 					
 	
 	def drawDot(self, prefix=''):

@@ -169,7 +169,7 @@ class Command(command):
 
 			if nodes:
 				#we still have some nodes hanging around, aborting 
-				nodes = string.join([i.name for i in nodes ], ', ')
+				nodes = ', '.join([i.name for i in nodes ])
 				self.abort(("The nodes %s are still part of the appliance %s." + \
 					"\nPlease delete them (rocks remove host) before removing the appliance.") % \
 						(nodes, appliance.name))
