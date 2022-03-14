@@ -77,7 +77,7 @@
 #
 
 M2OPTIONS	= build_ext "-I/usr/include/openssl -DOPENSSL_NO_EC"
-CRYPTOVERSION	= 0.21.1
+CRYPTOVERSION	= 0.38.0
 
 build::
 	gunzip -c M2Crypto-$(CRYPTOVERSION).tar.gz | $(TAR) -xf -

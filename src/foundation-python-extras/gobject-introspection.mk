@@ -54,13 +54,13 @@
 # @Copyright@
 #
 
-GOBJECT_VERSION	= 1.40.0
+GOBJECT_VERSION	= 1.71.0
 GOBJ = gobject-introspection
 
 # build twice - first time, install into a temporary install directory
 # so that pygobject can link against it
 build::
-	gunzip -c $(GOBJ)-$(GOBJECT_VERSION).tar.gz | $(TAR) -xf -
+	$(TAR) -xf $(GOBJ)-$(GOBJECT_VERSION).tar.xz 
 	(								\
 		cd $(GOBJ)-$(GOBJECT_VERSION);			\
 		PATH=/opt/rocks/bin:$$PATH				\

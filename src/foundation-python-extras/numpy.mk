@@ -121,6 +121,10 @@ ifeq ($(strip $(VERSION.MAJOR)), 7)
 NUMPY_VERSION = 1.10.4
 endif
 
+ifeq ($(strip $(VERSION.MAJOR)), 8)
+NUMPY_VERSION = 1.22.3
+endif
+
 build::
 	gunzip -c numpy-$(NUMPY_VERSION).tar.gz | $(TAR) -xf -
 	(								\

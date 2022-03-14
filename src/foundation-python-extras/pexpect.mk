@@ -112,18 +112,18 @@
 #
 
 build::
-	gunzip -c pexpect-0.97.tar.gz | $(TAR) -xf -
+	gunzip -c pexpect-4.8.0.tar.gz | $(TAR) -xf -
 	(								\
-		cd pexpect-0.97;					\
+		cd pexpect-4.8.0;					\
 		$(PY.PATH) setup.py build;				\
 	)
 	
 install::
 	(								\
-		cd pexpect-0.97;					\
+		cd pexpect-4.8.0;					\
 		$(PY.PATH) setup.py install --root=$(ROOT);		\
 	)
 
 
 clean::
-	rm -rf pexpect-0.97
+	rm -rf pexpect-4.8.0

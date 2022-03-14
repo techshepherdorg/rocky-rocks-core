@@ -86,19 +86,19 @@
 #
 
 build::
-	gunzip -c IPy-0.55.tar.gz | $(TAR) -xf -
+	gunzip -c IPy-1.01.tar.gz | $(TAR) -xf -
 	(								\
-		cd IPy-0.55;						\
+		cd IPy-1.01;						\
 		$(PY.PATH) setup.py build;				\
 	)
 	
 install::
 	(								\
-		cd IPy-0.55;						\
+		cd IPy-1.01;						\
 		$(PY.PATH) setup.py install --root=$(ROOT);		\
 	)
 
 
 clean::
-	rm -rf IPy-0.55
+	rm -rf IPy-1.01
 

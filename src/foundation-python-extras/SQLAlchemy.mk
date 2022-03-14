@@ -57,7 +57,7 @@
 #
 #
 
-vers = 0.9.2
+vers = 1.4.32
 
 build::
 	gunzip -c SQLAlchemy-$(vers).tar.gz | $(TAR) -xf -

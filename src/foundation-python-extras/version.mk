@@ -8,6 +8,6 @@ else
 EXTRAFILES = 
 endif
 
-RPM.FILES = "/opt/rocks/share/[a-ln-zA-Z]*\\n/opt/rocks/bin/*\\n/opt/rocks/include/pycairo*\\n/opt/rocks/include/pyg*\\n/opt/rocks/include/python2.[67]/*\\n/opt/rocks/lib/pkgconfig/*\\n/opt/rocks/lib/pyg*\\n/opt/rocks/lib/python2.[67]/site-packages/*"
+RPM.FILES = "/opt/rocks/bin/*\\n/opt/rocks/lib/python3*/*"
 
 RPM.FILES += $(EXTRAFILES)

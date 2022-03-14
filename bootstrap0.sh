@@ -171,6 +171,7 @@ yum -y install libffi-devel
 compile_and_install foundation-python
 compile_and_install foundation-python-setuptools
 compile_and_install foundation-libxml2
+compile_and_install foundation-cython
 # ROCKS 8 no longer needs python-xml as not supported in Python 3
 #compile_and_install foundation-python-xml
 #compile_and_install foundation-python-extras
