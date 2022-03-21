@@ -232,13 +232,13 @@ class Graph:
 
     def getNodes(self):
         list = []
-        for key,val in list(self.nodes.items()):
+        for key,val in builtins.list(self.nodes.items()):
             list.append(val)
         return list
 
     def getEdges(self):
         list = []
-        for key,val in list(self.adjList.items()):
+        for key,val in builtins.list(self.adjList.items()):
             list.extend(val)
         return list
             
@@ -246,9 +246,9 @@ class Graph:
     def reverse(self):
         adjList      = self.adjList
         self.adjList = {}
-        for key, node in list(self.nodes.items()):
+        for key, node in builtins.list(self.nodes.items()):
             node.reverse()
-        for key,val in list(adjList.items()):
+        for key,val in builtins.list(adjList.items()):
             for edge in val:
                 edge.reverse()
                 self.addEdge(edge)
@@ -283,7 +283,7 @@ class Graph:
         
     def __repr__(self):
         list = []
-        for key,val in list(self.adjList.items()):
+        for key,val in builtins.list(self.adjList.items()):
             for e in val:
                 list.append(e.__repr__())
         return '\n'.join(list)

@@ -169,7 +169,7 @@ class IPAddr:
 
     def __init__(self, addr):
         if type(addr) == bytes:
-            self.list = list(map(int, addr.split('.')))
+            self.list = builtins.list(map(int, addr.split('.')))
             self.list.reverse()
         else:
             self.list = []

@@ -123,10 +123,10 @@ class command(rocks.commands.Command):
 		
 	def getSubnet(self, subnet, netmask):
 		s_list = subnet.split('.')
-		s_list = list(map(int, s_list))
+		s_list = builtins.list(map(int, s_list))
 		
 		n_list = netmask.split('.')
-		n_list = list(map(int, n_list))
+		n_list = builtins.list(map(int, n_list))
 		
 		net_list = []
 		for i in range(0, 4):
@@ -142,10 +142,10 @@ class command(rocks.commands.Command):
 	# computed for named.conf.
 	def getSubnet_deprecated(self, subnet, netmask):
 		s_list = subnet.split('.')
-		s_list = list(map(int, s_list))
+		s_list = builtins.list(map(int, s_list))
 		
 		n_list = netmask.split('.')
-		n_list = list(map(int, n_list))
+		n_list = builtins.list(map(int, n_list))
 		
 		net_list = []
 		cidr = 0

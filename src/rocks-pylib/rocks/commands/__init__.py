@@ -792,7 +792,7 @@ class HostArgumentProcessor:
                     dict[host] = 1
             else:                # host name
                 dict[self.db.getHostname(name)] = 1
-        list = list(dict.keys())
+        list = builtins.list(dict.keys())
         list.sort()
         return list
 
@@ -1926,7 +1926,7 @@ class Command:
             else:
                 list.append(arg)
 
-        if  "json" in list(dict.keys()):
+        if  "json" in builtins.list(dict.keys()):
             if self.str2bool(dict['json']):
                 self.json=True
 

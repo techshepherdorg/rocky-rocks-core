@@ -216,7 +216,7 @@ class Command(rocks.commands.report.command):
 				self.attrs[key] = \
 					rocks.util.escapeAttr(self.attrs[key])
 
-			for (k, v) in list(self.attrs.items()):
+			for (k, v) in builtins.list(self.attrs.items()):
 				xmlentities += '\t<!ENTITY %s "%s">\n' % (k, v)
 
 		xmlhdr =re.compile('<\?xml')

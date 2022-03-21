@@ -80,7 +80,7 @@ args = file.readline().split()
 file.close()
 
 if 'build' not in args:
-    for disk in list(nodedisks.keys()):
+    for disk in builtins.list(nodedisks.keys()):
         if p.isRocksDisk(nodedisks[disk]):
             parts += p.addPartitions(nodedisks[disk], format = 0)
 
@@ -96,7 +96,7 @@ if 'build' not in args:
 #
 # reconnect all disks that match in the database
 #
-for disk in list(nodedisks.keys()):
+for disk in builtins.list(nodedisks.keys()):
     if disk in dbpartinfo and \
         p.compareDiskInfo(dbpartinfo[disk], nodedisks[disk]):
 

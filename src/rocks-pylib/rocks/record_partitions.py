@@ -77,6 +77,6 @@ if 'build' not in args:
 # mark each disk as a 'rocks' disk -- this let's us know that we have
 # 'seen' and configured this disk
 #
-for disk in list(nodepartinfo.keys()):
+for disk in builtins.list(nodepartinfo.keys()):
 	p.isRocksDisk(nodepartinfo[disk], touchit = 1)
 

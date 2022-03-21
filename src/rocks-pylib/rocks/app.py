@@ -541,7 +541,7 @@ class RCFileHandler(rocks.util.ParseXML):
         # those that append path names found in the attributes to the sys.path
         #
         newattrs = {}
-        for (aname, avalue) in list(attrs.items()):
+        for (aname, avalue) in builtins.list(attrs.items()):
             newattrs[aname] = str(attrs[aname])
 
         if self.foundSection:

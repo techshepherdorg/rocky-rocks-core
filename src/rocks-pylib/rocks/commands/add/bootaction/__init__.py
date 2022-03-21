@@ -137,9 +137,9 @@ class Command(rocks.commands.HostArgumentProcessor, rocks.commands.add.command):
 				cols['args'] = '"%s"' % (bootargs)
 
 			self.db.execute('insert into bootaction '
-				'(%s) ' % (','.join(list(cols.keys()))) + \
+				'(%s) ' % (','.join(builtins.list(cols.keys()))) + \
 				'values '
-				'(%s) ' % (','.join(list(cols.values()))))
+				'(%s) ' % (','.join(builtins.list(cols.values()))))
 		else:
 			#
 			# update the existing row

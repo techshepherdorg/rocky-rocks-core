@@ -588,10 +588,10 @@ class Base(Arch):
 		return None
 
 	def getTreeNames(self):
-		return list(self.trees.keys())
+		return builtins.list(self.trees.keys())
 
 	def getTree(self, name):
-		if name in list(self.trees.keys()):
+		if name in builtins.list(self.trees.keys()):
 			return self.trees[name]
 		else:
 			return None
@@ -650,7 +650,7 @@ class Base(Arch):
 		return self.getTree('release')
 
 	def dumpDirNames(self):
-		for key in list(self.trees.keys()):
+		for key in builtins.list(self.trees.keys()):
 			value = self.trees[key]
 			if type(value) == list:
 				for e in value:
@@ -659,7 +659,7 @@ class Base(Arch):
 				value.dumpDirNames()
         
 	def dump(self):
-		for key in list(self.trees.keys()):
+		for key in builtins.list(self.trees.keys()):
 			value = self.trees[key]
 			if type(value) == list:
 				for e in value:

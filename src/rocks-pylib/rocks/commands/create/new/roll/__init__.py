@@ -99,7 +99,7 @@ class Textsub(UserDict.UserDict):
 			if self.re == None:
 				self.regex = re.compile("(%s)" % \
 					'|'.join(map(re.escape,
-						list(self.data.keys()))))
+						builtins.list(self.data.keys()))))
 
 	def __call__(self, match):
 		return self.data[match.string[match.start():match.end()]]

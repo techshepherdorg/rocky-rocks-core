@@ -943,7 +943,7 @@ class Generator_linux(Generator):
             attrs = node.attributes.getNamedItem((None, 'attrs'))
             if attrs:
                 dict = eval(attrs.value)
-                for (k,v) in list(dict.items()):
+                for (k,v) in builtins.list(dict.items()):
                     self.attrs[k] = v
         
     # <main>
@@ -1398,7 +1398,7 @@ class Generator_linux(Generator):
         list.append('')
         list.append('cat >> /etc/sysconfig/rocks-pre << EOF')
 
-        for (file, (owner, perms)) in list(self.rcsFiles.items()):
+        for (file, (owner, perms)) in builtins.list(self.rcsFiles.items()):
             s = self.rcsEnd(file, owner, perms)
             list.append(s)
 
@@ -1588,7 +1588,7 @@ class Generator_sunos(Generator):
             attrs = node.attributes.getNamedItem((None, 'attrs'))
             if attrs:
                 dict = eval(attrs.value)
-                for (k,v) in list(dict.items()):
+                for (k,v) in builtins.list(dict.items()):
                     self.attrs[k] = v
 
     # <main>
@@ -1968,7 +1968,7 @@ class Generator_sunos(Generator):
         list.append("<service_bundle type='profile' name='site'"
             "\n\txmlns:xi='http://www.w3.org/2001/XInclude' >")
 
-        for i in list(self.service_instances.keys()):
+        for i in builtins.list(self.service_instances.keys()):
             list.append("\t<service name='%s' version='1' type='service'>" % i)
             for j in self.service_instances[i]:
                 list.append("\t\t<instance name='%s' enabled='%s'/>" \

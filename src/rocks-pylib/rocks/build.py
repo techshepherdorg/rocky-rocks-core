@@ -1064,7 +1064,7 @@ class DistributionBuilder(Builder):
     def getRollBaseFiles(self):
         files = []
         for m in self.dist.getMirrors():
-            for key, value in list(m.getRolls().items()):
+            for key, value in builtins.list(m.getRolls().items()):
                 for arch, ver in value:
                     if self.useRoll(key, ver, arch):
                         print('    including "%s" (%s,%s) roll...' % \
@@ -1078,7 +1078,7 @@ class DistributionBuilder(Builder):
     def getRollRPMS(self):
         rpms = []
         for m in self.dist.getMirrors():
-            for key, value in list(m.getRolls().items()):
+            for key, value in builtins.list(m.getRolls().items()):
                 for arch, ver in value:
                     if self.useRoll(key, ver, arch):
                         print('    including "%s" (%s,%s) roll...' % \
@@ -1092,7 +1092,7 @@ class DistributionBuilder(Builder):
     def getRollSRPMS(self):
         rpms = []
         for m in self.dist.getMirrors():
-            for key, value in list(m.getRolls().items()):
+            for key, value in builtins.list(m.getRolls().items()):
                for arch, ver in value:
                 if self.useRoll(key,ver,arch):
                         print('    including "%s" (%s,%s) roll...' % \
@@ -1195,7 +1195,7 @@ class DistributionBuilder(Builder):
     #
 
     for m in self.dist.getMirrors():
-        for key, value in list(m.getRolls().items()):
+        for key, value in builtins.list(m.getRolls().items()):
             if key != 'base':
                 continue
 
@@ -1559,7 +1559,7 @@ class DistributionBuilder(Builder):
         # them as a list.
         
         list = []
-        for e in list(dict.keys()):
+        for e in builtins.list(dict.keys()):
             list.append(dict[e])
         return list
 

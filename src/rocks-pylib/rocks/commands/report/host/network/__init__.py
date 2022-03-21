@@ -225,7 +225,7 @@ class Command(rocks.commands.HostArgumentProcessor,
 		self.addOutput(host, 'NETWORKING=yes')
 
 		gateway = None
-		for (key, val) in list(self.db.getHostRoutes(host).items()):
+		for (key, val) in builtins.list(self.db.getHostRoutes(host).items()):
 			if key == '0.0.0.0' and val[0] == '0.0.0.0':
 				gateway = val[1]
 

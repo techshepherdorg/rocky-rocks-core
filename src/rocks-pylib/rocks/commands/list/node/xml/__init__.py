@@ -361,7 +361,7 @@ class Command(rocks.commands.list.command):
 		#
 		# make sure all the attributes are XML escaped
 		#
-		for key in list(attrs.keys()):
+		for key in builtins.list(attrs.keys()):
 			attrs[key] = rocks.util.escapeAttr(attrs[key])
 
 		if 'os' not in attrs:
@@ -523,11 +523,11 @@ class Command(rocks.commands.list.command):
 
 		self.addText('<?xml version="1.0" standalone="no"?>\n')
 		self.addText('<!DOCTYPE rocks-graph [\n')
-		for (k, v) in list(attrs.items()):
+		for (k, v) in builtins.list(attrs.items()):
 			self.addText('\t<!ENTITY %s "%s">\n' % (k, v))
 		self.addText(']>\n')
 		d = {}
-		for key in list(attrs.keys()):
+		for key in builtins.list(attrs.keys()):
 			d[key] = '&%s;' % key
 		self.addText('<%s attrs="%s">\n' % (starter_tag, d))
 		if attrs['os'] == 'linux':

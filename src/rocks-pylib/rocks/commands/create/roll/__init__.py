@@ -386,7 +386,7 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		# convert the dictionary to a list and return all the RPMFiles
 		
 		list = []
-		for e in list(dict.keys()):
+		for e in builtins.list(dict.keys()):
 			list.append(dict[e])
 		return list
 
@@ -535,9 +535,9 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 					rpm[1:].encode('utf-8'))
 
 				try:
-					for r in list(group.mandatory_packages.keys()) + \
-							list(group.optional_packages.keys()) + \
-							list(group.default_packages.keys()):
+					for r in builtins.list(group.mandatory_packages.keys()) + \
+							builtins.list(group.optional_packages.keys()) + \
+							builtins.list(group.default_packages.keys()):
 						if r not in selected:
 							selected.append(r)
 				except:
@@ -556,8 +556,8 @@ class RollBuilder_linux(Builder, rocks.dist.Arch):
 		while not done:
 			done = 1
 			results = a.findDeps(pkgs)
-			for pkg in list(results.keys()):
-				for req in list(results[pkg].keys()):
+			for pkg in builtins.list(results.keys()):
+				for req in builtins.list(results[pkg].keys()):
 					reqlist = results[pkg][req]
 					for r in reqlist:
 						if r.name not in selected:

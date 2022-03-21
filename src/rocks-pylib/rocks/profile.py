@@ -296,7 +296,7 @@ class AttributeHandler:
 		list = []
 		list.append('<?xml version="1.0" standalone="no"?>\n')
 		list.append('<!DOCTYPE rocks-graph [\n')
-		for (k, v) in list(attrs.items()):
+		for (k, v) in builtins.list(attrs.items()):
 			list.append('\t<!ENTITY %s "%s">\n' % (k, v))
 		list.append(']>\n')
 		self.header = ''.join(list)
@@ -902,7 +902,7 @@ class Pass1NodeHandler(handler.ContentHandler,
 	def endElement_eval(self, name):
 		if not self.doEval:
 			return
-		for key in list(self.entities.keys()):
+		for key in builtins.list(self.entities.keys()):
 			os.environ[key] = self.entities[key]
 		p = subprocess.Popen(self.evalShell, shell=True,
 				stdin=subprocess.PIPE, stdout=subprocess.PIPE, 
@@ -1060,7 +1060,7 @@ class Pass2NodeHandler(handler.ContentHandler,
 		
 	def getKSText(self):
 		text = ''
-		for key, val in list(self.kstags.items()):
+		for key, val in builtins.list(self.kstags.items()):
 			text += '%s %s\n' % (key, val)
 		return text
 		
@@ -1228,7 +1228,7 @@ class FrameworkIterator(rocks.graph.GraphIterator):
 
 	def run(self, node):
 		rocks.graph.GraphIterator.run(self, node)
-		keys = list(self.nodes.keys())
+		keys = builtins.list(self.nodes.keys())
 		keys.sort()
 		list = []
 		for key in keys:

@@ -281,7 +281,7 @@ def list2str(list):
 
 
 def listcmp(l1, l2):
-    return list(map(lambda a,b: a==b, l1, l2))
+    return builtins.list(map(lambda a,b: a==b, l1, l2))
 
 def listdup(e, n):
     l = []

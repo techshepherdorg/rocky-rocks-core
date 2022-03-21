@@ -268,7 +268,7 @@ class Command(rocks.commands.HostArgumentProcessor,
 		if rows > 0:
 			self.addOutput(host, '*nat')
 			self.makeRules(host,rules, comments)	
-			for (key, rule) in list(rules.items()):
+			for (key, rule) in builtins.list(rules.items()):
 				if key in comments and comments[key]:
 					self.addOutput(host,
 						'# %s' % comments[key])
@@ -290,7 +290,7 @@ class Command(rocks.commands.HostArgumentProcessor,
 
 			rules, comments = self.getRules(host)
 
-			keys = list(rules.keys())
+			keys = builtins.list(rules.keys())
 			keys.sort()
 			for key in keys:
 				if key in comments and comments[key]:

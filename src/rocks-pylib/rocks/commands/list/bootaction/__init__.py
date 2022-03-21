@@ -118,7 +118,7 @@ class Command(rocks.commands.list.command):
 		for row in self.db.fetchall():
 			dict[row[0]] = row[1:]
 
-		keys = list(dict.keys())
+		keys = builtins.list(dict.keys())
 		keys.sort()
 		for action in keys:
 			self.addOutput(action, dict[action])

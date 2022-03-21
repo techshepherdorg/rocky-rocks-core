@@ -108,7 +108,7 @@ class Command(rocks.commands.list.host.command):
 		for host in self.getHostnames(args):
 			routes = self.db.getHostRoutes(host, 1)
 
-			keys = list(routes.keys())
+			keys = builtins.list(routes.keys())
 			keys.sort()
 			for key in keys:		
 				self.addOutput(host, 
