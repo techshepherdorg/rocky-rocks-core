@@ -280,13 +280,13 @@ class Application(rocks.app.Application):
         
         currentKeys=[]
         for key in currentList:
-            if type(key) == tuple:
+            if type(key) == builtins.tuple:
                 currentKeys.append(key[0])
             else:
                 currentKeys.append(key)
         
         for value in newList:
-            if type(value) == tuple:
+            if type(value) == builtins.tuple:
                 compareKey = value[0]
             else:
                 compareKey = value

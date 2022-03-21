@@ -1434,7 +1434,7 @@ class Command:
         #           hostlist,iface,mac=self.fillPositionalArgs( \
             #            ('iface','mac'),params,args)
     
-        if not type(names) in [ list, tuple ]:
+        if not type(names) in [ builtins.list, builtins.tuple ]:
             names = [ names ]
              
         if not params:
@@ -1498,7 +1498,7 @@ class Command:
 
         # make sure names is a list or tuple
         
-        if not type(names) in [ list, tuple ]:
+        if not type(names) in [ builtins.list, builtins.tuple ]:
             names = [ names ]
 
         # for each element in the names list make sure it is also
@@ -1508,7 +1508,7 @@ class Command:
         
         pdlist = []
         for e in names:
-            if type(e) in [ list, tuple] \
+            if type(e) in [ builtins.list, builtins.tuple] \
                 and len(e) == 2:
                 tuple = ( e[0], e[1] )
             else:

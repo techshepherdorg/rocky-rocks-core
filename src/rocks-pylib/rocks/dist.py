@@ -605,7 +605,7 @@ class Base(Arch):
 		except KeyError:
 			return []
 		list = [] 
-		if type(value) == list:
+		if type(value) == builtins.list:
 			for tree in value:
 				list.extend(tree.getFiles(path))
 			return list
@@ -652,7 +652,7 @@ class Base(Arch):
 	def dumpDirNames(self):
 		for key in builtins.list(self.trees.keys()):
 			value = self.trees[key]
-			if type(value) == list:
+			if type(value) == builtins.list:
 				for e in value:
 					e.dumpDirNames()
 			else:
@@ -661,7 +661,7 @@ class Base(Arch):
 	def dump(self):
 		for key in builtins.list(self.trees.keys()):
 			value = self.trees[key]
-			if type(value) == list:
+			if type(value) == builtins.list:
 				for e in value:
 					e.dump()
 			else:

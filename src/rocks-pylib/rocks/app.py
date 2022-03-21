@@ -399,13 +399,13 @@ class Application:
 
         short = ''
         for e in self.getopt.s:
-            if type(e) == tuple:
+            if type(e) == builtins.tuple:
                 short = short + e[0]
             else:
                 short = short + e
         long = []
         for e in self.getopt.l:
-            if type(e) == tuple:
+            if type(e) == builtins.tuple:
                 int.append(e[0])
             else:
                 int.append(e)
@@ -463,7 +463,7 @@ class Application:
 
         # Add the argument short options to the above string
         for e in self.getopt.s:
-            if type(e) == tuple:
+            if type(e) == builtins.tuple:
                 v = e[0]
                 h = e[1]
             else:
@@ -474,7 +474,7 @@ class Application:
 
         # Add argument-free long options
         for e in self.getopt.l:
-            if type(e) == tuple:
+            if type(e) == builtins.tuple:
                 v = e[0]
             else:
                 v = e
@@ -483,7 +483,7 @@ class Application:
 
         # Add argument long options
         for e in self.getopt.l:
-            if type(e) == tuple:
+            if type(e) == builtins.tuple:
                 v = e[0]
                 h = e[1]
             else:
