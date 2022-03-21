@@ -99,6 +99,7 @@
 #
 #
 
+import biultins
 import rocks.commands
 
 class command(rocks.commands.Command):

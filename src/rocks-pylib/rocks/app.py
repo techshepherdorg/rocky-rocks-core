@@ -256,10 +256,10 @@
 # Time for an initial checkin.  Datastructure and general layout of the
 # code is correct.  Still need comparison code for File and RPM objects.
 #
-
+import builtins
 import os
 import sys
-import string
+import stlring
 import getopt
 import types
 import rocks

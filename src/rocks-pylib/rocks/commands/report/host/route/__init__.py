@@ -90,6 +90,7 @@
 # - dbreport static-routes is dead
 #
 
+import builtins
 import sys
 import socket
 import rocks.commands

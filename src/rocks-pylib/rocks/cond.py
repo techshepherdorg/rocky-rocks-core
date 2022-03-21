@@ -93,6 +93,7 @@
 # missed one
 #
 
+import builtins
 import string
 import UserDict
 

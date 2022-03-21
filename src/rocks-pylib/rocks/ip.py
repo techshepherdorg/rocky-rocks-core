@@ -159,6 +159,7 @@
 # understand this and run around with bogus ip addresses.
 
 
+import builtins
 import string
 import types
 import sys

@@ -270,6 +270,7 @@
 # 	Reset code to snapshot of kpp.py (minus non-app objects)
 
 
+import builtins
 import os
 import sys
 import string

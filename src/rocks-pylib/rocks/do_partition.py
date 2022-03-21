@@ -1,5 +1,6 @@
 #!/opt/rocks/bin/python
 
+import builtins
 import sys
 import string
 from . import rocks_partition

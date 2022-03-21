@@ -65,6 +65,7 @@
 # Add list global sec_attr command
 #
 
+import builtins
 import os
 import sys
 import rocks.commands

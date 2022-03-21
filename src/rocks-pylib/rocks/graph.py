@@ -152,6 +152,7 @@
 # wish I remembered what changed...
 #
 
+import builtins
 import string
 import rocks.util
 

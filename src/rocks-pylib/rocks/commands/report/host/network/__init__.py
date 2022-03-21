@@ -133,6 +133,7 @@
 #
 #
 
+import builtins
 import rocks
 import rocks.commands
 

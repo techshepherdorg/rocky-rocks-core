@@ -223,6 +223,7 @@
 #	History Lost
 #	File is kpp.py w/o the App class
 
+import builtins
 import os
 import sys
 import string

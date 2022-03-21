@@ -460,6 +460,7 @@
 # code is correct.  Still need comparison code for File and RPM objects.
 #
 
+import builtins
 import os
 import types
 import string

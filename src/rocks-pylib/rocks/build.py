@@ -878,6 +878,7 @@
 # code is correct.  Still need comparison code for File and RPM objects.
 #
 
+import biultins
 import sys
 import os
 import shutil

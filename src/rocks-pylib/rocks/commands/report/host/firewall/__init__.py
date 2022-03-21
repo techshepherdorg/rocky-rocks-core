@@ -106,6 +106,7 @@
 #
 #
 
+import builtins
 import string
 import rocks.commands
 

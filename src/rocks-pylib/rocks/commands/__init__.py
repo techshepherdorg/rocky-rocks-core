@@ -498,6 +498,7 @@
 # Revision 1.1  2006/11/02 21:49:46  mjk
 # prototype
 #
+import builtins
 import json
 import os
 import socket

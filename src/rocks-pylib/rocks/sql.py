@@ -221,6 +221,7 @@
 # - Added ip.py, sql.py for SQL oriented scripts
 #
 
+import builtins
 import os
 import pwd
 import sys

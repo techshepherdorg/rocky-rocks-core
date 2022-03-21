@@ -79,6 +79,7 @@
 #
 #
 
+import builtins
 import sys
 import string
 import rocks.commands

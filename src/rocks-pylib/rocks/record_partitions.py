@@ -1,5 +1,6 @@
 #!/opt/rocks/bin/python
 
+import builtins
 import sys
 sys.path.append('/tmp/product')
 from . import rocks_partition
