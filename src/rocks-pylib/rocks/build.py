@@ -1,4 +1,4 @@
-#! /opt/rocks/bin/python
+#! /opt/rocks/bin/python3
 # 
 # @Copyright@
 # 
@@ -878,7 +878,7 @@
 # code is correct.  Still need comparison code for File and RPM objects.
 #
 
-import biultins
+import builtins
 import sys
 import os
 import shutil
@@ -1001,24 +1001,24 @@ class DistributionBuilder(Builder):
         self.dist        = dist
         self.useLinks        = links
         self.compsPath        = None
-    self.useRolls        = {}
-    self.allRolls        = 1
-    self.onlyRolls        = 0
-    self.withSiteProfiles   = 0
-    self.version     = '1.0'
-    self.calcmd5        = 1
+        self.useRolls        = {}
+        self.allRolls        = 1
+        self.onlyRolls        = 0
+        self.withSiteProfiles   = 0
+        self.version     = '1.0'
+        self.calcmd5        = 1
 
-    # Build the Tree objects for the Mirror and Distribution
-    # trees.  The actual files for the distibution may or may not
-    # exist.  We no longer nuke pre-existing distibutions before
-    # building a new one.  This will make mirroring simpler.
+        # Build the Tree objects for the Mirror and Distribution
+        # trees.  The actual files for the distibution may or may not
+        # exist.  We no longer nuke pre-existing distibutions before
+        # building a new one.  This will make mirroring simpler.
 
-    for mirror in self.dist.getMirrors():
-        if not mirror.isBuilt():
-            mirror.build()
+        for mirror in self.dist.getMirrors():
+            if not mirror.isBuilt():
+                mirror.build()
 
-    if not self.dist.isBuilt():
-        self.dist.build()
+        if not self.dist.isBuilt():
+            self.dist.build()
 
 
     def setRolls(self, list, only=0):
@@ -1051,14 +1051,14 @@ class DistributionBuilder(Builder):
     def useRoll(self, key, ver, arch):
         "Returns true if we should include this roll"
 
-    if arch == self.dist.arch:
-        if self.allRolls:
-            return 1
-        if key in self.useRolls:
-            version, enabled = self.useRolls[key]
-            if enabled and version == ver:
+        if arch == self.dist.arch:
+            if self.allRolls:
                 return 1
-    return 0
+            if key in self.useRolls:
+                version, enabled = self.useRolls[key]
+                if enabled and version == ver:
+                    return 1
+        return 0
 
 
     def getRollBaseFiles(self):
@@ -1187,17 +1187,17 @@ class DistributionBuilder(Builder):
     def includeCriticalRPMS(self):
         print('Including critical RPMS')
 
-    #
-    # there are some standard RPMs that we build in order for our
-    # modifcations to the installer to work correctly. this function
-    # ensures that the rocks-built standard RPMs are always included
-    # and the ones from OS CDs are not.
-    #
+        #
+        # there are some standard RPMs that we build in order for our
+        # modifcations to the installer to work correctly. this function
+        # ensures that the rocks-built standard RPMs are always included
+        # and the ones from OS CDs are not.
+        #
 
-    for m in self.dist.getMirrors():
-        for key, value in builtins.list(m.getRolls().items()):
-            if key != 'base':
-                continue
+        for m in self.dist.getMirrors():
+            for key, value in builtins.list(m.getRolls().items()):
+                if key != 'base':
+                    continue
 
             for arch, ver in value:
                 if self.useRoll(key, ver, arch):
@@ -1282,34 +1282,34 @@ class DistributionBuilder(Builder):
     def buildKickstart(self):
         print('Installing XML Kickstart profiles')
 
-    build   = self.dist.getBuildPath()
+        build   = self.dist.getBuildPath()
 
-    for rpm in self.dist.getRPMS():
-        tok = rpm.getBaseName().split('-')
-        if tok[0] != 'roll':
-            continue
-        try:
-            k = tok.index('kickstart')
-            rollname = '-'.join(tok[1:k])
-        except ValueError:
-            continue
+        for rpm in self.dist.getRPMS():
+            tok = rpm.getBaseName().split('-')
+            if tok[0] != 'roll':
+                continue
+            try:
+                k = tok.index('kickstart')
+                rollname = '-'.join(tok[1:k])
+            except ValueError:
+                continue
             
         print('    installing "%s" profiles...' % rollname)
         self.applyRPM(rpm.getBaseName(), build)
 
-    # Copy local profiles into the distribution.
-    if self.withSiteProfiles:
-        print('    installing "site" profiles...')
-        tree = self.dist.getSiteProfilesTree()
-        for dir in tree.getDirs():
-            for file in tree.getFiles(dir):
-                path = os.path.join(build, dir)
-                if not os.path.isdir(path):
-                    os.makedirs(path)
-                shutil.copy(file.getFullName(),
-                    os.path.join(path, file.getName()))
-                # make sure apache can read site XML
-                file.chmod(0o664)
+        # Copy local profiles into the distribution.
+        if self.withSiteProfiles:
+            print('    installing "site" profiles...')
+            tree = self.dist.getSiteProfilesTree()
+            for dir in tree.getDirs():
+                for file in tree.getFiles(dir):
+                    path = os.path.join(build, dir)
+                    if not os.path.isdir(path):
+                        os.makedirs(path)
+                    shutil.copy(file.getFullName(),
+                        os.path.join(path, file.getName()))
+                    # make sure apache can read site XML
+                    file.chmod(0o664)
 
 
     def applyRPM(self, name, root, flags=''):
@@ -1320,172 +1320,172 @@ class DistributionBuilder(Builder):
         Throws a ValueError if it cannot find the specified RPM, and
         BuildError if the RPM was found but could not be installed."""
 
-    rpm = None
-    try:
-            rpm = self.dist.getRPM(name)
-    except rocks.dist.DistRPMList as e:
-        for r in e.list:
-            if r.getPackageArch() == self.dist.getArch():
-                rpm = r
-                break
+        rpm = None
+        try:
+                rpm = self.dist.getRPM(name)
+        except rocks.dist.DistRPMList as e:
+            for r in e.list:
+                if r.getPackageArch() == self.dist.getArch():
+                    rpm = r
+                    break
 
-        if not rpm:
-            raise ValueError("could not find %s" % name)
+            if not rpm:
+                raise ValueError("could not find %s" % name)
 
-        dbdir = os.path.join(root, 'var', 'lib', 'rpm')
-        if not os.path.isdir(dbdir):
-            os.makedirs(dbdir)
+            dbdir = os.path.join(root, 'var', 'lib', 'rpm')
+            if not os.path.isdir(dbdir):
+                os.makedirs(dbdir)
 
-        reloc = subprocess.call("rpm -q --queryformat '%{prefixes}\n' -p " +
+            reloc = subprocess.call("rpm -q --queryformat '%{prefixes}\n' -p " +
                         rpm.getFullName() + "| grep none > /dev/null", shell=True)
 
-    cmd = 'rpm -i --ignoresize --nomd5 --force --nodeps --ignorearch '
-    cmd += '--dbpath %s ' % dbdir
-    if reloc:
-        cmd = cmd + '--prefix %s %s %s' % (root, flags,
+        cmd = 'rpm -i --ignoresize --nomd5 --force --nodeps --ignorearch '
+        cmd += '--dbpath %s ' % dbdir
+        if reloc:
+            cmd = cmd + '--prefix %s %s %s' % (root, flags,
                            rpm.getFullName())
-    else:
-        cmd = cmd + '--badreloc --relocate /=%s %s %s' % (root, flags,
+        else:
+            cmd = cmd + '--badreloc --relocate /=%s %s %s' % (root, flags,
                                   rpm.getFullName())
 
-    if self.debug > 0:
-                sys.stderr.write('build.applyRPM: executing "%s"' % cmd)
+        if self.debug > 0:
+            sys.stderr.write('build.applyRPM: executing "%s"' % cmd)
 
-        retval = subprocess.call(cmd + ' > /dev/null 2>&1', shell=True)
+            retval = subprocess.call(cmd + ' > /dev/null 2>&1', shell=True)
 
-        shutil.rmtree(os.path.join(root, 'var'))
+            shutil.rmtree(os.path.join(root, 'var'))
         
-        if retval == 256:
-            raise BuildError("could not apply RPM %s" % (name))
+            if retval == 256:
+                raise BuildError("could not apply RPM %s" % (name))
 
-        return retval
+            return retval
 
 
     def buildProductImg(self):
-    #
-    # the directory where the python files exist that are used to
-    # extend anaconda
-    #
+        #
+        # the directory where the python files exist that are used to
+        # extend anaconda
+        #
 
         ## For CentOS 7, rocks-boot has the product img
         if self.versionMajor >= 7:
                 return
-    product = '../../images/product.img'
-    productfilesdir = os.path.join(self.dist.getBuildPath(), 'include')
+        product = '../../images/product.img'
+        productfilesdir = os.path.join(self.dist.getBuildPath(), 'include')
 
-    if not os.path.exists(productfilesdir):
+        if not os.path.exists(productfilesdir):
+            #
+            # there are no 'product' files, so there's nothing to do.
+            # let's just return
+            #
+            return
+
+        cwd = os.getcwd()
+
         #
-        # there are no 'product' files, so there's nothing to do.
-        # let's just return
+        # make an MD5 checksum for all files in the distribution
         #
+        # the 'sed' command strips off the leading "./" from the pathnames
+        #
+        # don't include the build, SRPMS and force directories
+        #
+        os.chdir(self.dist.getReleasePath())
+        if self.calcmd5:
+            cmd = '/usr/bin/md5sum `find -L . -type f | sed "s/^\.\///" | '
+            cmd += 'egrep -v "^build|^SRPMS|^force" | egrep -v "rpm$"` '
+            cmd += '> %s/packages.md5' % (productfilesdir)
+        else:
+            cmd = 'touch %s/packages.md5' % (productfilesdir)
+
+        subprocess.call(cmd, shell=True)
+
+        #
+        # create the product.img file
+        #
+        os.chdir(productfilesdir)
+
+        if not os.path.exists('../../images'):
+            os.makedirs('../../images')
+
+        subprocess.call('rm -f %s' % (product), shell=True)
+        cmd = '/sbin/mksquashfs packages.md5 installclass/*py installclasses '
+        cmd += '%s ' % (product)
+        cmd += '-keep-as-directory > /dev/null 2>&1'
+        subprocess.call(cmd,shell=True)
+
+        if os.path.exists(product):
+            #
+            # on a server installation (e.g., frontend), mksquashfs
+            # fails, but it is not important that product.img is built
+            # during the installation. product.img was already downloaded
+            # off the CD, so it will not be needed for the remainder of
+            # the server installation.
+            #
+            os.chmod(product, 0o664)
+
+        os.chdir(cwd)
         return
-
-    cwd = os.getcwd()
-
-    #
-    # make an MD5 checksum for all files in the distribution
-    #
-    # the 'sed' command strips off the leading "./" from the pathnames
-    #
-    # don't include the build, SRPMS and force directories
-    #
-    os.chdir(self.dist.getReleasePath())
-    if self.calcmd5:
-        cmd = '/usr/bin/md5sum `find -L . -type f | sed "s/^\.\///" | '
-        cmd += 'egrep -v "^build|^SRPMS|^force" | egrep -v "rpm$"` '
-        cmd += '> %s/packages.md5' % (productfilesdir)
-    else:
-        cmd = 'touch %s/packages.md5' % (productfilesdir)
-
-    subprocess.call(cmd, shell=True)
-
-    #
-    # create the product.img file
-    #
-    os.chdir(productfilesdir)
-
-    if not os.path.exists('../../images'):
-        os.makedirs('../../images')
-
-    subprocess.call('rm -f %s' % (product), shell=True)
-    cmd = '/sbin/mksquashfs packages.md5 installclass/*py installclasses '
-    cmd += '%s ' % (product)
-    cmd += '-keep-as-directory > /dev/null 2>&1'
-    subprocess.call(cmd,shell=True)
-
-    if os.path.exists(product):
-        #
-        # on a server installation (e.g., frontend), mksquashfs
-        # fails, but it is not important that product.img is built
-        # during the installation. product.img was already downloaded
-        # off the CD, so it will not be needed for the remainder of
-        # the server installation.
-        #
-        os.chmod(product, 0o664)
-
-    os.chdir(cwd)
-    return
 
 
     def createrepo(self):
-    print('Creating repository')
+        print('Creating repository')
 
-    cwd = os.getcwd()
-    releasedir = self.dist.getReleasePath()
-    os.chdir(releasedir)
+        cwd = os.getcwd()
+        releasedir = self.dist.getReleasePath()
+        os.chdir(releasedir)
 
-    #
-    # first check in the install environment (/tmp/updates), then
-    # look in the 'normal' place (on a running frontend).
-    #
-    createrepo = '/tmp/updates/usr/share/createrepo/genpkgmetadata.py'
-    if not os.path.exists(createrepo):
-        createrepo = '/usr/share/createrepo/genpkgmetadata.py'
+        #
+        # first check in the install environment (/tmp/updates), then
+        # look in the 'normal' place (on a running frontend).
+        #
+        createrepo = '/tmp/updates/usr/share/createrepo/genpkgmetadata.py'
+        if not os.path.exists(createrepo):
+            createrepo = '/usr/share/createrepo/genpkgmetadata.py'
 
 
-    groupfile = "%s/RedHat/base/comps.xml" % releasedir
-    if os.path.exists(groupfile):
-        gf = "--groupfile %s/RedHat/base/comps.xml " % (releasedir)
-    else:
-        print("Couldn't find the groupfile %s" % groupfile)
-        print("\tIf you are bootstrapping, this is not a problem")
-        gf = " "
+        groupfile = "%s/RedHat/base/comps.xml" % releasedir
+        if os.path.exists(groupfile):
+            gf = "--groupfile %s/RedHat/base/comps.xml " % (releasedir)
+        else:
+            print("Couldn't find the groupfile %s" % groupfile)
+            print("\tIf you are bootstrapping, this is not a problem")
+            gf = " "
 
-    tmpdir = os.getenv("TMPDIR")
-    # worker.py (Called by genpkgmetadata) needs tmp space
-    os.putenv("TMPDIR",".")
-    subprocess.call('%s ' % (createrepo) + 
-        gf + ' --workers 8 ' +  
-        '--quiet .', shell=True)
+        tmpdir = os.getenv("TMPDIR")
+        # worker.py (Called by genpkgmetadata) needs tmp space
+        os.putenv("TMPDIR",".")
+        subprocess.call('%s ' % (createrepo) + 
+            gf + ' --workers 8 ' +  
+            '--quiet .', shell=True)
 
-    if tmpdir is not None:
-        os.putenv("TMPDIR",tmpdir)
-    else:
-        os.unsetenv("TMPDIR")
-    os.chdir(cwd)
+        if tmpdir is not None:
+            os.putenv("TMPDIR",tmpdir)
+        else:
+            os.unsetenv("TMPDIR")
+        os.chdir(cwd)
 
-    return
+        return
 
 
     def makeDirListing(self):    
-    #
-    # make sure a known CGI exists in the roll directory so we can
-    # reliably list all the rolls present on a system. this is useful
-    # when the directory listing output is different between different
-    # web servers
-    #
-    path = os.path.join(self.dist.getRootPath(), 'rolls')
-    if os.path.exists(path):
-        filename = os.path.join(path, 'index.cgi')
+        #
+        # make sure a known CGI exists in the roll directory so we can
+        # reliably list all the rolls present on a system. this is useful
+        # when the directory listing output is different between different
+        # web servers
+        #
+        path = os.path.join(self.dist.getRootPath(), 'rolls')
+        if os.path.exists(path):
+            filename = os.path.join(path, 'index.cgi')
+    
+            file = open(filename, 'w')
+            file.write('%s' % (directory_listing_cgi))
+            file.close()
 
-        file = open(filename, 'w')
-        file.write('%s' % (directory_listing_cgi))
-        file.close()
+            os.chmod(path, 755)
+            os.chmod(filename, 755)
 
-        os.chmod(path, 755)
-        os.chmod(filename, 755)
-
-    return
+        return
 
 
     def cleaner(self, path, file, root):

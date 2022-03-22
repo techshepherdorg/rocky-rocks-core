@@ -194,31 +194,31 @@ class Command(rocks.commands.add.command):
         (args, subnet, netmask) = self.fillPositionalArgs(
             ('subnet', 'netmask'))
 
-    (mtu,) = self.fillParams([('mtu', '1500')])
+        (mtu,) = self.fillParams([('mtu', '1500')])
 
-    if len(args) != 1:
-        self.abort('must supply one network')
-    name = args[0]
+        if len(args) != 1:
+            self.abort('must supply one network')
+        name = args[0]
 
-    if not subnet:
-                    self.abort('subnet not specified')
-    if not netmask:
-                    self.abort('netmask not specified')
+        if not subnet:
+                        self.abort('subnet not specified')
+        if not netmask:
+                        self.abort('netmask not specified')
 
-    (dnszone, servedns) = self.fillParams([('dnszone', name),
-        ('servedns','n')])
+        (dnszone, servedns) = self.fillParams([('dnszone', name),
+            ('servedns','n')])
 
-    servedns = self.str2bool(servedns)
-    # Insert the name of the new network into the subnets
-    # table if it does not already exist
+        servedns = self.str2bool(servedns)
+        # Insert the name of the new network into the subnets
+        # table if it does not already exist
         
-    rows = self.db.execute("""select * from subnets where 
-        name='%s'""" % name)
-    if rows > 0:
-        self.abort('network "%s" exists' % name)
+        rows = self.db.execute("""select * from subnets where 
+            name='%s'""" % name)
+        if rows > 0:
+            self.abort('network "%s" exists' % name)
     
-    self.db.execute("""insert into subnets (name, subnet, netmask,
-        mtu, dnszone, servedns) values ('%s', '%s', '%s', %s, '%s', %s)"""\
-        % (name, subnet, netmask, mtu, dnszone, servedns))
+        self.db.execute("""insert into subnets (name, subnet, netmask,
+            mtu, dnszone, servedns) values ('%s', '%s', '%s', %s, '%s', %s)"""\
+            % (name, subnet, netmask, mtu, dnszone, servedns))
 
 
