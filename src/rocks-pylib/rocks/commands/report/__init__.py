@@ -100,7 +100,7 @@
 #
 
 import builtins
-import roilcks.commands
+import rocks.commands
 
 class command(rocks.commands.Command):
 	MustBeRoot = 0

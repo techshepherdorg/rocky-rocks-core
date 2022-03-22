@@ -159,8 +159,8 @@ class Command(rocks.commands.NetworkArgumentProcessor,
         
         if not len(args):
             self.abort('must supply network')
-    if not subnet:
-        self.abort('must supply subnet')
+        if not subnet:
+            self.abort('must supply subnet')
                     
         for network in self.getNetworkNames(args):
             self.db.execute("""update subnets set subnet='%s' where

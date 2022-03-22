@@ -110,7 +110,7 @@ import rocks.gen
 import rocks.file
 import rocks.commands
 import tempfile
-from xml.dom.ext.reader import Sax2
+#from xml.dom.ext.reader import Sax2
 
 rpm_force_template = """[ $? -ne 0 ] && \\
 echo "# YUM failed - trying with RPM" && \\

@@ -94,8 +94,8 @@ import rocks
 import string
 import rocks.gen
 import rocks.commands
-import xml.dom.ext
-import xml.dom.ext.reader.Sax2
+#import xml.dom.ext
+#import xml.dom.ext.reader.Sax2
 
 class ProfileNodeFilter(rocks.gen.NodeFilter):
 	def acceptNode(self, node):
