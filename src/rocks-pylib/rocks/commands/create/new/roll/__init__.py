@@ -80,19 +80,19 @@ import re
 import os
 import shutil
 import string
-import UserDict
+import collections
 from random import randrange
 import rocks
 import rocks.commands
 
-class Textsub(UserDict.UserDict):
+class Textsub(collections.UserDict):
 	"""Substitutes variables in the text with their values
 	from the compiled dictionary"""
 
 	def __init__(self, dict=None):
 		self.re = None
 		self.regex = None
-		UserDict.UserDict.__init__(self, dict)
+		collections.UserDict.__init__(self, dict)
 
 	def compile(self):
 		if len(self.data) > 0:

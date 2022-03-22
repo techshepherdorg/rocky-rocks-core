@@ -95,10 +95,10 @@
 
 import builtins
 import string
-import UserDict
+import collections
 
 
-class _CondEnv(UserDict.UserDict):
+class _CondEnv(collections.UserDict):
 	"""This is a special dictionary that rather than throwing
 	an exception when an item is not found it just returns None.  It is
 	used to create a special local() environment where all unresolved
@@ -107,7 +107,7 @@ class _CondEnv(UserDict.UserDict):
 	
 	def __getitem__(self, key):
 		try:
-			val = UserDict.UserDict.__getitem__(self, key)
+			val = collections.UserDict.__getitem__(self, key)
 		except:
 			return None
 
