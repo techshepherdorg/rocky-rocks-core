@@ -99,8 +99,8 @@
 #
 #
 
-import biultins
-import rocks.commands
+import builtins
+import roilcks.commands
 
 class command(rocks.commands.Command):
 	MustBeRoot = 0
