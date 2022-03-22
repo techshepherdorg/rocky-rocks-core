@@ -21,6 +21,7 @@ ad3a431168f81807aa1fc86eff0941dc9a39c9da  src/foundation-python-extras/Numeric-2
 ecd046355054a655708b8f57cf1d837a4cf070f8  src/foundation-python-extras/pygobject-2.14.1.tar.gz
 0dc1b7c7f0c16ee8debbf92cce28fa5f1ea5be92  src/foundation-python-extras/pygtk-2.10.6.tar.gz
 54af5de24bcf7b55b884e5a3631c2a746ae6b73c  src/foundation-python-extras/SQLAlchemy-0.9.2.tar.gz
+2d8830d1025c8e33149c7723c2f283122f9488c1  src/foundation-python-extras/ptyprocess-0.7.0.tar.gz
 18035755a0ab75fe23191b5588d4572bfe675b5c  src/foundation-python-extras/ssl-1.15.tar.gz
 b5f8302941435adc4145cb16f5f9cb696069425d  src/foundation-python/Python-2.6.7.tar.gz
 1778dd7cc826096a56fcfaf86c90b38f0373066a  src/foundation-python/Python-2.7.5.tar.gz

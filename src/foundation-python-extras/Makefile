@@ -166,6 +166,6 @@ build::
 install::
 	mkdir -p $(ROOT)/$(PKGROOT)
 
-include M2Crypto.mk mysqlclient.mk SQLAlchemy.mk\
-	numpy.mk pexpect.mk IPy.mk docutils.mk 
+include ptyprocess.mk M2Crypto.mk mysqlclient.mk SQLAlchemy.mk\
+	numpy.mk pexpect.mk IPy.mk docutils.mk
 
