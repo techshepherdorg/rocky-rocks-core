@@ -417,7 +417,7 @@ import os
 import tempfile
 import time
 import xml.dom.NodeFilter
-import xml.dom.ext.reader.Sax2
+#import xml.dom.ext.reader.Sax2
 import rocks.js
 import rocks.cond
 import yaml
@@ -1852,7 +1852,7 @@ class Generator_sunos(Generator):
             list.append("chroot /a /tmp/post_section_%d %s"
                     % (self.finish_section, arg))
         else:
-            if interpreter is not '/bin/sh':
+            if interpreter != '/bin/sh':
                 list.append("cat > /tmp/post_section_%d "
                     "<< '__eof__'"
                     % self.finish_section)

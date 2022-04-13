@@ -146,9 +146,9 @@ import sys
 import re
 import string
 import tempfile
-from xml.dom                 import ext
-from xml.dom.ext.reader.Sax2 import FromXmlStream
-from xml.sax._exceptions     import SAXParseException
+#from xml.dom                 import ext
+#from xml.dom.ext.reader.Sax2 import FromXmlStream
+#from xml.sax._exceptions     import SAXParseException
 import rocks.file
 import rocks.util
 import rocks.gen
